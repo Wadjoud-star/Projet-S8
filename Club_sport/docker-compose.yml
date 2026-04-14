@@ -18,7 +18,7 @@ services:
       - club_network
 
   tomcat:
-    image: tomcat:10.1
+    build: .
     container_name: club_tomcat
     restart: always
     depends_on:
@@ -26,7 +26,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./target/club-sport.war:/usr/local/tomcat/webapps/club-sport.war
+      - ./docker/target/club-sport.war:/usr/local/tomcat/webapps/club-sport.war
     networks:
       - club_network
 
