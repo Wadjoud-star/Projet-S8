@@ -1,0 +1,69 @@
+@charset "UTF-8";
+/* NAVBAR PRINCIPALE */
+.navbar-custom {
+	background: #0f172a; /* bleu très foncé */
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(8px);
+	padding: 10px 20px;
+	transition: all 0.3s ease;
+}
+
+/* LIENS */
+.navbar-custom .nav-link {
+	color: #cbd5e1;
+	font-size: 0.9rem;
+	margin: 0 8px;
+	transition: all 0.2s ease;
+	position: relative;
+}
+
+/* HOVER */
+.navbar-custom .nav-link:hover {
+	color: #38bdf8; /* bleu clair */
+}
+
+/* LIEN ACTIF */
+.navbar-custom .nav-link.active {
+	color: #38bdf8;
+}
+
+/* EFFET SOUS-LIGNE */
+.navbar-custom .nav-link::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: -4px;
+	width: 0%;
+	height: 2px;
+	background: #38bdf8;
+	transition: width 0.3s ease;
+}
+
+.navbar-custom .nav-link:hover::after {
+	width: 100%;
+}
+
+/* BOUTON TOGGLER (mobile) */
+.navbar-custom .navbar-toggler {
+	border: none;
+}
+
+.navbar-custom .navbar-toggler:focus {
+	box-shadow: none;
+}
+
+/* TEXTE DROITE (connexion / inscription) */
+.navbar-custom .navbar-nav:last-child .nav-link {
+	font-weight: 500;
+}
+
+body {
+	padding-top: 70px;
+}
+
+#map {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	margin-top: 55px;
+}
