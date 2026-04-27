@@ -14,24 +14,37 @@ CREATE TABLE commune (
     FOREIGN KEY (code_region) REFERENCES region(code_region)
 );
 
+CREATE TABLE federation (
+    code_federation VARCHAR(10) PRIMARY KEY,
+    nom_federation VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE statistique_clubs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nb_clubs INT,
+    nb_etablissements_professionnels INT,
+    total_structures INT,
+    code_commune VARCHAR(10) NOT NULL,
+    code_federation VARCHAR(10) NOT NULL,
+    FOREIGN KEY (code_commune) REFERENCES commune(code_commune),
+    FOREIGN KEY (code_federation) REFERENCES federation(code_federation)
+);
+
 CREATE TABLE statistique_licencies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     total_licencies INT,
     licencies_femmes INT,
     licencies_hommes INT,
     code_commune VARCHAR(10) NOT NULL,
-    FOREIGN KEY (code_commune) REFERENCES commune(code_commune)
-);
-
-CREATE TABLE federation (
-    code_federation VARCHAR(10) PRIMARY KEY,
-    nom_federation VARCHAR(100) NOT NULL
+    code_federation VARCHAR(10) NOT NULL,
+    FOREIGN KEY (code_commune) REFERENCES commune(code_commune),
+    FOREIGN KEY (code_federation) REFERENCES federation(code_federation)
 );
 
 CREATE TABLE club (
     id_club INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    adresse VARCHAR(100),
+    adresse VARCHAR(150),
     code_postal VARCHAR(10),
     latitude DOUBLE,
     longitude DOUBLE,

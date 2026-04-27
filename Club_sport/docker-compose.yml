@@ -1,3 +1,4 @@
+
 version: '3.8'
 
 services:
@@ -16,6 +17,7 @@ services:
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - club_network
+
 
   tomcat:
     build: .
