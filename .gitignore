@@ -1,0 +1,13 @@
+# Java
+*.class
+out/
+bin/
+
+# VS Code / Eclipse
+.project
+.classpath
+.settings/
+
+# Data files
+Club_sport_admin/clubs-data-2019.csv
+Club_sport_admin/lic-data-2019.csv
