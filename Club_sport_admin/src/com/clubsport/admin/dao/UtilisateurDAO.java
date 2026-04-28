@@ -9,30 +9,36 @@ import java.util.List;
 
 public class UtilisateurDAO {
 
-    // Récupère tous les utilisateurs d'un rôle donné (admin, club, federation)
+    /**
+     * Récupère tous les utilisateurs d'un rôle donné.
+     */
     public List<Utilisateur> getUtilisateursParRole(String role) {
         List<Utilisateur> liste = new ArrayList<>();
 
-        // Requête SQL filtrée par rôle
-        String sql = "SELECT id, nom, email, mot_de_passe_hash, role FROM utilisateur WHERE role = ?";
+        String sql = """
+            SELECT id, nom, prenom, email, mot_de_passe_hash, role
+            FROM utilisateur
+            WHERE role = ?
+            ORDER BY nom ASC
+        """;
 
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            // Injection du rôle dans la requête
             stmt.setString(1, role);
 
             ResultSet rs = stmt.executeQuery();
 
-            // Construction des objets Utilisateur à partir des résultats SQL
             while (rs.next()) {
-                liste.add(new Utilisateur(
+                Utilisateur u = new Utilisateur(
                         rs.getInt("id"),
                         rs.getString("nom"),
+                        rs.getString("prenom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
                         rs.getString("role")
-                ));
+                );
+                liste.add(u);
             }
 
         } catch (SQLException e) {
@@ -42,7 +48,9 @@ public class UtilisateurDAO {
         return liste;
     }
 
-    // Supprime un utilisateur par son ID
+    /**
+     * Supprime un utilisateur par son ID.
+     */
     public boolean supprimerUtilisateur(int id) {
         String sql = "DELETE FROM utilisateur WHERE id = ?";
 
@@ -50,7 +58,7 @@ public class UtilisateurDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
-            return stmt.executeUpdate() > 0; // true si suppression OK
+            return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,17 +66,24 @@ public class UtilisateurDAO {
         }
     }
 
-    // Met à jour  nom, email et rôle utilisateur
+    /**
+     * Met à jour un utilisateur (nom, prénom, email, rôle).
+     */
     public boolean modifierUtilisateur(Utilisateur u) {
-        String sql = "UPDATE utilisateur SET nom = ?, email = ?, role = ? WHERE id = ?";
+        String sql = """
+            UPDATE utilisateur
+            SET nom = ?, prenom = ?, email = ?, role = ?
+            WHERE id = ?
+        """;
 
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, u.getNom());
-            stmt.setString(2, u.getEmail());
-            stmt.setString(3, u.getRole());
-            stmt.setInt(4, u.getId());
+            stmt.setString(2, u.getPrenom());
+            stmt.setString(3, u.getEmail());
+            stmt.setString(4, u.getRole());
+            stmt.setInt(5, u.getId());
 
             return stmt.executeUpdate() > 0;
 

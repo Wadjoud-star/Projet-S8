@@ -17,4 +17,7 @@ public class Region {
     public String getNomRegion() {
         return nomRegion;
     }
+    public String toString() {
+        return nomRegion;
+    }
 }

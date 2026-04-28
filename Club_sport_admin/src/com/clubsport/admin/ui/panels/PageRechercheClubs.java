@@ -3,25 +3,20 @@ package com.clubsport.admin.ui.panels;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
-// =======================================================
-// MODIF BDD (commenté) : import du DAO
-// import com.clubsport.dao.ClubDAO;
-// import com.clubsport.model.Club;
-// =======================================================
+import com.clubsport.admin.dao.ClubDAO;
+import com.clubsport.admin.model.Club;
 
 public class PageRechercheClubs extends JFrame {
 
     private JComboBox<String> comboCritere;
+    private JTextField txtRecherche;
     private JTable table;
     private DefaultTableModel model;
 
-    // =======================================================
-    // MODIF BDD (commenté) : DAO
-    // private ClubDAO clubDAO = new ClubDAO();
-    // =======================================================
+    // DAO réel
+    private ClubDAO clubDAO = new ClubDAO();
 
     public PageRechercheClubs() {
         setTitle("Recherche de clubs");
@@ -37,8 +32,7 @@ public class PageRechercheClubs extends JFrame {
         add(titre, BorderLayout.NORTH);
 
         // --- PANEL GLOBAL CENTRE ---
-        JPanel panelCentre = new JPanel();
-        panelCentre.setLayout(new BorderLayout());
+        JPanel panelCentre = new JPanel(new BorderLayout());
 
         // --- ZONE DE RECHERCHE ---
         JPanel zoneRecherche = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 20));
@@ -56,16 +50,19 @@ public class PageRechercheClubs extends JFrame {
                 "Nombre de femmes"
         });
 
+        txtRecherche = new JTextField(15);
+
         JButton btnChercher = new JButton("Chercher");
         btnChercher.addActionListener(e -> rechercherClubs());
 
         zoneRecherche.add(labelCritere);
         zoneRecherche.add(comboCritere);
+        zoneRecherche.add(txtRecherche);
         zoneRecherche.add(btnChercher);
 
         panelCentre.add(zoneRecherche, BorderLayout.NORTH);
 
-        // --- TABLEAU DES RÉSULTATS ---
+        // --- TABLEAU ---
         String[] colonnes = {"ID", "Nom", "Adresse", "Code postal", "Licenciés", "Hommes", "Femmes"};
         model = new DefaultTableModel(colonnes, 0) {
             @Override
@@ -86,21 +83,9 @@ public class PageRechercheClubs extends JFrame {
         model.setRowCount(0);
 
         String critere = (String) comboCritere.getSelectedItem();
+        String valeur = txtRecherche.getText().trim();
 
-        // =======================================================
-        // VERSION ACTUELLE : données fictives (affichage comme avant)
-        // =======================================================
-        List<ClubFake> clubs = getFakeClubs();
-
-        for (ClubFake c : clubs) {
-            model.addRow(new Object[]{
-                    c.id, c.nom, c.adresse, c.codePostal, c.nbLicencies, c.nbHommes, c.nbFemmes
-            });
-        }
-
-        // =======================================================
-        // MODIF BDD (commenté) : conversion du critère → colonne SQL
-        /*
+        // Conversion critère → colonne SQL
         String colonne = switch (critere) {
             case "ID" -> "id_club";
             case "Nom" -> "nom";
@@ -112,49 +97,19 @@ public class PageRechercheClubs extends JFrame {
             default -> "nom";
         };
 
-        // MODIF BDD (commenté) : récupération depuis MySQL
-        List<Club> clubsBDD = clubDAO.rechercherPar(colonne, "valeurRecherchee");
+        // Récupération depuis MySQL
+        List<Club> clubsBDD = clubDAO.rechercherPar(colonne, valeur);
 
         for (Club c : clubsBDD) {
             model.addRow(new Object[]{
-                    c.getId(), c.getNom(), c.getAdresse(), c.getCodePostal(),
-                    c.getNbLicencies(), c.getNbHommes(), c.getNbFemmes()
+                    c.getId(),
+                    c.getNom(),
+                    c.getAdresse(),
+                    c.getCodePostal(),
+                    c.getNbLicencies(),
+                    c.getNbHommes(),
+                    c.getNbFemmes()
             });
-        }
-        */
-        // =======================================================
-    }
-
-    // --- Données fictives en attendant la BDD ---
-    private List<ClubFake> getFakeClubs() {
-        List<ClubFake> list = new ArrayList<>();
-
-        list.add(new ClubFake(1, "Club de Foot", "12 rue du Stade", "76000", 120, 80, 40));
-        list.add(new ClubFake(2, "Club de Tennis", "5 avenue des Sports", "76100", 60, 35, 25));
-        list.add(new ClubFake(3, "Club de Natation", "Piscine Municipale", "76200", 90, 50, 40));
-
-        return list;
-    }
-
-    // --- Classe modèle fictive ---
-    class ClubFake {
-        int id;
-        String nom;
-        String adresse;
-        String codePostal;
-        int nbLicencies;
-        int nbHommes;
-        int nbFemmes;
-
-        public ClubFake(int id, String nom, String adresse, String codePostal,
-                        int nbLicencies, int nbHommes, int nbFemmes) {
-            this.id = id;
-            this.nom = nom;
-            this.adresse = adresse;
-            this.codePostal = codePostal;
-            this.nbLicencies = nbLicencies;
-            this.nbHommes = nbHommes;
-            this.nbFemmes = nbFemmes;
         }
     }
 }
