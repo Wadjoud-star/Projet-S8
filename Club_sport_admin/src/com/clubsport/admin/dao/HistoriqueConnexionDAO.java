@@ -1,6 +1,7 @@
 package com.clubsport.admin.dao;
 
 import com.clubsport.admin.model.HistoriqueConnexion;
+import com.clubsport.admin.model.Utilisateur;
 import com.clubsport.admin.util.ConnexionDB;
 
 import java.sql.*;
@@ -9,27 +10,50 @@ import java.util.List;
 
 public class HistoriqueConnexionDAO {
 
-    // Récupère toutes les connexions enregistrées dans la base
+    /**
+     * Récupère tout l'historique des connexions, trié du plus récent au plus ancien.
+     */
     public List<HistoriqueConnexion> getHistorique() {
         List<HistoriqueConnexion> liste = new ArrayList<>();
 
-        // Requête SQL simple : on récupère tout l'historique
-        String sql = "SELECT id, nom, prenom, date_connexion FROM historique_connexion ORDER BY date_connexion DESC";
+        String sql = """
+            SELECT h.id, h.date_connexion, h.adresse_ip, h.login, h.succes,
+                   u.id AS uid, u.nom, u.prenom, u.email, u.mot_de_passe_hash, u.role
+            FROM historique_connexion h
+            LEFT JOIN utilisateur u ON h.id_utilisateur = u.id
+            ORDER BY h.date_connexion DESC
+        """;
 
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             ResultSet rs = stmt.executeQuery();
 
-            // Construction des objets HistoriqueConnexion à partir des résultats SQL
             while (rs.next()) {
-                liste.add(new HistoriqueConnexion(
-                        rs.getInt("id"),
+
+                // Construction de l'utilisateur associé
+                Utilisateur user = new Utilisateur(
+                        rs.getInt("uid"),
                         rs.getString("nom"),
                         rs.getString("prenom"),
-                        rs.getString("date_connexion")
-                ));
+                        rs.getString("email"),
+                        rs.getString("mot_de_passe_hash"),
+                        rs.getString("role")
+                );
+
+                // Construction de l'historique
+                HistoriqueConnexion h = new HistoriqueConnexion(
+                        rs.getInt("id"),
+                        rs.getTimestamp("date_connexion"),
+                        rs.getString("adresse_ip"),
+                        rs.getString("login"),
+                        rs.getBoolean("succes"),
+                        user
+                );
+
+                liste.add(h);
             }
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,17 +62,25 @@ public class HistoriqueConnexionDAO {
         return liste;
     }
 
-    // Ajoute une nouvelle entrée dans l'historique
-    public boolean ajouterConnexion(String nom, String prenom) {
-        String sql = "INSERT INTO historique_connexion (nom, prenom, date_connexion) VALUES (?, ?, NOW())";
+    /**
+     * Ajoute une entrée dans l'historique des connexions.
+     */
+    public boolean ajouterConnexion(Utilisateur utilisateur, String adresseIP, boolean succes) {
+
+        String sql = """
+            INSERT INTO historique_connexion (id_utilisateur, login, adresse_ip, succes, date_connexion)
+            VALUES (?, ?, ?, ?, NOW())
+        """;
 
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, nom);
-            stmt.setString(2, prenom);
+            stmt.setInt(1, utilisateur.getId());
+            stmt.setString(2, utilisateur.getEmail()); // login utilisé
+            stmt.setString(3, adresseIP);
+            stmt.setBoolean(4, succes);
 
-            return stmt.executeUpdate() > 0; // true si insertion OK
+            return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();

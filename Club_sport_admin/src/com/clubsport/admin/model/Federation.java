@@ -17,4 +17,7 @@ public class Federation {
     public String getNomFederation() {
         return nomFederation;
     }
+    public String toString() {
+        return nomFederation;
+    }
 }

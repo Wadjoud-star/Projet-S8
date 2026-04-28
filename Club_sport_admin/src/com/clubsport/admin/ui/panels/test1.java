@@ -51,13 +51,13 @@ public class test1 extends JFrame {
         label.setFont(new Font("Arial", Font.BOLD, 18));
         panel.add(label);
 
-        // Effet visuel + clic
+        // Effet  clic
         panel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                action.run(); // ouvre la nouvelle page
+                action.run(); // ouvre  nouvelle page
             }
 
             @Override
