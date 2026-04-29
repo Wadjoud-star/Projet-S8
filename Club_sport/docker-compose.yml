@@ -27,12 +27,12 @@ services:
       - mysql
     ports:
       - "8080:8080"
-
+    volumes:
+      -  C:/Users/bpenw/eclipse-workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/Club_sport:/usr/local/tomcat/webapps/Club_sport
     networks:
       - club_network
 
 volumes:
   mysql_data:
-
 networks:
   club_network:
