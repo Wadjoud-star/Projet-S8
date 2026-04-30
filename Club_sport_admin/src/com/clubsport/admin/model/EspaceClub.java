@@ -4,17 +4,16 @@ import java.util.Date;
 
 public class EspaceClub {
 
-    private int id;               
-    private String actualites;    
-    private String horaires;      
-    private String cotisations;   
-    private Date dateMaj;        
-    private Club club;           
+    private int id;
+    private String actualites;
+    private String horaires;
+    private double cotisations;  
+    private Date dateMaj;
+    private Club club;
 
-    /**
-     * Constructeur complet utilisé lors du chargement depuis la base de données.
-     */
-    public EspaceClub(int id, String actualites, String horaires, String cotisations, Date dateMaj, Club club) {
+// Contruire un objet Espacede club 
+    public EspaceClub(int id, String actualites, String horaires,double cotisations, Date dateMaj, Club club) {
+
         this.id = id;
         this.actualites = actualites;
         this.horaires = horaires;
@@ -23,7 +22,7 @@ public class EspaceClub {
         this.club = club;
     }
 
-    // --- Getters ---
+
 
     public int getId() {
         return id;
@@ -37,7 +36,7 @@ public class EspaceClub {
         return horaires;
     }
 
-    public String getCotisations() {
+    public double getCotisations() {
         return cotisations;
     }
 
@@ -50,31 +49,14 @@ public class EspaceClub {
     }
 
 
-    /** Mise à jour des actualités */
-    public void setActualites(String actualites) {
-        this.actualites = actualites;
+//afficher le nom du club 
+    public String getNomClub() {
+        return club != null ? club.getNom() : "";
     }
 
-    /** Mise à jour des horaires */
-    public void setHoraires(String horaires) {
-        this.horaires = horaires;
-        this.dateMaj = new Date();
-    }
-
-    /** Mise à jour des cotisations */
-    public void setCotisations(String cotisations) {
-        this.cotisations = cotisations;
-        this.dateMaj = new Date();
-    }
-
-
-    // --- Méthode utilitaire ---
-
-    /**
-     * Permet d'afficher l'espace club dans une liste ou un log.
-     */
+// afficher dans les box 
     @Override
     public String toString() {
-        return "Espace du club : " + (club != null ? club.getNom() : "Inconnu");
+        return "Espace du club : " + getNomClub();
     }
 }

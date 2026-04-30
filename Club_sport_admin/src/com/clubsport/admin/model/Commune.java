@@ -3,13 +3,12 @@ package com.clubsport.admin.model;
 
 public class Commune {
 
-    private String codeCommune;   
-    private String nomCommune;    
-    private int population;       
-    private Region region;        
-    /**
-     * Constructeur complet utilisé lors du chargement depuis la base de données.
-     */
+    private String codeCommune;
+    private String nomCommune;
+    private int population;
+    private Region region;
+
+ // Contruire une commune 
     public Commune(String codeCommune, String nomCommune, int population, Region region) {
         this.codeCommune = codeCommune;
         this.nomCommune = nomCommune;
@@ -17,7 +16,6 @@ public class Commune {
         this.region = region;
     }
 
-    // --- Getters ---
 
     public String getCodeCommune() {
         return codeCommune;
@@ -35,18 +33,14 @@ public class Commune {
         return region;
     }
 
-    // --- Setters  ---
 
-    /** Mise à jour de la population  */
-    public void setPopulation(int population) {
-        this.population = population;
+
+// renvoyer les noms des Regions de manière correcte
+    public String getNomRegion() {
+        return region != null ? region.getNomRegion() : "";
     }
 
-    // --- Méthode utilitaire ---
-
-    /**
-     * Permet d'afficher la commune dans une JComboBox ou dans les logs.
-     */
+// methode pour afficher 
     @Override
     public String toString() {
         return nomCommune;
