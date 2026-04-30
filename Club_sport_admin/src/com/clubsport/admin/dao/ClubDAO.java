@@ -57,7 +57,7 @@ public class ClubDAO {
         Federation federation = chargerFederation(conn, rs.getString("code_federation"));
 
         // --- Chargement des statistiques ---
-        StatistiqueLicencies stats = chargerStatistiques(conn, idClub);
+        StatistiqueLicencies stats = chargerStatistiques(conn, idClub, commune, federation);
 
         // --- Chargement de l'espace club ---
         EspaceClub espace = chargerEspaceClub(conn, idClub);
@@ -74,8 +74,8 @@ public class ClubDAO {
                 rs.getInt("nb_femmes"),
                 commune,
                 federation,
-                stats,
-                espace
+                espace,
+                stats
         );
     }
 
@@ -115,18 +115,22 @@ public class ClubDAO {
         return null;
     }
 
-    private StatistiqueLicencies chargerStatistiques(Connection conn, int idClub) throws SQLException {
+    private StatistiqueLicencies chargerStatistiques(Connection conn, int idClub, Commune commune, Federation federation) throws SQLException {
         String sql = "SELECT * FROM statistiques WHERE id_club = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idClub);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+        
+            	
                 return new StatistiqueLicencies(
                         rs.getInt("id"),
                         rs.getInt("total_licencies"),
                         rs.getInt("licencies_femmes"),
                         rs.getInt("licencies_hommes"),
-                        null // le club sera injecté après
+                        commune,
+                        federation
+                      //  null // le club sera injecté après
                 );
             }
         }
@@ -143,7 +147,7 @@ public class ClubDAO {
                         rs.getInt("id"),
                         rs.getString("actualites"),
                         rs.getString("horaires"),
-                        rs.getString("cotisations"),
+                        rs.getDouble("cotisations"),
                         rs.getDate("date_maj"),
                         null // le club sera injecté après
                 );
