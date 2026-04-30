@@ -1,15 +1,13 @@
 package com.clubsport.admin.ui.panels;
 
+import com.clubsport.admin.dao.UtilisateurDAO;
+import com.clubsport.admin.model.Utilisateur;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-
-// ===============================================
-// MODIF BDD (commenté) : import du DAO
-// import com.clubsport.dao.UtilisateurDAO;
-// import java.util.List;
-// ===============================================
+import java.util.List;
 
 public class PageGestionComptes extends JFrame {
 
@@ -17,10 +15,8 @@ public class PageGestionComptes extends JFrame {
     private JTable table;
     private DefaultTableModel model;
 
-    // ===============================================
-    // MODIF BDD (commenté) : DAO
-    // private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
-    // ===============================================
+    // DAO réel
+    private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
 
     public PageGestionComptes() {
         setTitle("Gestion des comptes");
@@ -50,7 +46,7 @@ public class PageGestionComptes extends JFrame {
         model = new DefaultTableModel(colonnes, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column >= 3;
+                return column >= 3; // Modifier / Supprimer cliquables
             }
         };
 
@@ -69,25 +65,7 @@ public class PageGestionComptes extends JFrame {
 
         String type = (String) comboType.getSelectedItem();
 
-        // ============================================================
-        // VERSION ACTUELLE : données fictives (affichage comme avant)
-        // ============================================================
-        if (type.equals("Élus")) {
-            ajouterLigne("elu001", "Martin", "Claire");
-            ajouterLigne("elu002", "Dupont", "Jean");
-        } else if (type.equals("Présidents")) {
-            ajouterLigne("pres001", "Durand", "Luc");
-        } else if (type.equals("Entraîneurs")) {
-            ajouterLigne("ent001", "Morel", "Sophie");
-        } else if (type.equals("Sportifs")) {
-            ajouterLigne("sport001", "Leroy", "Maxime");
-        } else if (type.equals("Administrateurs")) {
-            ajouterLigne("admin001", "Admin", "Root");
-        }
-
-        // ============================================================
-        // MODIF BDD (commenté) : conversion du type → rôle MySQL
-        /*
+        // Conversion du type en rôle MySQL
         String roleBDD = switch (type) {
             case "Élus" -> "elu";
             case "Présidents" -> "president";
@@ -97,15 +75,19 @@ public class PageGestionComptes extends JFrame {
             default -> "";
         };
 
-        // MODIF BDD (commenté) : récupération depuis MySQL
-        List<String[]> utilisateurs = utilisateurDAO.getUtilisateursParRole(roleBDD);
+        // Récupération depuis MySQL
+        List<Utilisateur> utilisateurs = utilisateurDAO.getUtilisateursParRole(roleBDD);
 
-        // MODIF BDD (commenté) : ajout dans le tableau
-        for (String[] u : utilisateurs) {
-            model.addRow(new Object[]{u[0], u[1], u[2], "Modifier", "Supprimer"});
+        // Ajout dans le tableau
+        for (Utilisateur u : utilisateurs) {
+            model.addRow(new Object[]{
+                    u.getId(),
+                    u.getNom(),
+                    u.getPrenom(),
+                    "Modifier",
+                    "Supprimer"
+            });
         }
-        */
-        // ============================================================
     }
 
     private void ajouterLigne(String id, String nom, String prenom) {
@@ -145,12 +127,23 @@ public class PageGestionComptes extends JFrame {
 
             button.addActionListener((ActionEvent e) -> {
                 int row = table.getSelectedRow();
-                String id = (String) table.getValueAt(row, 0);
+                int id = (int) table.getValueAt(row, 0);
 
                 if (actionType.equals("modifier")) {
                     JOptionPane.showMessageDialog(null, "Modifier le compte : " + id);
                 } else if (actionType.equals("supprimer")) {
-                    JOptionPane.showMessageDialog(null, "Supprimer le compte : " + id);
+                    int confirm = JOptionPane.showConfirmDialog(null,
+                            "Supprimer le compte " + id + " ?", "Confirmation",
+                            JOptionPane.YES_NO_OPTION);
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        if (utilisateurDAO.supprimerUtilisateur(id)) {
+                            JOptionPane.showMessageDialog(null, "Compte supprimé.");
+                            chargerComptes();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Erreur lors de la suppression.");
+                        }
+                    }
                 }
             });
         }

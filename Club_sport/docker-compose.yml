@@ -28,11 +28,11 @@ services:
     volumes:
       - ./docker/.keystore:/usr/local/tomcat/conf/.keystore
       - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
+      -  C:/Users/bpenw/eclipse-workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/Club_sport:/usr/local/tomcat/webapps/Club_sport
     networks:
       - club_network
 
 volumes:
   mysql_data:
-
 networks:
   club_network:
