@@ -52,13 +52,18 @@ public class HistoriqueConnexion {
 
 // permet d'afficher la date au bon format et l'afficher 
     public String getDateFormatee() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        return sdf.format(dateHeure);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");// convertir une date en texte 
+        return sdf.format(dateHeure);// transforme enntexte lisible 
     }
 
 //afficher suucces ou echec 
     public String getStatutTexte() {
-        return succes ? "Succès" : "Échec";
+    	if (succes) {
+    	    return "Succès";
+    	} else {
+    	    return "Échec";
+    	}
+
     }
 
 // Pour inserer dans le tableau 

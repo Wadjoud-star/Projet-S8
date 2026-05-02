@@ -74,7 +74,6 @@ public class ClubDAO {
                 rs.getInt("nb_femmes"),
                 commune,
                 federation,
-                stats,
                 espace
         );
     }
@@ -116,7 +115,7 @@ public class ClubDAO {
     }
 
     private StatistiqueLicencies chargerStatistiques(Connection conn, int idClub) throws SQLException {
-        String sql = "SELECT * FROM statistiques WHERE id_club = ?";
+        String sql = "SELECT * FROM statistiques_licencies WHERE id_club = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idClub);
             ResultSet rs = stmt.executeQuery();
@@ -126,7 +125,8 @@ public class ClubDAO {
                         rs.getInt("total_licencies"),
                         rs.getInt("licencies_femmes"),
                         rs.getInt("licencies_hommes"),
-                        null // le club sera injecté après
+                        null, // le club sera injecté après
+                        null
                 );
             }
         }
@@ -143,7 +143,7 @@ public class ClubDAO {
                         rs.getInt("id"),
                         rs.getString("actualites"),
                         rs.getString("horaires"),
-                        rs.getString("cotisations"),
+                        rs.getDouble("cotisations"),
                         rs.getDate("date_maj"),
                         null // le club sera injecté après
                 );

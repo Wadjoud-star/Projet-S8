@@ -40,7 +40,7 @@ public class PageGestionComptes extends JFrame {
         add(topPanel, BorderLayout.NORTH);
 
         // --- TABLEAU AVEC CHECKBOX ---
-        String[] colonnes = {"Sélection", "Identifiant", "Nom", "Prénom"};
+        String[] colonnes = {"Sélection", "Identifiant", "Nom"};
 
         model = new DefaultTableModel(colonnes, 0) {
             @Override
@@ -97,8 +97,7 @@ public class PageGestionComptes extends JFrame {
             model.addRow(new Object[]{
                     false, // checkbox
                     u.getId(),
-                    u.getNom(),
-                    u.getPrenom()
+                    u.getNom()
             });
         }
     }
@@ -129,7 +128,26 @@ public class PageGestionComptes extends JFrame {
         }
 
         int id = ids.get(0);
-        JOptionPane.showMessageDialog(this, "Modifier le compte : " + id);
+
+        // Charger l'utilisateur complet
+        Utilisateur utilisateur = utilisateurDAO.getUtilisateurParId(id);
+
+        if (utilisateur == null) {
+            JOptionPane.showMessageDialog(this, "Impossible de charger cet utilisateur.", "Erreur", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Ouvrir la fenêtre de modification
+        ModifierUtilisateur fenetre = new ModifierUtilisateur(utilisateur);
+        fenetre.setVisible(true);
+
+        // Quand la fenêtre se ferme remet  le tableau vide
+        fenetre.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                chargerComptes();
+            }
+        });
     }
 
     private void supprimerSelection() {
@@ -151,7 +169,7 @@ public class PageGestionComptes extends JFrame {
             utilisateurDAO.supprimerUtilisateur(id);
         }
 
-        JOptionPane.showMessageDialog(this, "Suppression effectuée.");
+        JOptionPane.showMessageDialog(this, "Suppression validée.");
         chargerComptes();
     }
 }

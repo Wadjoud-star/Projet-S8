@@ -16,7 +16,7 @@ public class UtilisateurDAO {
         List<Utilisateur> liste = new ArrayList<>();
 
         String sql = """
-            SELECT id, nom, prenom, email, mot_de_passe_hash, role
+            SELECT id_utilisateur, nom, email, mot_de_passe_hash, role
             FROM utilisateur
             WHERE role = ?
             ORDER BY nom ASC
@@ -31,9 +31,8 @@ public class UtilisateurDAO {
 
             while (rs.next()) {
                 Utilisateur u = new Utilisateur(
-                        rs.getInt("id"),
+                        rs.getInt("id_utilisateur"),
                         rs.getString("nom"),
-                        rs.getString("prenom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
                         rs.getString("role")
@@ -52,7 +51,7 @@ public class UtilisateurDAO {
      * Supprime un utilisateur par son ID.
      */
     public boolean supprimerUtilisateur(int id) {
-        String sql = "DELETE FROM utilisateur WHERE id = ?";
+        String sql = "DELETE FROM utilisateur WHERE id_utilisateur = ?";
 
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -67,23 +66,22 @@ public class UtilisateurDAO {
     }
 
     /**
-     * Met à jour un utilisateur (nom, prénom, email, rôle).
+     * Met à jour un utilisateur (nom, email, rôle).
      */
     public boolean modifierUtilisateur(Utilisateur u) {
         String sql = """
             UPDATE utilisateur
-            SET nom = ?, prenom = ?, email = ?, role = ?
-            WHERE id = ?
+            SET nom = ?, email = ?, role = ?
+            WHERE id_utilisateur = ?
         """;
 
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, u.getNom());
-            stmt.setString(2, u.getPrenom());
-            stmt.setString(3, u.getEmail());
-            stmt.setString(4, u.getRole());
-            stmt.setInt(5, u.getId());
+            stmt.setString(2, u.getEmail());
+            stmt.setString(3, u.getRole());
+            stmt.setInt(4, u.getId());
 
             return stmt.executeUpdate() > 0;
 
@@ -91,5 +89,38 @@ public class UtilisateurDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Récupère un utilisateur par son ID.
+     */
+    public Utilisateur getUtilisateurParId(int id) {
+        String sql = """
+            SELECT id_utilisateur, nom, email, mot_de_passe_hash, role
+            FROM utilisateur
+            WHERE id_utilisateur = ?
+        """;
+
+        try (Connection conn = ConnexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Utilisateur(
+                        rs.getInt("id_utilisateur"),
+                        rs.getString("nom"),
+                        rs.getString("email"),
+                        rs.getString("mot_de_passe_hash"),
+                        rs.getString("role")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
