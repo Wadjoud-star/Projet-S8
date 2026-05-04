@@ -8,15 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UtilisateurDAO {
-
-    /**
-     * Récupère tous les utilisateurs d'un rôle donné.
-     */
+// permet de récuperer les utilisateurs en faisant une liste. On la trie par ordre alpha
     public List<Utilisateur> getUtilisateursParRole(String role) {
         List<Utilisateur> liste = new ArrayList<>();
 
         String sql = """
-            SELECT id, nom, prenom, email, mot_de_passe_hash, role
+            SELECT id, nom, email, mot_de_passe_hash, role
             FROM utilisateur
             WHERE role = ?
             ORDER BY nom ASC
@@ -33,7 +30,6 @@ public class UtilisateurDAO {
                 Utilisateur u = new Utilisateur(
                         rs.getInt("id"),
                         rs.getString("nom"),
-                        rs.getString("prenom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
                         rs.getString("role")
@@ -48,9 +44,7 @@ public class UtilisateurDAO {
         return liste;
     }
 
-    /**
-     * Supprime un utilisateur par son ID.
-     */
+// supprimer un utilisateur
     public boolean supprimerUtilisateur(int id) {
         String sql = "DELETE FROM utilisateur WHERE id = ?";
 
@@ -66,13 +60,11 @@ public class UtilisateurDAO {
         }
     }
 
-    /**
-     * Met à jour un utilisateur (nom, prénom, email, rôle).
-     */
+ // mettre a jour les informations d'un utilisateur a partir des infos rentrées dans les champs 
     public boolean modifierUtilisateur(Utilisateur u) {
         String sql = """
             UPDATE utilisateur
-            SET nom = ?, prenom = ?, email = ?, role = ?
+            SET nom = ?, email = ?, role = ?
             WHERE id = ?
         """;
 
@@ -80,10 +72,9 @@ public class UtilisateurDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, u.getNom());
-            stmt.setString(2, u.getPrenom());
-            stmt.setString(3, u.getEmail());
-            stmt.setString(4, u.getRole());
-            stmt.setInt(5, u.getId());
+            stmt.setString(2, u.getEmail());
+            stmt.setString(3, u.getRole());
+            stmt.setInt(4, u.getId());
 
             return stmt.executeUpdate() > 0;
 
@@ -91,5 +82,36 @@ public class UtilisateurDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+// récupérer l'id d'un utilisateur 
+    public Utilisateur getUtilisateurParId(int id) {
+        String sql = """
+            SELECT id, nom, email, mot_de_passe_hash, role
+            FROM utilisateur
+            WHERE id = ?
+        """;
+
+        try (Connection conn = ConnexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Utilisateur(
+                        rs.getInt("id"),
+                        rs.getString("nom"),
+                        rs.getString("email"),
+                        rs.getString("mot_de_passe_hash"),
+                        rs.getString("role")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

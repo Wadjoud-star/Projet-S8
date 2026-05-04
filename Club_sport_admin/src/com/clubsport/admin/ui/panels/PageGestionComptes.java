@@ -31,7 +31,12 @@ public class PageGestionComptes extends JFrame {
                 "Élus", "Présidents", "Entraîneurs", "Sportifs", "Administrateurs"
         });
 
+        //  Bouton Chercher
         JButton btnChercher = new JButton("Chercher");
+        btnChercher.setBackground(new Color(0, 120, 215));
+        btnChercher.setForeground(Color.WHITE);
+        btnChercher.setFocusPainted(false);
+        btnChercher.setPreferredSize(new Dimension(110, 35));
         btnChercher.addActionListener(e -> chargerComptes());
 
         topPanel.add(comboType);
@@ -39,12 +44,12 @@ public class PageGestionComptes extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // --- TABLEAU AVEC CHECKBOX ---
-        String[] colonnes = {"Sélection", "Identifiant", "Nom", "Prénom"};
+        // Le tableau avec les cases a selectionner 
+        String[] colonnes = {"Sélection", "Identifiant", "Nom"};
 
         model = new DefaultTableModel(colonnes, 0) {
             @Override
-            public Class<?> getColumnClass(int columnIndex) {
+            public Class<?> getColumnClass(int columnIndex) {// definit le type de colonne du tableau
                 return columnIndex == 0 ? Boolean.class : String.class;
             }
 
@@ -62,8 +67,18 @@ public class PageGestionComptes extends JFrame {
         // --- PANEL BAS : Boutons Modifier / Supprimer ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
+        // --- Bouton Modifier harmonisé ---
         JButton btnModifier = new JButton("Modifier");
+        btnModifier.setBackground(new Color(0, 120, 215));
+        btnModifier.setForeground(Color.WHITE);
+        btnModifier.setFocusPainted(false);
+        btnModifier.setPreferredSize(new Dimension(110, 35));
+
+        // Bouton Supprimer 
         JButton btnSupprimer = new JButton("Supprimer");
+        btnSupprimer.setBackground(new Color(200, 200, 200));
+        btnSupprimer.setFocusPainted(false);
+        btnSupprimer.setPreferredSize(new Dimension(110, 35));
 
         bottomPanel.add(btnModifier);
         bottomPanel.add(btnSupprimer);
@@ -93,12 +108,20 @@ public class PageGestionComptes extends JFrame {
 
         List<Utilisateur> utilisateurs = utilisateurDAO.getUtilisateursParRole(roleBDD);
 
+        // --- AJOUT AUTOMATIQUE D’UN UTILISATEUR FICTIF A CHAQUE FOIS ---
+        Utilisateur fictif = new Utilisateur(
+                999,                      // id fictif
+                "Martin Élu",             // nom
+                "martin.elu@example.com", // email
+                "elu"                     // rôle
+        );
+        utilisateurs.add(fictif);
+
         for (Utilisateur u : utilisateurs) {
             model.addRow(new Object[]{
                     false, // checkbox
                     u.getId(),
-                    u.getNom(),
-                    u.getPrenom()
+                    u.getNom()
             });
         }
     }
@@ -106,10 +129,10 @@ public class PageGestionComptes extends JFrame {
     private List<Integer> getSelectedIds() {
         List<Integer> ids = new ArrayList<>();
 
-        for (int i = 0; i < model.getRowCount(); i++) {
-            boolean selected = (boolean) model.getValueAt(i, 0);
+        for (int i = 0; i < model.getRowCount(); i++) {// parcourt le slignes du tableau
+            boolean selected = (boolean) model.getValueAt(i, 0);// recupere les infos de la premiere colonne 
             if (selected) {
-                ids.add(Integer.parseInt(model.getValueAt(i, 1).toString()));
+                ids.add(Integer.parseInt(model.getValueAt(i, 1).toString()));// convertit la colonne 1 en texte puis en entier et on ajoute a la liste
             }
         }
         return ids;
@@ -126,10 +149,39 @@ public class PageGestionComptes extends JFrame {
         if (ids.size() > 1) {
             JOptionPane.showMessageDialog(this, "Vous ne pouvez modifier qu’un seul compte à la fois.");
             return;
-        }
+        }// this désigne la fenetre actuelle 
 
         int id = ids.get(0);
-        JOptionPane.showMessageDialog(this, "Modifier le compte : " + id);
+
+        // Charger l'utilisateur complet
+        Utilisateur utilisateur = utilisateurDAO.getUtilisateurParId(id);
+
+        // Si l'utilisateur n'existe pas en BDD (cas du fictif), on le crée manuellement
+        if (utilisateur == null && id == 999) {
+            utilisateur = new Utilisateur(
+                    999,
+                    "Martin Élu",
+                    "martin.elu@example.com",
+                    "elu"
+            );
+        }
+
+        if (utilisateur == null) {
+            JOptionPane.showMessageDialog(this, "Impossible de charger cet utilisateur.", "Erreur", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Ouvrir la fenêtre de modification
+        ModifierUtilisateur fenetre = new ModifierUtilisateur(utilisateur);
+        fenetre.setVisible(true);
+
+        // Quand la fenêtre se ferme remet  le tableau vide
+        fenetre.addWindowListener(new java.awt.event.WindowAdapter() {// permet de savoir si on ferme la fenetre 
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                chargerComptes();
+            }
+        });
     }
 
     private void supprimerSelection() {
@@ -137,7 +189,7 @@ public class PageGestionComptes extends JFrame {
 
         if (ids.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Sélectionnez au moins un compte.");
-            return;
+            return;// si on ne selectionne rien on demande a l'utilisateur de selectionner quelque chose
         }
 
         int confirm = JOptionPane.showConfirmDialog(this,
@@ -148,10 +200,19 @@ public class PageGestionComptes extends JFrame {
         if (confirm != JOptionPane.YES_OPTION) return;
 
         for (int id : ids) {
-            utilisateurDAO.supprimerUtilisateur(id);
+            utilisateurDAO.supprimerUtilisateur(id);// si on clique sur oui on supprime les id selectionner de la BDD
         }
 
-        JOptionPane.showMessageDialog(this, "Suppression effectuée.");
-        chargerComptes();
+        JOptionPane.showMessageDialog(this, "Suppression validée.");
+        chargerComptes();// on remet à jour la page
+    }
+
+    // --- MAIN POUR LANCER DIRECTEMENT LA PAGE ---
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            PageGestionComptes fen = new PageGestionComptes();
+            fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            fen.setVisible(true);
+        });
     }
 }
