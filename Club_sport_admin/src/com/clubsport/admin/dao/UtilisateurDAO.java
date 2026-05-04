@@ -8,15 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UtilisateurDAO {
-
-    /**
-     * Récupère tous les utilisateurs d'un rôle donné.
-     */
+// permet de récuperer les utilisateurs en faisant une liste. On la trie par ordre alpha
     public List<Utilisateur> getUtilisateursParRole(String role) {
         List<Utilisateur> liste = new ArrayList<>();
 
         String sql = """
-            SELECT id_utilisateur, nom, email, mot_de_passe_hash, role
+            SELECT id, nom, email, mot_de_passe_hash, role
             FROM utilisateur
             WHERE role = ?
             ORDER BY nom ASC
@@ -31,7 +28,7 @@ public class UtilisateurDAO {
 
             while (rs.next()) {
                 Utilisateur u = new Utilisateur(
-                        rs.getInt("id_utilisateur"),
+                        rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
@@ -47,11 +44,9 @@ public class UtilisateurDAO {
         return liste;
     }
 
-    /**
-     * Supprime un utilisateur par son ID.
-     */
+// supprimer un utilisateur
     public boolean supprimerUtilisateur(int id) {
-        String sql = "DELETE FROM utilisateur WHERE id_utilisateur = ?";
+        String sql = "DELETE FROM utilisateur WHERE id = ?";
 
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -65,14 +60,12 @@ public class UtilisateurDAO {
         }
     }
 
-    /**
-     * Met à jour un utilisateur (nom, email, rôle).
-     */
+ // mettre a jour les informations d'un utilisateur a partir des infos rentrées dans les champs 
     public boolean modifierUtilisateur(Utilisateur u) {
         String sql = """
             UPDATE utilisateur
             SET nom = ?, email = ?, role = ?
-            WHERE id_utilisateur = ?
+            WHERE id = ?
         """;
 
         try (Connection conn = ConnexionDB.getConnection();
@@ -91,14 +84,12 @@ public class UtilisateurDAO {
         }
     }
 
-    /**
-     * Récupère un utilisateur par son ID.
-     */
+// récupérer l'id d'un utilisateur 
     public Utilisateur getUtilisateurParId(int id) {
         String sql = """
-            SELECT id_utilisateur, nom, email, mot_de_passe_hash, role
+            SELECT id, nom, email, mot_de_passe_hash, role
             FROM utilisateur
-            WHERE id_utilisateur = ?
+            WHERE id = ?
         """;
 
         try (Connection conn = ConnexionDB.getConnection();
@@ -109,7 +100,7 @@ public class UtilisateurDAO {
 
             if (rs.next()) {
                 return new Utilisateur(
-                        rs.getInt("id_utilisateur"),
+                        rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
