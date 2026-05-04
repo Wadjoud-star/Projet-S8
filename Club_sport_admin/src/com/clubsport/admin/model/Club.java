@@ -61,10 +61,11 @@ public class Club {
     	return espaceClub; }
 
 
-// retourner l'adresse d'un club 
+// retourner l'adresse complete d'un club 
     public String getAdresseComplete() {
-        if (commune == null) return adresse + ", " + codePostal;
-        return adresse + ", " + codePostal + " " + commune.getNomCommune();
+        if (commune == null) return adresse + ", " + codePostal;// si la commune n'a pas de commune 
+        // on affiche juste l'adresse et le code postal 
+        return adresse + ", " + codePostal + " " + commune.getNomCommune();// sinon tout 
     }
 
 // calculer taux de femmes 
