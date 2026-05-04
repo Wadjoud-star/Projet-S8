@@ -11,3 +11,6 @@ bin/
 # Data files
 Club_sport_admin/clubs-data-2019.csv
 Club_sport_admin/lic-data-2019.csv
+
+# Dumps MySQL (fichiers souvent volumineux — à partager hors dépôt)
+Club_sport/docker/mysql/dump*.sql
