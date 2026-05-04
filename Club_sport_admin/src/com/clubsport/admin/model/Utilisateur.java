@@ -13,7 +13,7 @@ public class Utilisateur {
     private List<HistoriqueConnexion> historiques;// liste des connections 
 
 // Construire un objet utilisateur 
-    public Utilisateur(int id, String nom, String email,String motDePasseHAsh, String role) {
+    public Utilisateur(int id, String nom, String email,String motDePasseHash, String role) {
 
         this.id = id;
         this.nom = nom;
@@ -21,6 +21,12 @@ public class Utilisateur {
         this.motDePasseHash = motDePasseHash;
         this.role = role;
         this.historiques = new ArrayList<>();
+    }
+    public Utilisateur(int id, String nom, String email, String role) {
+        this.id = id;
+        this.nom = nom;
+        this.email = email;
+        this.role = role;
     }
 
 
@@ -62,6 +68,18 @@ public class Utilisateur {
     public boolean isClub() {
         return "club".equalsIgnoreCase(role);
     }
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
 
 // Afficher de facon lisible 
     @Override

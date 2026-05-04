@@ -18,7 +18,7 @@ public class HistoriqueConnexionDAO {
 
         String sql = """
             SELECT h.id, h.date_connexion, h.adresse_ip, h.login, h.succes, 
-                   u.id AS uid, u.nom, u.prenom, u.email, u.mot_de_passe_hash, u.role
+                   u.id AS uid, u.nom, u.email, u.mot_de_passe_hash, u.role
             FROM historique_connexion h
             LEFT JOIN utilisateur u ON h.id_utilisateur = u.id
             ORDER BY h.date_connexion DESC
@@ -38,7 +38,6 @@ public class HistoriqueConnexionDAO {
                 Utilisateur user = new Utilisateur(
                         rs.getInt("uid"),
                         rs.getString("nom"),
-                        rs.getString("prenom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
                         rs.getString("role")
@@ -57,6 +56,59 @@ public class HistoriqueConnexionDAO {
                 liste.add(h);
             }
 
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return liste;
+    }
+    /**
+     * Récupère l'historique des connexions pour une date précise (format AAAA-MM-JJ).
+     */
+    public List<HistoriqueConnexion> getHistoriqueParDate(String date) {
+        List<HistoriqueConnexion> liste = new ArrayList<>();
+
+        String sql = """
+            SELECT h.id, h.date_connexion, h.adresse_ip, h.login, h.succes,
+                   u.id AS uid, u.nom, u.email, u.mot_de_passe_hash, u.role
+            FROM historique_connexion h
+            LEFT JOIN utilisateur u ON h.id_utilisateur = u.id
+            WHERE DATE(h.date_connexion) = ?
+            ORDER BY h.date_connexion DESC
+        """;
+        // DATE(h.date_connexion) permet d'ignorer l'heure et de comparer uniquement la date
+
+        try (Connection conn = ConnexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, date); // on injecte la date saisie par l'utilisateur
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+
+                // Construction de l'utilisateur associé
+                Utilisateur user = new Utilisateur(
+                        rs.getInt("uid"),
+                        rs.getString("nom"),
+                        rs.getString("email"),
+                        rs.getString("mot_de_passe_hash"),
+                        rs.getString("role")
+                );
+
+                // Construction de l'historique
+                HistoriqueConnexion h = new HistoriqueConnexion(
+                        rs.getInt("id"),
+                        rs.getTimestamp("date_connexion"),
+                        rs.getString("adresse_ip"),
+                        rs.getString("login"),
+                        rs.getBoolean("succes"),
+                        user
+                );
+
+                liste.add(h);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
