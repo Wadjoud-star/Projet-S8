@@ -73,10 +73,8 @@ public class ClubDAO {
                 rs.getInt("nb_hommes"),
                 rs.getInt("nb_femmes"),
                 commune,
-                federation,
-                espace,
-                stats
-
+                federation,   
+             espace
         );
     }
 
@@ -116,10 +114,8 @@ public class ClubDAO {
         return null;
     }
 
-
-    private StatistiqueLicencies chargerStatistiques(Connection conn, int idClub, Commune commune, Federation federation) throws SQLException {
-        String sql = "SELECT * FROM statistiques WHERE id_club = ?";
-
+    private StatistiqueLicencies chargerStatistiques(Connection conn, int idClub) throws SQLException {
+        String sql = "SELECT * FROM statistiques_licencies WHERE id_club = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idClub);
             ResultSet rs = stmt.executeQuery();
@@ -131,11 +127,8 @@ public class ClubDAO {
                         rs.getInt("total_licencies"),
                         rs.getInt("licencies_femmes"),
                         rs.getInt("licencies_hommes"),
-
-                        commune,
-                        federation
-                      //  null // le club sera injecté après
-
+                        null, // le club sera injecté après
+                        null
                 );
             }
         }

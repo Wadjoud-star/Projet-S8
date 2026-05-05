@@ -8,13 +8,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/clubs")
-public class ClubServlet extends HttpServlet {
+/**
+ * Contrôleur : page d'accueil de l'espace élus (vue JSP).
+ */
+@WebServlet("/elu")
+public class EluAccueilServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+        req.getRequestDispatcher("/WEB-INF/jsp/elus/accueil.jsp").forward(req, resp);
     }
 }
