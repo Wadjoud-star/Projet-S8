@@ -57,7 +57,7 @@ public class ClubDAO {
         Federation federation = chargerFederation(conn, rs.getString("code_federation"));
 
         // --- Chargement des statistiques ---
-        StatistiqueLicencies stats = chargerStatistiques(conn, idClub);
+        StatistiqueLicencies stats = chargerStatistiques(conn, idClub, commune, federation);
 
         // --- Chargement de l'espace club ---
         EspaceClub espace = chargerEspaceClub(conn, idClub);
@@ -73,8 +73,8 @@ public class ClubDAO {
                 rs.getInt("nb_hommes"),
                 rs.getInt("nb_femmes"),
                 commune,
-                federation,
-                espace
+                federation,   
+             espace
         );
     }
 
@@ -120,6 +120,8 @@ public class ClubDAO {
             stmt.setInt(1, idClub);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+        
+            	
                 return new StatistiqueLicencies(
                         rs.getInt("id"),
                         rs.getInt("total_licencies"),

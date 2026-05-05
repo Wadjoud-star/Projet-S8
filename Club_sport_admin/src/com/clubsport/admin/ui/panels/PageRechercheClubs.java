@@ -10,7 +10,7 @@ import com.clubsport.admin.model.Club;
 
 public class PageRechercheClubs extends JFrame {
 
-    private JRadioButton rbNom, rbAdresse, rbCodePostal, rbLicencies, rbHommes, rbFemmes;// les boutons 
+    private JRadioButton rbFederation, rbAdresse, rbCodePostal, rbLicencies, rbHommes, rbFemmes;// les boutons 
     private JTextField txtRecherche;// champ de recherhe de saisi
     private JTable table;// tableau qui affiche les résultats 
     private DefaultTableModel model;// modele du tableau
@@ -37,7 +37,7 @@ public class PageRechercheClubs extends JFrame {
         // --- BOUTONS CRITÈRES ---
         JPanel panelCriteres = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));// boutons centrés 
 // attribue un nom à chaque bouton 
-        rbNom = new JRadioButton("Nom");
+        rbFederation = new JRadioButton("Federation");
         rbAdresse = new JRadioButton("Adresse");
         rbCodePostal = new JRadioButton("Code postal");
         rbLicencies = new JRadioButton("Licenciés total");
@@ -45,16 +45,16 @@ public class PageRechercheClubs extends JFrame {
         rbFemmes = new JRadioButton("Licenciées femmes");
 
         ButtonGroup group = new ButtonGroup();
-        group.add(rbNom);
+        group.add(rbFederation);
         group.add(rbAdresse);
         group.add(rbCodePostal);
         group.add(rbLicencies);
         group.add(rbHommes);
         group.add(rbFemmes);
 
-        rbNom.setSelected(true);// par défaut le bouton nom est sélectionner 
+        rbFederation.setSelected(true);// par défaut le bouton nom est sélectionner 
 
-        panelCriteres.add(rbNom);
+        panelCriteres.add(rbFederation);
         panelCriteres.add(rbAdresse);
         panelCriteres.add(rbCodePostal);
         panelCriteres.add(rbLicencies);
@@ -77,6 +77,7 @@ public class PageRechercheClubs extends JFrame {
         add(panelHaut, BorderLayout.NORTH);
 
 // le tableau:
+        
         // colonne du tableau
         String[] colonnes = {"Nom", "Adresse", "Code postal", "Licenciés", "Licenciés hommes", "Licenciées femmes"};
 
@@ -95,9 +96,9 @@ public class PageRechercheClubs extends JFrame {
             JOptionPane.showMessageDialog(this, "Veuillez entrer une valeur.");
             return;// recupere le texte entre et met un mess d'erreur si rien saisi
         }
-        String colonne = "nom";
+        String colonne = "nom_federation";
 
-        if (rbNom.isSelected()) colonne = "nom";
+        if (rbFederation.isSelected()) colonne = "nom_federation";
         if (rbAdresse.isSelected()) colonne = "adresse";
         if (rbCodePostal.isSelected()) colonne = "code_postal";
         if (rbLicencies.isSelected()) colonne = "nb_licencies";
