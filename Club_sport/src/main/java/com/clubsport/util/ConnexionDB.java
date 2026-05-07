@@ -7,9 +7,10 @@ import java.sql.SQLException;
 
 public class ConnexionDB {
 
-    private static final String URL      = "jdbc:mysql://localhost:3307/clubs_sportifs";
-    private static final String USER     = "admin";
-    private static final String PASSWORD = "admin";
+	private static final String URL = "jdbc:mysql://mysql:3306/clubs_sportifs";
+    //private static final String URL      = "jdbc:mysql://localhost:3307/clubs_sportifs";
+    private static final String USER     = "root";
+    private static final String PASSWORD = "root";
     private static final String DRIVER   = "com.mysql.cj.jdbc.Driver";
 
     // Constructeur privé : personne ne peut faire new ConnexionDB()

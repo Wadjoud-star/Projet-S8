@@ -1,11 +1,14 @@
 @charset "UTF-8";
+
+
 body {
-	padding-top: 70px;
+	padding-top: 56px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
 }
+
 .navbar-custom {
 	background: #0f172a;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -66,14 +69,21 @@ body {
 	padding: 2rem;
 	background: #fff;
 }
+
 .brand {
-    text-align: center;
-    margin-bottom: 1.5rem;
+	text-align: center;
+	margin-bottom: 1.5rem;
+}
+
+#sidebar {
+	height: calc(100vh - 56px);
+	overflow-y: auto;
+	position: sticky;
+	top: 56px;
 }
 
 #map {
-	position: absolute;
-	inset: 0;
-	z-index: 0;
-	margin-top: 55px;
+	height: calc(100vh - 56px);
+	width: 100%;
+	border-radius: 0 0 0.375rem 0.375rem;
 }

@@ -3,88 +3,58 @@ package com.clubsport.admin.model;
 
 public class StatistiqueLicencies {
 
-    private int id;                 
-    private int totalLicencies;     
-    private int licenciesFemmes;    
-    private int licenciesHommes;    
-    private Club club;              
+    private int id;
+    private int totalLicencies;
+    private int licenciesFemmes;
+    private int licenciesHommes;
+    private Commune commune;
+    private Federation federation;
 
-    /**
-     * Constructeur complet utilisé lors du chargement depuis la base de données.
-     */
-    public StatistiqueLicencies(int id, int totalLicencies, int licenciesFemmes, int licenciesHommes, Club club) {
+    // permet de construire un objet 
+    public StatistiqueLicencies(int id, int totalLicencies, int licenciesFemmes,int licenciesHommes,
+    		Commune commune, Federation federation ) {
+
         this.id = id;
         this.totalLicencies = totalLicencies;
         this.licenciesFemmes = licenciesFemmes;
         this.licenciesHommes = licenciesHommes;
-        this.club = club;
-    }
+        this.commune = commune;
+        this.federation = federation;
+}
 
-    // --- Getters ---
 
     public int getId() {
-        return id;
-    }
+        return id; }
 
     public int getTotalLicencies() {
-        return totalLicencies;
-    }
+        return totalLicencies;}
 
     public int getLicenciesFemmes() {
-        return licenciesFemmes;
-    }
+        return licenciesFemmes;}
 
     public int getLicenciesHommes() {
-        return licenciesHommes;
-    }
+        return licenciesHommes; }
 
-    public Club getClub() {
-        return club;
-    }
+    public Commune getCommune() {
+        return commune;}
 
-    // --- Setters utiles (pas de setters inutiles) ---
-
-    /** Mise à jour du total des licenciés */
-    public void setTotalLicencies(int totalLicencies) {
-        this.totalLicencies = totalLicencies;
-    }
-
-    /** Mise à jour du nombre de femmes */
-    public void setLicenciesFemmes(int licenciesFemmes) {
-        this.licenciesFemmes = licenciesFemmes;
-    }
-
-    /** Mise à jour du nombre d'hommes */
-    public void setLicenciesHommes(int licenciesHommes) {
-        this.licenciesHommes = licenciesHommes;
-    }
+    public Federation getFederation() {
+        return federation;}
 
 
-    // --- Méthodes utilitaires ---
-
-    /**
-     * Calcule la proportion de femmes dans le club.
-     */
+// calcul la propo de femmes 
     public double getProportionFemmes() {
-        return totalLicencies == 0 ? 0 : (double) licenciesFemmes / totalLicencies;
+        return totalLicencies == 0 ? 0 : (double) licenciesFemmes / totalLicencies;// pas de division par 0
     }
 
-    /**
-     * Calcule la proportion d'hommes dans le club.
-     */
+// calculer la propotion d'homme 
     public double getProportionHommes() {
-        return totalLicencies == 0 ? 0 : (double) licenciesHommes / totalLicencies;
+        return totalLicencies == 0 ? 0 : (double) licenciesHommes / totalLicencies;// verifie pas division par 0
     }
 
-    /**
-     * retourne la proportion de femmes par rapport au total .
-     */
-    public double calculerProportion() {
-        return getProportionFemmes();
-    }
-
+// afficher de maniere lisible dans les pages 
     @Override
     public String toString() {
-        return "Statistiques du club : " + (club != null ? club.getNom() : "Inconnu");
+        return "Statistiques - " + commune.getNomCommune() + " / " + federation.getNomFederation();
     }
 }

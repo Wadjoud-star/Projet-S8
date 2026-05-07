@@ -1,5 +1,6 @@
 package com.clubsport.admin.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HistoriqueConnexion {
@@ -11,7 +12,10 @@ public class HistoriqueConnexion {
     private boolean succes;
     private Utilisateur utilisateur;
 
-    public HistoriqueConnexion(int id, Date dateHeure, String adresseIP, String login, boolean succes, Utilisateur utilisateur) {
+// Construire un objet 
+    public HistoriqueConnexion(int id, Date dateHeure, String adresseIP,String login, boolean succes,
+    		Utilisateur utilisateur) {
+
         this.id = id;
         this.dateHeure = dateHeure;
         this.adresseIP = adresseIP;
@@ -44,12 +48,34 @@ public class HistoriqueConnexion {
         return utilisateur;
     }
 
-    public void setUtilisateur(Utilisateur utilisateur) {
-        this.utilisateur = utilisateur;
+
+
+// permet d'afficher la date au bon format et l'afficher 
+    public String getDateFormatee() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");// convertir une date en texte 
+        return sdf.format(dateHeure);// transforme enntexte lisible 
     }
 
+//afficher suucces ou echec 
+    public String getStatutTexte() {
+    	if (succes) {
+    	    return "Succès";
+    	} else {
+    	    return "Échec";
+    	}
+
+    }
+
+// Pour inserer dans le tableau 
+    public Object[] toTableRow() {
+        return new Object[]{
+                getDateFormatee(),login,adresseIP, getStatutTexte()
+        };
+    }
+
+ // Permet afficher les informations de manière lisible 
     @Override
     public String toString() {
-        return login + " - " + dateHeure + (succes ? " (OK)" : " (Échec)");
+        return login + " - " + getDateFormatee() + " (" + getStatutTexte() + ")";
     }
 }

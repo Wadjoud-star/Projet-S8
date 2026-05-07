@@ -1,8 +1,5 @@
 package com.clubsport.admin.model;
 
-/**
- * Représente un club sportif avec ses informations principales,
- */
 public class Club {
 
     private int id;
@@ -14,18 +11,15 @@ public class Club {
     private int nbLicencies;
     private int nbHommes;
     private int nbFemmes;
-
-    // Relations
     private Commune commune;
     private Federation federation;
-    private StatistiqueLicencies statistiques;
     private EspaceClub espaceClub;
 
-    /**
-     * Constructeur complet utilisé par les DAO lors du chargement depuis la base.
-     */
-    public Club(int id,String nom,String adresse,String codePostal,double latitude,double longitude,
-            int nbLicencies,int nbHommes,int nbFemmes,Commune commune,Federation federation,StatistiqueLicencies statistiques,EspaceClub espaceClub) {
+// création d'un contructeur d'un club 
+    public Club(int id, String nom, String adresse, String codePostal,double latitude, double longitude,
+                int nbLicencies, int nbHommes, int nbFemmes,Commune commune, Federation federation, 
+                EspaceClub espaceClub) {
+
         this.id = id;
         this.nom = nom;
         this.adresse = adresse;
@@ -37,80 +31,76 @@ public class Club {
         this.nbFemmes = nbFemmes;
         this.commune = commune;
         this.federation = federation;
-        this.statistiques = statistiques;
         this.espaceClub = espaceClub;
     }
 
-    // --- Getters ---
 
-    public int getId() { return id; }
-    
-    public String getNom() { return nom; }
-    
-    public String getAdresse() { return adresse; }
-    
-    public String getCodePostal() { return codePostal; }
-    
-    public double getLatitude() { return latitude; }
-    
-    public double getLongitude() { return longitude; }
-    
-    public int getNbLicencies() { return nbLicencies; }
-    public int getNbHommes() { return nbHommes; }
-    public int getNbFemmes() { return nbFemmes; }
-    public Commune getCommune() { return commune; }
-    public Federation getFederation() { return federation; }
-    public StatistiqueLicencies getStatistiques() { return statistiques; }
-    public EspaceClub getEspaceClub() { return espaceClub; }
+    public int getId() { 
+    	return id; }
+    public String getNom() { 
+    	return nom; }
+    public String getAdresse() { 
+    	return adresse; }
+    public String getCodePostal() { 
+    	return codePostal; }
+    public double getLatitude() { 
+    	return latitude; }
+    public double getLongitude() { 
+    	return longitude; }
+    public int getNbLicencies() { 
+    	return nbLicencies; }
+    public int getNbHommes() { 
+    	return nbHommes; }
+    public int getNbFemmes() { 
+    	return nbFemmes; }
+    public Commune getCommune() { 
+    	return commune; }
+    public Federation getFederation() { 
+    	return federation; }
+    public EspaceClub getEspaceClub() { 
+    	return espaceClub; }
 
-    // --- Setters  ---
 
-    /** Mise à jour adresse du club */
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
-
-    /** Mise à jour du code postal */
-    public void setCodePostal(String codePostal) {
-        this.codePostal = codePostal;
-    }
-
-    /** Mise à jour des statistiques simples */
-    public void setNbLicencies(int nbLicencies) {
-        this.nbLicencies = nbLicencies;
-    }
-
-    public void setNbHommes(int nbHommes) {
-        this.nbHommes = nbHommes;
-    }
-
-    public void setNbFemmes(int nbFemmes) {
-        this.nbFemmes = nbFemmes;
-    }
-
-    /** Mise à jour de l'espace club */
-    public void setEspaceClub(EspaceClub espaceClub) {
-        this.espaceClub = espaceClub;
-    }
-
-    // --- Méthodes utilitaires ---
-
-    /** Retourne l'adresse complète sous forme lisible */
+// retourner l'adresse complete d'un club 
     public String getAdresseComplete() {
-        return adresse + ", " + codePostal + " " + (commune != null ? commune.getNomCommune() : "");
+        if (commune == null) return adresse + ", " + codePostal;// si la commune n'a pas de commune 
+        // on affiche juste l'adresse et le code postal 
+        return adresse + ", " + codePostal + " " + commune.getNomCommune();// sinon tout 
     }
 
-    /** Pourcentage de femmes dans le club */
+// calculer taux de femmes 
     public double getTauxFemmes() {
         return nbLicencies == 0 ? 0 : (double) nbFemmes / nbLicencies;
     }
 
-    /** Pourcentage d'hommes dans le club */
+// calculer le taux d'hommes 
     public double getTauxHommes() {
-        return nbLicencies == 0 ? 0 : (double) nbHommes / nbLicencies;
+        return nbLicencies == 0 ? 0 : (double) nbHommes / nbLicencies;// on vérifie qu'on divise pas par 0
     }
 
-    /** Permets d'afficher le nom d'un club de la JComboBOX */
+// obtenir le nom de la commune 
+    public String getNomCommune() {
+        return commune != null ? commune.getNomCommune() : "";
+    }
+
+//obtenir les noms de federation et on vérifie que c'est non null
+    public String getNomFederation() {
+        return federation != null ? federation.getNomFederation() : "";
+    }
+
+//pour inserer dans la tableau
+    public Object[] toTableRow() {
+        return new Object[]{
+                nom,
+                adresse,
+                codePostal,
+                nbLicencies,
+                nbHommes,
+                nbFemmes
+        };
+    }
+
+// pour les combobox
     @Override
     public String toString() {
         return nom;

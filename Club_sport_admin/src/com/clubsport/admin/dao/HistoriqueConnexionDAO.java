@@ -17,13 +17,16 @@ public class HistoriqueConnexionDAO {
         List<HistoriqueConnexion> liste = new ArrayList<>();
 
         String sql = """
-            SELECT h.id, h.date_connexion, h.adresse_ip, h.login, h.succes,
-                   u.id AS uid, u.nom, u.prenom, u.email, u.mot_de_passe_hash, u.role
+            SELECT h.id, h.date_connexion, h.adresse_ip, h.login, h.succes, 
+                   u.id AS uid, u.nom, u.email, u.mot_de_passe_hash, u.role
             FROM historique_connexion h
             LEFT JOIN utilisateur u ON h.id_utilisateur = u.id
             ORDER BY h.date_connexion DESC
         """;
-
+// Select h.id : renvoie les colones de la table historique, u.id renvoie les colones de utilisateur
+        // From est la table de départ
+        // Left join : pour chaque connection on recupere les identifiant de l'utilisateurs 
+        // Order by : pour classer les données par date la plus neuve
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -35,7 +38,6 @@ public class HistoriqueConnexionDAO {
                 Utilisateur user = new Utilisateur(
                         rs.getInt("uid"),
                         rs.getString("nom"),
-                        rs.getString("prenom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
                         rs.getString("role")
@@ -61,17 +63,70 @@ public class HistoriqueConnexionDAO {
 
         return liste;
     }
-
     /**
-     * Ajoute une entrée dans l'historique des connexions.
+     * Récupère l'historique des connexions pour une date précise (format AAAA-MM-JJ).
      */
+    public List<HistoriqueConnexion> getHistoriqueParDate(String date) {
+        List<HistoriqueConnexion> liste = new ArrayList<>();
+
+        String sql = """
+            SELECT h.id, h.date_connexion, h.adresse_ip, h.login, h.succes,
+                   u.id AS uid, u.nom, u.email, u.mot_de_passe_hash, u.role
+            FROM historique_connexion h
+            LEFT JOIN utilisateur u ON h.id_utilisateur = u.id
+            WHERE DATE(h.date_connexion) = ?
+            ORDER BY h.date_connexion DESC
+        """;
+        // DATE(h.date_connexion) permet d'ignorer l'heure et de comparer uniquement la date
+
+        try (Connection conn = ConnexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, date); // on injecte la date saisie par l'utilisateur
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+
+                // Construction de l'utilisateur associé
+                Utilisateur user = new Utilisateur(
+                        rs.getInt("uid"),
+                        rs.getString("nom"),
+                        rs.getString("email"),
+                        rs.getString("mot_de_passe_hash"),
+                        rs.getString("role")
+                );
+
+                // Construction de l'historique
+                HistoriqueConnexion h = new HistoriqueConnexion(
+                        rs.getInt("id"),
+                        rs.getTimestamp("date_connexion"),
+                        rs.getString("adresse_ip"),
+                        rs.getString("login"),
+                        rs.getBoolean("succes"),
+                        user
+                );
+
+                liste.add(h);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return liste;
+    }
+
+// Ajoute une entrée dans l'historique des connexions.
+
     public boolean ajouterConnexion(Utilisateur utilisateur, String adresseIP, boolean succes) {
 
         String sql = """
             INSERT INTO historique_connexion (id_utilisateur, login, adresse_ip, succes, date_connexion)
             VALUES (?, ?, ?, ?, NOW())
         """;
-
+// Insert into va inserer dans historique les données qui sont rentrées dans les pages 
+        // les ? servent pour les champs 
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -79,7 +134,7 @@ public class HistoriqueConnexionDAO {
             stmt.setString(2, utilisateur.getEmail()); // login utilisé
             stmt.setString(3, adresseIP);
             stmt.setBoolean(4, succes);
-
+// Pour remplir les données des ?
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {

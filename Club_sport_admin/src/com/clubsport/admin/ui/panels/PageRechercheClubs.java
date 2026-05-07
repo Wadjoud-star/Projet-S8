@@ -5,110 +5,127 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-import com.clubsport.admin.dao.ClubDAO;
-import com.clubsport.admin.model.Club;
+import com.clubsport.admin.dao.RechercheDAO; // nouveau DAO
+import com.clubsport.admin.model.ResultatRecherche; // nouveau modèle
 
 public class PageRechercheClubs extends JFrame {
 
-    private JComboBox<String> comboCritere;
-    private JTextField txtRecherche;
-    private JTable table;
-    private DefaultTableModel model;
+    // --- Boutons radio pour les critères ---
+    private JRadioButton rbCommune, rbCodePostal, rbLicencies, rbFederation;
 
-    // DAO réel
-    private ClubDAO clubDAO = new ClubDAO();
+    private JTextField txtRecherche; // champ de recherche de saisie
+    private JTable table; // tableau qui affiche les résultats 
+    private DefaultTableModel model; // modèle du tableau
+
+    private RechercheDAO rechercheDAO = new RechercheDAO(); // objet de la base de données (nouveau DAO)
 
     public PageRechercheClubs() {
-        setTitle("Recherche de clubs");
-        setSize(750, 550);
-        setLocationRelativeTo(null);
+        setTitle("Recherche de clubs"); // titre de la fenêtre
+        setSize(900, 600); // taille de la fenêtre 
+        setLocationRelativeTo(null); // position de la page 
         setLayout(new BorderLayout());
 
-        // --- TEXTE EN HAUT ---
-        JLabel titre = new JLabel("Vous allez pouvoir chercher des clubs");
-        titre.setFont(new Font("Arial", Font.BOLD, 18));
-        titre.setHorizontalAlignment(SwingConstants.CENTER);
-        titre.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        add(titre, BorderLayout.NORTH);
+        // --- TITRE ---
+        JLabel titre = new JLabel("Recherche de clubs");
+        titre.setFont(new Font("Arial", Font.BOLD, 20)); // police du texte 
+        titre.setHorizontalAlignment(SwingConstants.CENTER); // centré horizontalement 
+        titre.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
+        add(titre, BorderLayout.NORTH); // titre placé en haut de la fenêtre
 
-        // --- PANEL GLOBAL CENTRE ---
-        JPanel panelCentre = new JPanel(new BorderLayout());
+        // --- PANEL GLOBAL HAUT ---
+        JPanel panelHaut = new JPanel(); // Panel qui contient les boutons et la zone chercher
+        panelHaut.setLayout(new BoxLayout(panelHaut, BoxLayout.Y_AXIS)); // les éléments se superposent 
+
+        // --- BOUTONS CRITÈRES ---
+        JPanel panelCriteres = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10)); // boutons centrés 
+
+        // Attribue un nom à chaque bouton 
+        rbCommune = new JRadioButton("Commune");
+        rbCodePostal = new JRadioButton("Code postal");
+        rbLicencies = new JRadioButton("Licenciés minimum"); // recherche minimum
+        rbFederation = new JRadioButton("Fédération");
+// creation des boutons (radio) 
+        ButtonGroup group = new ButtonGroup();
+        group.add(rbCommune);
+        group.add(rbCodePostal);
+        group.add(rbLicencies);
+        group.add(rbFederation);
+// un seul bouton selectionner 
+        rbCommune.setSelected(true); // par défaut le bouton commune est sélectionné 
+
+        panelCriteres.add(rbCommune);
+        panelCriteres.add(rbCodePostal);
+        panelCriteres.add(rbLicencies);
+        panelCriteres.add(rbFederation);
+
+        panelHaut.add(panelCriteres);
 
         // --- ZONE DE RECHERCHE ---
-        JPanel zoneRecherche = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 20));
-
-        JLabel labelCritere = new JLabel("Quel type de clubs cherchez-vous ?");
-        labelCritere.setFont(new Font("Arial", Font.PLAIN, 14));
-
-        comboCritere = new JComboBox<>(new String[]{
-                "ID",
-                "Nom",
-                "Adresse",
-                "Code postal",
-                "Nombre de licenciés",
-                "Nombre d'hommes",
-                "Nombre de femmes"
-        });
+        JPanel panelRecherche = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
         txtRecherche = new JTextField(15);
-
         JButton btnChercher = new JButton("Chercher");
+
+        // si clique sur bouton cela fait appel à la fonction de recherche
         btnChercher.addActionListener(e -> rechercherClubs());
 
-        zoneRecherche.add(labelCritere);
-        zoneRecherche.add(comboCritere);
-        zoneRecherche.add(txtRecherche);
-        zoneRecherche.add(btnChercher);
+        panelRecherche.add(txtRecherche);
+        panelRecherche.add(btnChercher);
 
-        panelCentre.add(zoneRecherche, BorderLayout.NORTH);
+        panelHaut.add(panelRecherche);
 
-        // --- TABLEAU ---
-        String[] colonnes = {"ID", "Nom", "Adresse", "Code postal", "Licenciés", "Hommes", "Femmes"};
-        model = new DefaultTableModel(colonnes, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+        add(panelHaut, BorderLayout.NORTH);
+
+        //  TABLEAU 
+        // colonnes adaptées aux résultats statistiques
+        String[] colonnes = {
+                "Fédération", "Commune", "Région", "Code postal",
+                "Total licenciés", "Hommes", "Femmes",
+                "Nb clubs", "Établissements", "Structures"
         };
 
+        model = new DefaultTableModel(colonnes, 0); // tableau vide au départ
         table = new JTable(model);
-        table.setRowHeight(28);
+        table.setRowHeight(28); // grandeur des lignes 
 
-        panelCentre.add(new JScrollPane(table), BorderLayout.CENTER);
-
-        add(panelCentre, BorderLayout.CENTER);
+        add(new JScrollPane(table), BorderLayout.CENTER); // permet de dérouler le tableau qui est centré
     }
 
     private void rechercherClubs() {
-        model.setRowCount(0);
 
-        String critere = (String) comboCritere.getSelectedItem();
+        model.setRowCount(0); // on vide le tableau avant d'ajouter les résultats
+
         String valeur = txtRecherche.getText().trim();
+        if (valeur.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Veuillez entrer une valeur.");
+            return; // récupère le texte entré et met un message d'erreur si rien saisi
+        }
 
-        // Conversion critère → colonne SQL
-        String colonne = switch (critere) {
-            case "ID" -> "id_club";
-            case "Nom" -> "nom";
-            case "Adresse" -> "adresse";
-            case "Code postal" -> "code_postal";
-            case "Nombre de licenciés" -> "nb_licencies";
-            case "Nombre d'hommes" -> "nb_hommes";
-            case "Nombre de femmes" -> "nb_femmes";
-            default -> "nom";
-        };
+        // colonne par défaut
+        String colonne = "commune";
 
-        // Récupération depuis MySQL
-        List<Club> clubsBDD = clubDAO.rechercherPar(colonne, valeur);
+        // détermine quel bouton radio est sélectionné
+        if (rbCommune.isSelected()) colonne = "commune";
+        if (rbCodePostal.isSelected()) colonne = "code_postal";
+        if (rbLicencies.isSelected()) colonne = "licencies"; // recherche minimum
+        if (rbFederation.isSelected()) colonne = "federation";
 
-        for (Club c : clubsBDD) {
+        // Récupération MySQL via RechercheDAO
+        List<ResultatRecherche> resultats = rechercheDAO.rechercher(colonne, valeur);
+
+        // Ajout des résultats dans le tableau
+        for (ResultatRecherche r : resultats) {
             model.addRow(new Object[]{
-                    c.getId(),
-                    c.getNom(),
-                    c.getAdresse(),
-                    c.getCodePostal(),
-                    c.getNbLicencies(),
-                    c.getNbHommes(),
-                    c.getNbFemmes()
+                    r.getFederation(),
+                    r.getCommune(),
+                    r.getRegion(),
+                    r.getCodePostal(),
+                    r.getTotalLicencies(),
+                    r.getHommes(),
+                    r.getFemmes(),
+                    r.getNbClubs(),
+                    r.getNbEtablissements(),
+                    r.getTotalStructures()
             });
         }
     }

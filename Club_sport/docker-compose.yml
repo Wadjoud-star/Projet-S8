@@ -1,4 +1,7 @@
-version: '3.8'
+
+
+
+
 
 services:
   mysql:
@@ -9,7 +12,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: clubs_sportifs
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -28,7 +31,7 @@ services:
     volumes:
       - ./docker/.keystore:/usr/local/tomcat/conf/.keystore
       - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
-      - ./src/main/webapp:/usr/local/tomcat/webapps/Club_sport
+
     networks:
       - club_network
 
