@@ -6,13 +6,42 @@ package com.clubsport.model;
  */
 public class StatLicenceElu {
 
+    private String codeRegion;
+    private String nomRegion;
+    private String codeDepartement;
     private String codeCommune;
     private String nomCommune;
     private String codeFederation;
     private String nomFederation;
+    private String genre;
     private int totalLicencies;
     private int licenciesFemmes;
     private int licenciesHommes;
+    private int valeurGenre;
+
+    public String getCodeRegion() {
+        return codeRegion;
+    }
+
+    public void setCodeRegion(String codeRegion) {
+        this.codeRegion = codeRegion;
+    }
+
+    public String getNomRegion() {
+        return nomRegion;
+    }
+
+    public void setNomRegion(String nomRegion) {
+        this.nomRegion = nomRegion;
+    }
+
+    public String getCodeDepartement() {
+        return codeDepartement;
+    }
+
+    public void setCodeDepartement(String codeDepartement) {
+        this.codeDepartement = codeDepartement;
+    }
 
     public String getCodeCommune() {
         return codeCommune;
@@ -68,5 +97,21 @@ public class StatLicenceElu {
 
     public void setLicenciesHommes(int licenciesHommes) {
         this.licenciesHommes = licenciesHommes;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public int getValeurGenre() {
+        return valeurGenre;
+    }
+
+    public void setValeurGenre(int valeurGenre) {
+        this.valeurGenre = valeurGenre;
     }
 }
