@@ -48,14 +48,14 @@ public class AuthentificationServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			out.print("{\"Message\": " + "\"Cet utilisateur n'existe pas\"}");
 		} else {
-			boolean validate = udao.validateUser(email, password);
+			boolean validate = udao.validateUser(email, password, role);
 			if (validate) {
 				HttpSession session = request.getSession(true);
 				session.setAttribute("Email", email);
 				session.setAttribute("Role", role);
 				response.setStatus(HttpServletResponse.SC_OK);
-				out.print("{\"message\": \" Login is OK" + "\", \"Email\": \"" + email + "\"" + ", \"Role\": \"" + role
-						+ "\"" + "}");
+				out.print("{\"message\": \" Login is OK" + "\", \"Email\": \"" + u.getEmail() + "\"" + ", \"Role\": \""
+						+ u.getRole() + "\"" + "}");
 			} else {
 				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 				out.print("{\"message\": \" FORBIDDEN!" + "\", \"error\": \"Invalid login or password" + "\"}");

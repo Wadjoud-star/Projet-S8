@@ -44,10 +44,11 @@ public class UserDAO {
 		}
 		return null;
 	}
-	public boolean validateUser(String email, String password) {
-		String sql = "SELECT* FROM utilisateur WHERE email = ?";
+	public boolean validateUser(String email, String password, String role) {
+		String sql = "SELECT* FROM utilisateur WHERE email = ? AND role = ?";
 		try (Connection conn = ConnexionDB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, email);
+			stmt.setString(2, role);
 			ResultSet rs = stmt.executeQuery();
 			if(rs.next()) {
 				String hash = rs.getString("mot_de_passe_hash");

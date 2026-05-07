@@ -36,18 +36,19 @@ public class CheckAuthServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-        HttpSession session = request.getSession(false);
-        String email = (String) session.getAttribute("Email");
-        String role = (String) session.getAttribute("Role");
-        if(session != null && email != null && role != null) {
-        	response.setStatus(HttpServletResponse.SC_OK);
-        	out.print("{\"Message\": "+"\"Authentication is ok\", "+"\"Email\": \""+ email +"\"}");
-        }else {
-        	response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		PrintWriter out = response.getWriter();
+		HttpSession session = request.getSession(false);
+		if (session != null && session.getAttribute("Email") != null && session.getAttribute("Role") != null) {
+			String email = (String) session.getAttribute("Email");
+			String role = (String) session.getAttribute("Role");
+			response.setStatus(HttpServletResponse.SC_OK);
+			out.print("{\"Message\": " + "\"Authentication is ok\", " + "\"Email\": \"" + email + "\", " + "\"Role\": \""
+					+ role + "\"}");
+		} else {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			out.print("{\"error\" : \"Authentication required\"}");
 			return;
-        }
+		}
 	}
 
 }
