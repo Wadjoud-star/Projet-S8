@@ -14,3 +14,7 @@ Club_sport_admin/lic-data-2019.csv
 
 # Dumps MySQL (fichiers souvent volumineux — à partager hors dépôt)
 Club_sport/docker/mysql/dump*.sql
+
+# Local runtime / docs generated locally
+apache-tomcat-11.0.4/
+docs/
