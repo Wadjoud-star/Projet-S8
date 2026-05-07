@@ -18,7 +18,7 @@ import org.mindrot.bcrypt.*;
 /**
  * Servlet implementation class InscriptionServlet
  */
-@WebServlet("/InscriptionServlet")
+@WebServlet("/api/inscription")
 public class InscriptionServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
