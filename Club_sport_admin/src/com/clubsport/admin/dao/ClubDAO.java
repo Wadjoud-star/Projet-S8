@@ -11,23 +11,31 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ClubDAO {
 
-    /**
-     * Recherche des clubs selon un critère SQL (colonne) et une valeur.
-     * Utilisé par la page PageRechercheClubs.
-     */
-    public List<Club> rechercherPar(String colonne, String valeur) {
-        List<Club> clubs = new ArrayList<>();
 
-        String sql = "SELECT * FROM club WHERE " + colonne + " LIKE ?";
-
+    public List<Club> rechercherPar(String colonne, String valeur) {// declaration methode pour retourner liste 
+        List<Club> clubs = new ArrayList<>();// initialisation de la liste
+        String sql;// variable pour la requète sql
+// selectionne es clubs filtrés par le nom de la fédération 
+        if (colonne.equals("federation")) {
+            sql = """
+                SELECT c.*
+                FROM club c
+                JOIN federation f ON c.code_federation = f.code_federation
+                WHERE LOWER(f.nom_federation) LIKE LOWER(?)
+            """;
+        } 
+ // sinon pour les autres critères on utilise la classe club 
+        else {
+            sql = "SELECT * FROM club WHERE LOWER(" + colonne + ") LIKE LOWER(?)";
+        }
+// ouvre une connection a la bdd
         try (Connection conn = ConnexionDB.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, "%" + valeur + "%");
-
+// remplace les ? par les valeurs 
+            stmt.setString(1, "%" + valeur + "%"); // recherche partielle insensible à la casse
+// execute et recupere la requete
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -42,10 +50,7 @@ public class ClubDAO {
         return clubs;
     }
 
-    /**
-     * Construit un objet Club complet à partir du ResultSet.
-     * Charge également les relations : Commune, Fédération, Statistiques, EspaceClub.
-     */
+// construction d'un club 
     private Club construireClubDepuisResultSet(ResultSet rs, Connection conn) throws SQLException {
 
         int idClub = rs.getInt("id_club");
@@ -78,9 +83,7 @@ public class ClubDAO {
         );
     }
 
-    // ============================================================
-    // MÉTHODES DE CHARGEMENT DES RELATIONS
-    // ============================================================
+
 
     private Commune chargerCommune(Connection conn, String codeCommune) throws SQLException {
         String sql = "SELECT * FROM commune WHERE code_commune = ?";
@@ -92,7 +95,7 @@ public class ClubDAO {
                         rs.getString("code_commune"),
                         rs.getString("nom_commune"),
                         rs.getInt("population"),
-                        null // la région sera chargée ailleurs si besoin
+                        null // la région 
                 );
             }
         }
@@ -114,10 +117,29 @@ public class ClubDAO {
         return null;
     }
 
+ //Charge les statistiques d’un club avec code_federation.
+
     private StatistiqueLicencies chargerStatistiques(Connection conn, int idClub) throws SQLException {
-        String sql = "SELECT * FROM statistiques_licencies WHERE id_club = ?";
+
+        //récupère le code_federation du club
+        String codeFederation = null;
+        String sqlFed = "SELECT code_federation FROM club WHERE id_club = ?";
+        try (PreparedStatement stmtFed = conn.prepareStatement(sqlFed)) {
+            stmtFed.setInt(1, idClub);
+            ResultSet rsFed = stmtFed.executeQuery();
+            if (rsFed.next()) {
+                codeFederation = rsFed.getString("code_federation");
+            }
+        }
+
+        if (codeFederation == null) {
+            return null;
+        }
+
+        // récupère les statistiques associées à cette fédération
+        String sql = "SELECT * FROM statistique_licencies WHERE code_federation = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, idClub);
+            stmt.setString(1, codeFederation);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
         
@@ -127,7 +149,7 @@ public class ClubDAO {
                         rs.getInt("total_licencies"),
                         rs.getInt("licencies_femmes"),
                         rs.getInt("licencies_hommes"),
-                        null, // le club sera injecté après
+                        null,
                         null
                 );
             }
@@ -135,6 +157,7 @@ public class ClubDAO {
         return null;
     }
 
+// charger les clubs de la bdd relie a a colonne espace club
     private EspaceClub chargerEspaceClub(Connection conn, int idClub) throws SQLException {
         String sql = "SELECT * FROM espace_club WHERE id_club = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
