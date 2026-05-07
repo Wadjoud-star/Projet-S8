@@ -7,8 +7,13 @@ import java.sql.SQLException;
 
 public class ConnexionDB {
 
+Updated upstream
 	private static final String URL = "jdbc:mysql://mysql:3306/clubs_sportifs";
 	private static final String USER     = "root";
+
+    private static final String URL      = "jdbc:mysql://localhost:3306/clubs_sportifs";
+    private static final String USER     = "root";
+ Stashed changes
     private static final String PASSWORD = "root";
     private static final String DRIVER   = "com.mysql.cj.jdbc.Driver";
 

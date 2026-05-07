@@ -17,7 +17,8 @@ public class EluAccueilServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(jakarta.servlet.http.HttpServletRequest req, jakarta.servlet.http.HttpServletResponse resp) 
+    throws jakarta.servlet.ServletException, IOException {
         req.getRequestDispatcher("/WEB-INF/jsp/elus/accueil.jsp").forward(req, resp);
     }
 }
