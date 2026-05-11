@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UtilisateurDAO {
-// permet de récuperer les utilisateurs en faisant une liste. On la trie par ordre alpha
+
+    // permet de récuperer les utilisateurs en faisant une liste. On la trie par ordre alpha
     public List<Utilisateur> getUtilisateursParRole(String role) {
         List<Utilisateur> liste = new ArrayList<>();
 
@@ -44,7 +45,7 @@ public class UtilisateurDAO {
         return liste;
     }
 
-// supprimer un utilisateur
+    // supprimer un utilisateur
     public boolean supprimerUtilisateur(int id) {
         String sql = "DELETE FROM utilisateur WHERE id = ?";
 
@@ -60,7 +61,7 @@ public class UtilisateurDAO {
         }
     }
 
- // mettre a jour les informations d'un utilisateur a partir des infos rentrées dans les champs 
+    // mettre a jour les informations d'un utilisateur a partir des infos rentrées dans les champs 
     public boolean modifierUtilisateur(Utilisateur u) {
         String sql = """
             UPDATE utilisateur
@@ -84,7 +85,7 @@ public class UtilisateurDAO {
         }
     }
 
-// récupérer l'id d'un utilisateur 
+    // récupérer l'id d'un utilisateur 
     public Utilisateur getUtilisateurParId(int id) {
         String sql = """
             SELECT id, nom, email, mot_de_passe_hash, role
@@ -113,5 +114,28 @@ public class UtilisateurDAO {
         }
 
         return null;
+    }
+
+    // --- AJOUTER UN UTILISATEUR ---
+    public boolean ajouterUtilisateur(Utilisateur u) {
+    	String sql = """
+    		    INSERT INTO utilisateur (nom, email, mot_de_passe_hash, role)
+    		    VALUES (?, ?, ?, ?)
+    		""";
+
+    		try (Connection conn = ConnexionDB.getConnection();
+    		     PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+    		    stmt.setString(1, u.getNom());
+    		    stmt.setString(2, u.getEmail());
+    		    stmt.setString(3, ""); // mot de passe vide
+    		    stmt.setString(4, u.getRole());
+
+    		    return stmt.executeUpdate() > 0;
+    		}
+ catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

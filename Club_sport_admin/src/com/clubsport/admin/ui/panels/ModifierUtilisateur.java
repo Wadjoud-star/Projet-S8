@@ -56,7 +56,12 @@ public class ModifierUtilisateur extends JFrame {
 
         // Pour le rôle
         panel.add(new JLabel("Rôle :")); // on ajoute une nouvelle ligne
-        comboRole = new JComboBox<>(new String[]{"admin", "Elus", "utilisateur"});
+
+        // ⚠️ Correction : rôles conformes à ta base de données
+        comboRole = new JComboBox<>(new String[]{
+                "admin", "elu", "president", "entraineur", "sportif"
+        });
+
         comboRole.setSelectedItem(utilisateur.getRole()); // permet à l'admin de saisir
         comboRole.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         panel.add(comboRole);

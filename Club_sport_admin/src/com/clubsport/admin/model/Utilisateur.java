@@ -11,6 +11,8 @@ public class Utilisateur {
     private String motDePasseHash;
     private String role;
     private List<HistoriqueConnexion> historiques;// liste des connections 
+    
+    public Utilisateur() {}
 
 // Construire un objet utilisateur 
     public Utilisateur(int id, String nom, String email,String motDePasseHash, String role) {

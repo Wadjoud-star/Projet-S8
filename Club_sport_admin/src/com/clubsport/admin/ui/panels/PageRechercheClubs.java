@@ -2,6 +2,7 @@ package com.clubsport.admin.ui.panels;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public class PageRechercheClubs extends JFrame {
     private JTextField txtRecherche; // champ de recherche de saisie
     private JTable table; // tableau qui affiche les résultats 
     private DefaultTableModel model; // modèle du tableau
+
+    private JComboBox<String> cbTri; // menu déroulant pour trier
 
     private RechercheDAO rechercheDAO = new RechercheDAO(); // objet de la base de données (nouveau DAO)
 
@@ -44,13 +47,15 @@ public class PageRechercheClubs extends JFrame {
         rbCodePostal = new JRadioButton("Code postal");
         rbLicencies = new JRadioButton("Licenciés minimum"); // recherche minimum
         rbFederation = new JRadioButton("Fédération");
-// creation des boutons (radio) 
+
+        // creation des boutons (radio) 
         ButtonGroup group = new ButtonGroup();
         group.add(rbCommune);
         group.add(rbCodePostal);
         group.add(rbLicencies);
         group.add(rbFederation);
-// un seul bouton selectionner 
+
+        // un seul bouton selectionner 
         rbCommune.setSelected(true); // par défaut le bouton commune est sélectionné 
 
         panelCriteres.add(rbCommune);
@@ -69,8 +74,21 @@ public class PageRechercheClubs extends JFrame {
         // si clique sur bouton cela fait appel à la fonction de recherche
         btnChercher.addActionListener(e -> rechercherClubs());
 
+        // --- TRI ---
+        JLabel lblTrier = new JLabel("Trier par :");
+
+        String[] optionsTri = {
+                "Fédération", "Commune", "Région", "Code postal",
+                "Total licenciés", "Hommes", "Femmes",
+                "Nb clubs", "Établissements", "Structures"
+        };
+
+        cbTri = new JComboBox<>(optionsTri);
+
         panelRecherche.add(txtRecherche);
         panelRecherche.add(btnChercher);
+        panelRecherche.add(lblTrier);
+        panelRecherche.add(cbTri);
 
         panelHaut.add(panelRecherche);
 
@@ -107,7 +125,7 @@ public class PageRechercheClubs extends JFrame {
         // détermine quel bouton radio est sélectionné
         if (rbCommune.isSelected()) colonne = "commune";
         if (rbCodePostal.isSelected()) colonne = "code_postal";
-        if (rbLicencies.isSelected()) colonne = "licencies"; // recherche minimum
+        if (rbLicencies.isSelected()) colonne = "total_licencies"; // recherche minimum
         if (rbFederation.isSelected()) colonne = "federation";
 
         // Récupération MySQL via RechercheDAO
@@ -128,5 +146,13 @@ public class PageRechercheClubs extends JFrame {
                     r.getTotalStructures()
             });
         }
+
+        // --- TRI DES RÉSULTATS ---
+        int colonneTri = cbTri.getSelectedIndex(); // même ordre que les colonnes du tableau
+
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
+        sorter.toggleSortOrder(colonneTri); // tri croissant
     }
 }
