@@ -18,9 +18,25 @@
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/bpenw/Downloads/jackson-annotations-2.21.jar"/>
-	<classpathentry kind="lib" path="C:/Users/bpenw/Downloads/jackson-core-2.21.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/bpenw/Downloads/jackson-databind-2.21.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/bpenw/Downloads/bcrypt-0.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bpenw/Downloads/jackson-annotations-2.21.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/bpenw/Downloads/jackson-core-2.21.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/bpenw/Downloads/jackson-databind-2.21.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/bpenw/Downloads/bcrypt-0.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

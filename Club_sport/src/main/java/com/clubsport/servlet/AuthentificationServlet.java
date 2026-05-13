@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import com.clubsport.dao.*;
 import com.clubsport.util.*;
@@ -46,7 +48,11 @@ public class AuthentificationServlet extends HttpServlet {
 		User u = udao.getUserbymail(email);
 		if (u == null) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			out.print("{\"Message\": " + "\"Cet utilisateur n'existe pas\"}");
+			//out.print("{\"Message\": " + "\"Cet utilisateur n'existe pas\"}");
+			String msg = URLEncoder.encode("Cet utilisateur n'existe pas", StandardCharsets.UTF_8);
+
+			response.sendRedirect(request.getContextPath() + "/errorLogin.html?message=" + msg);
+			return;
 		} else {
 			boolean validate = udao.validateUser(email, password, role);
 			if (validate) {
@@ -54,11 +60,18 @@ public class AuthentificationServlet extends HttpServlet {
 				session.setAttribute("Email", email);
 				session.setAttribute("Role", role);
 				response.setStatus(HttpServletResponse.SC_OK);
-				out.print("{\"message\": \" Login is OK" + "\", \"Email\": \"" + u.getEmail() + "\"" + ", \"Role\": \""
-						+ u.getRole() + "\"" + "}");
+				out.print("{\"email\":\"" + email +"\", "+"\"role\":\"" + role + "\"}");
+				if(u.getRole().equals("elu"))
+					response.sendRedirect("/elu");
+				else
+					response.sendRedirect("/acteur");
 			} else {
 				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-				out.print("{\"message\": \" FORBIDDEN!" + "\", \"error\": \"Invalid login or password" + "\"}");
+				//out.print("{\"message\": \" FORBIDDEN!" + "\", \"error\": \"Invalid login or password" + "\"}");
+				String msg = URLEncoder.encode("Login ou mot de passe incorrect", StandardCharsets.UTF_8);
+
+				response.sendRedirect(request.getContextPath() + "/errorLogin.html?message=" + msg);
+				return;
 			}
 		}
 		out.flush();

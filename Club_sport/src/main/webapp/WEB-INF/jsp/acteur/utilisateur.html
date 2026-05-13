@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Espace utilisateur - Sport Club</title>
-    <link rel="stylesheet" href="utilisateur.css">
+    <link rel="stylesheet" href="./utilisateur.css">
 </head>
 <body>
 
@@ -35,36 +35,6 @@
     const description = document.getElementById("descriptionPage");
     const contenu = document.getElementById("contenuUtilisateur");
 
-    if (type === "elu") {
-        titre.textContent = "Espace élu";
-        description.textContent = "Consultez les statistiques sportives et les indicateurs d’aide à la décision.";
-
-        contenu.innerHTML = `
-            <div class="card">
-                <h2>Consulter les statistiques</h2>
-                <p>Voir le nombre de licenciés par commune, département, région et fédération.</p>
-                <button>Accéder</button>
-            </div>
-
-            <div class="card">
-                <h2>Classement des zones</h2>
-                <p>Visualiser le classement selon la proportion de licenciés.</p>
-                <button>Voir le classement</button>
-            </div>
-
-            <div class="card">
-                <h2>Diagrammes</h2>
-                <p>Afficher des indicateurs statistiques sous forme de graphiques.</p>
-                <button>Afficher</button>
-            </div>
-
-            <div class="card">
-                <h2>Exporter les données</h2>
-                <p>Exporter les résultats au format XLSX ou PDF.</p>
-                <button>Exporter</button>
-            </div>
-        `;
-    } else {
         titre.textContent = "Espace club";
         description.textContent = "Gérez les informations publiques de votre club sportif.";
 
@@ -93,7 +63,6 @@
                 <button>Modifier</button>
             </div>
         `;
-    }
 </script>
 
 </body>

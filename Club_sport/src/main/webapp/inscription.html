@@ -16,7 +16,7 @@
 			<h1>⚽ Club de sport</h1>
 			<p>Créez un compte</p>
 		</div>
-		<form id="login-form" method="POST" action="api/inscription">
+		<form id="login-form" method="post" action="/api/inscription">
 			<div class="row mb-3">
 				<div class="col">
 					<label for="prenom" class="form-label">Prénom</label> <input
@@ -40,7 +40,7 @@
 			<div class="mb-4">
 				<label for="password-confirm" class="form-label">Confirmer
 					le mot de passe</label> <input type="password" id="password-confirm"
-					class="form-control" placeholder="••••••••" required/>
+					class="form-control" placeholder="••••••••" name="confirm" required/>
 			</div>
 			<div class="mb-4">
 				<label for="type" class="form-label">Vous êtes :</label> <select

@@ -11,7 +11,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.*;
 
-@WebFilter(urlPatterns = {"/elu", "/elu/licences"})
+@WebFilter(urlPatterns = {"/elu", "/elu/licences", "/acteur"})
 
 public class AuthenticationFilter implements Filter {
 

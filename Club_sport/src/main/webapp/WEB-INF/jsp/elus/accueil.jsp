@@ -1,14 +1,9 @@
-<<<<<<< HEAD
-
-=======
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
->>>>>>> 0a4ad8d5c00de387559b527b3aa3c30741c9471c
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Espace Ã‰lus | Dashboard</title>
+    <title>Espace Élus | Dashboard</title>
     
     <!-- Bootstrap 5 & Google Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,7 +30,7 @@
     <nav class="sidebar shadow">
         <div class="p-4 text-center">
             <h4 class="fw-bold mb-0">Sport<span class="text-primary">Data</span></h4>
-            <small class="text-muted">Portail CollectivitÃ©s</small>
+            <small class="text-muted">Portail Collectivités</small>
         </div>
         <hr class="mx-3 border-secondary">
         <div class="nav flex-column">
@@ -56,7 +51,7 @@
     <main class="main-content">
         <div class="container-fluid">
             <div class="mb-5">
-                <h1 class="h2 fw-bold mb-1">Espace Ã‰lus</h1>
+                <h1 class="h2 fw-bold mb-1">Espace Élus</h1>
                 <p class="text-muted mb-0">Bienvenue sur votre outil d'analyse territoriale.</p>
             </div>
 
@@ -70,9 +65,9 @@
                                 <i class="fas fa-users-viewfinder fs-4"></i>
                             </div>
                             <h5 class="fw-bold">Statistiques Licences</h5>
-                            <p class="text-muted small">Analyse croisÃ©e par commune, genre et fÃ©dÃ©ration sur votre territoire.</p>
+                            <p class="text-muted small">Analyse croisée par commune, genre et fédération sur votre territoire.</p>
                             <a href="<%= request.getContextPath() %>/elu/licences" class="btn btn-primary btn-sm w-100 rounded-pill mt-3">
-                                AccÃ©der au module
+                                Accéder au module
                             </a>
                         </div>
                     </div>
@@ -84,7 +79,7 @@
                         <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center text-center">
                             <i class="fas fa-plus-circle fs-1 text-light-emphasis mb-3"></i>
                             <h5 class="text-muted">Nouveau module</h5>
-                            <p class="small text-muted">BientÃ´t disponible pour vos analyses.</p>
+                            <p class="small text-muted">Bientôt disponible pour vos analyses.</p>
                         </div>
                     </div>
                 </div>
