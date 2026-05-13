@@ -31,7 +31,6 @@ public class PageGestionComptes extends JFrame {
                 "Élus", "Présidents", "Entraîneurs", "Sportifs", "Administrateurs"
         });
 
-        //  Bouton Chercher
         JButton btnChercher = new JButton("Chercher");
         btnChercher.setBackground(new Color(0, 120, 215));
         btnChercher.setForeground(Color.WHITE);
@@ -44,12 +43,12 @@ public class PageGestionComptes extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Le tableau avec les cases a selectionner 
-        String[] colonnes = {"Sélection", "Identifiant", "Nom", "Email", "Rôle"};
+        // --- TABLEAU ---
+        String[] colonnes = {"Sélection", "Identifiant", "Nom", "Email", "Rôle", "Statut Vérification"};
 
         model = new DefaultTableModel(colonnes, 0) {
             @Override
-            public Class<?> getColumnClass(int columnIndex) { // definit le type de colonne du tableau
+            public Class<?> getColumnClass(int columnIndex) {
                 return columnIndex == 0 ? Boolean.class : String.class;
             }
 
@@ -64,47 +63,41 @@ public class PageGestionComptes extends JFrame {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-     // En bas:  Boutons Modifier / Supprimer / Créer ---
+        // --- PANEL BAS ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-
-        // --- Style des boutons ---
         Color bleu = new Color(0, 120, 215);
 
-        // --- Bouton Modifier ---
         JButton btnModifier = new JButton("Modifier");
         btnModifier.setBackground(bleu);
         btnModifier.setForeground(Color.WHITE);
-        btnModifier.setFocusPainted(false);
         btnModifier.setPreferredSize(new Dimension(110, 35));
 
-        // --- Bouton Supprimer ---
         JButton btnSupprimer = new JButton("Supprimer");
         btnSupprimer.setBackground(bleu);
         btnSupprimer.setForeground(Color.WHITE);
-        btnSupprimer.setFocusPainted(false);
         btnSupprimer.setPreferredSize(new Dimension(110, 35));
 
-        // --- Bouton Créer ---
         JButton btnCreer = new JButton("Créer");
         btnCreer.setBackground(bleu);
         btnCreer.setForeground(Color.WHITE);
-        btnCreer.setFocusPainted(false);
         btnCreer.setPreferredSize(new Dimension(110, 35));
+
+        JButton btnValider = new JButton("Valider");
+        btnValider.setBackground(bleu);
+        btnValider.setForeground(Color.WHITE);
+        btnValider.setPreferredSize(new Dimension(110, 35));
 
         bottomPanel.add(btnModifier);
         bottomPanel.add(btnSupprimer);
         bottomPanel.add(btnCreer);
+        bottomPanel.add(btnValider);
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-
-        // on ajoute une action sur le bouton modifier 
+        // --- ACTIONS ---
         btnModifier.addActionListener(e -> modifierSelection());
-
-        // pareil pour supprimer 
         btnSupprimer.addActionListener(e -> supprimerSelection());
 
-     // pareil pour créer 
         btnCreer.addActionListener(e -> {
             CreerUtilisateur fen = new CreerUtilisateur();
             fen.setVisible(true);
@@ -117,14 +110,31 @@ public class PageGestionComptes extends JFrame {
             });
         });
 
-         
-      
+        btnValider.addActionListener(e -> {
+            List<Integer> ids = getSelectedIds();
+
+            if (ids.size() != 1) {
+                JOptionPane.showMessageDialog(this, "Sélectionnez un seul compte à valider.");
+                return;
+            }
+
+            Utilisateur utilisateur = utilisateurDAO.getUtilisateurParId(ids.get(0));
+
+            if (utilisateur == null) {
+                JOptionPane.showMessageDialog(this, "Impossible de charger cet utilisateur.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            ValidationInscription fen = new ValidationInscription(utilisateur);
+            fen.setVisible(true);
+        });
     }
-// on charge les compte et on vide le tableau 
+
+    // --- CHARGER LES COMPTES ---
     private void chargerComptes() {
         model.setRowCount(0);
 
-        String type = (String) comboType.getSelectedItem();// récupère les données de la combobox
+        String type = (String) comboType.getSelectedItem();
 
         String roleBDD = switch (type) {
             case "Élus" -> "elu";
@@ -139,30 +149,33 @@ public class PageGestionComptes extends JFrame {
 
         for (Utilisateur u : utilisateurs) {
             model.addRow(new Object[]{
-                    false, // checkbox
+                    false,
                     u.getId(),
                     u.getNom(),
                     u.getEmail(),
-                    u.getRole()
+                    u.getRole(),
+                    u.getStatutVerification() // ✔ NOUVEAU
             });
         }
     }
 
+    // --- RÉCUPÉRER LES IDS SÉLECTIONNÉS ---
     private List<Integer> getSelectedIds() {
         List<Integer> ids = new ArrayList<>();
 
-        for (int i = 0; i < model.getRowCount(); i++) { // parcourt les lignes du tableau
-            boolean selected = (boolean) model.getValueAt(i, 0); // recupere les infos de la premiere colonne 
+        for (int i = 0; i < model.getRowCount(); i++) {
+            boolean selected = (boolean) model.getValueAt(i, 0);
             if (selected) {
-                ids.add(Integer.parseInt(model.getValueAt(i, 1).toString())); // convertit la colonne 1 en texte puis en entier et on ajoute a la liste
+                ids.add(Integer.parseInt(model.getValueAt(i, 1).toString()));
             }
         }
         return ids;
     }
 
+    // --- MODIFIER ---
     private void modifierSelection() {
         List<Integer> ids = getSelectedIds();
-// on afficher des messages si pas de compte selectionné ou si plusieurs selections 
+
         if (ids.size() == 0) {
             JOptionPane.showMessageDialog(this, "Sélectionnez un compte.");
             return;
@@ -174,8 +187,6 @@ public class PageGestionComptes extends JFrame {
         }
 
         int id = ids.get(0);
-
-        // Charger l'utilisateur complet
         Utilisateur utilisateur = utilisateurDAO.getUtilisateurParId(id);
 
         if (utilisateur == null) {
@@ -183,11 +194,9 @@ public class PageGestionComptes extends JFrame {
             return;
         }
 
-        // Ouvrir la fenêtre de modification
         ModifierUtilisateur fenetre = new ModifierUtilisateur(utilisateur);
         fenetre.setVisible(true);
 
-        // Quand la fenêtre se ferme remet  le tableau vide
         fenetre.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosed(java.awt.event.WindowEvent e) {
@@ -195,7 +204,8 @@ public class PageGestionComptes extends JFrame {
             }
         });
     }
-// on affiche un message d'erreur si aucun compte n'est séléctionner 
+
+    // --- SUPPRIMER ---
     private void supprimerSelection() {
         List<Integer> ids = getSelectedIds();
 
@@ -219,7 +229,7 @@ public class PageGestionComptes extends JFrame {
         chargerComptes();
     }
 
-    // --- MAIN POUR LANCER DIRECTEMENT LA PAGE ---
+    // --- MAIN ---
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             PageGestionComptes fen = new PageGestionComptes();

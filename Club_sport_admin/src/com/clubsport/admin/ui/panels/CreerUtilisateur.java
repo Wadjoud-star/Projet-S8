@@ -11,6 +11,7 @@ public class CreerUtilisateur extends JFrame {
     private JTextField txtNom;
     private JTextField txtEmail;
     private JComboBox<String> comboRole;
+    private JTextField txtPhoto; // champ pour la photo
 
     private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
 
@@ -18,7 +19,7 @@ public class CreerUtilisateur extends JFrame {
 
         // --- PARAMÈTRES DE LA FENÊTRE ---
         setTitle("Créer un utilisateur");
-        setSize(500, 380);
+        setSize(500, 450);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -44,7 +45,7 @@ public class CreerUtilisateur extends JFrame {
         panel.add(new JLabel("Nom :"), gbc);
 
         txtNom = new JTextField();
-        txtNom.setPreferredSize(new Dimension(250, 28)); // champ plus large
+        txtNom.setPreferredSize(new Dimension(250, 28));
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         panel.add(txtNom, gbc);
@@ -62,7 +63,6 @@ public class CreerUtilisateur extends JFrame {
 
         // --- CHAMP ROLE ---
         gbc.gridx = 0; gbc.gridy = 2;
-        gbc.weightx = 0;
         panel.add(new JLabel("Rôle :"), gbc);
 
         comboRole = new JComboBox<>(new String[]{
@@ -70,26 +70,51 @@ public class CreerUtilisateur extends JFrame {
         });
         comboRole.setPreferredSize(new Dimension(250, 28));
         gbc.gridx = 1;
-        gbc.weightx = 1.0;
         panel.add(comboRole, gbc);
+
+        // --- PHOTO IDENTITÉ ---
+        gbc.gridx = 0; gbc.gridy = 3;
+        panel.add(new JLabel("Photo identité :"), gbc);
+
+        txtPhoto = new JTextField();
+        txtPhoto.setPreferredSize(new Dimension(250, 28));
+        gbc.gridx = 1;
+        panel.add(txtPhoto, gbc);
+
+        // --- BOUTON CHOISIR FICHIER ---
+        gbc.gridx = 1; gbc.gridy = 4;
+        JButton btnChoisirFichier = new JButton("Choisir un fichier");
+        btnChoisirFichier.setBackground(new Color(200, 200, 200));
+        btnChoisirFichier.setFocusPainted(false);
+        btnChoisirFichier.setPreferredSize(new Dimension(150, 30));
+
+        btnChoisirFichier.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Sélectionner une photo d'identité");
+
+            int result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                String chemin = fileChooser.getSelectedFile().getAbsolutePath();
+                txtPhoto.setText(chemin); // on remplit automatiquement le champ
+            }
+        });
+
+        panel.add(btnChoisirFichier, gbc);
 
         add(panel, BorderLayout.CENTER);
 
         // --- PANEL BAS AVEC LES BOUTONS ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
-        // --- Bouton Créer ---
         JButton btnCreer = new JButton("Créer");
-        btnCreer.setBackground(new Color(0, 120, 215)); // bleu harmonisé
+        btnCreer.setBackground(new Color(0, 120, 215));
         btnCreer.setForeground(Color.WHITE);
-        btnCreer.setFocusPainted(false);
         btnCreer.setPreferredSize(new Dimension(120, 35));
 
-        // --- Bouton Annuler ---
         JButton btnAnnuler = new JButton("Annuler");
-        btnAnnuler.setBackground(new Color(0, 120, 215)); // même couleur que Créer
+        btnAnnuler.setBackground(new Color(0, 120, 215));
         btnAnnuler.setForeground(Color.WHITE);
-        btnAnnuler.setFocusPainted(false);
         btnAnnuler.setPreferredSize(new Dimension(120, 35));
 
         bottomPanel.add(btnCreer);
@@ -97,38 +122,35 @@ public class CreerUtilisateur extends JFrame {
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- ACTION : CRÉER L'UTILISATEUR ---
         btnCreer.addActionListener(e -> creerUtilisateur());
-
-        // --- ACTION : ANNULER ET FERMER LA FENÊTRE ---
         btnAnnuler.addActionListener(e -> dispose());
     }
 
-    // --- MÉTHODE POUR CRÉER L'UTILISATEUR ---
+    // On crée un utilisateur
     private void creerUtilisateur() {
 
         String nom = txtNom.getText().trim();
         String email = txtEmail.getText().trim();
         String role = (String) comboRole.getSelectedItem();
+        String photo = txtPhoto.getText().trim();
 
-        // Vérification des champs
         if (nom.isEmpty() || email.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Veuillez remplir tous les champs.");
+            JOptionPane.showMessageDialog(this, "Attention à remplir toutes les informations");
             return;
         }
 
-        // Création de l'objet utilisateur
         Utilisateur u = new Utilisateur();
         u.setNom(nom);
         u.setEmail(email);
         u.setRole(role);
+        u.setPhotoIdentite(photo.isEmpty() ? null : photo);
+        u.setStatutVerification("EN_ATTENTE");
 
-        // Insertion en base
         boolean ok = utilisateurDAO.ajouterUtilisateur(u);
 
         if (ok) {
             JOptionPane.showMessageDialog(this, "Utilisateur créé avec succès.");
-            dispose(); // ferme la fenêtre
+            dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Erreur lors de la création.", "Erreur", JOptionPane.ERROR_MESSAGE);
         }

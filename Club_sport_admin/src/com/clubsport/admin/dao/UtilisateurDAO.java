@@ -14,7 +14,7 @@ public class UtilisateurDAO {
         List<Utilisateur> liste = new ArrayList<>();
 
         String sql = """
-            SELECT id, nom, email, mot_de_passe_hash, role
+            SELECT id, nom, email, mot_de_passe_hash, role, photo_identite, statut_verification
             FROM utilisateur
             WHERE role = ?
             ORDER BY nom ASC
@@ -28,12 +28,15 @@ public class UtilisateurDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                // on construit un utilisateur complet
                 Utilisateur u = new Utilisateur(
                         rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
-                        rs.getString("role")
+                        rs.getString("role"),
+                        rs.getString("photo_identite"),
+                        rs.getString("statut_verification")
                 );
                 liste.add(u);
             }
@@ -65,7 +68,7 @@ public class UtilisateurDAO {
     public boolean modifierUtilisateur(Utilisateur u) {
         String sql = """
             UPDATE utilisateur
-            SET nom = ?, email = ?, role = ?
+            SET nom = ?, email = ?, role = ?, photo_identite = ?, statut_verification = ?
             WHERE id = ?
         """;
 
@@ -75,7 +78,9 @@ public class UtilisateurDAO {
             stmt.setString(1, u.getNom());
             stmt.setString(2, u.getEmail());
             stmt.setString(3, u.getRole());
-            stmt.setInt(4, u.getId());
+            stmt.setString(4, u.getPhotoIdentite());
+            stmt.setString(5, u.getStatutVerification());
+            stmt.setInt(6, u.getId());
 
             return stmt.executeUpdate() > 0;
 
@@ -85,10 +90,10 @@ public class UtilisateurDAO {
         }
     }
 
-    // récupérer l'id d'un utilisateur 
+    // récupérer un utilisateur par son id
     public Utilisateur getUtilisateurParId(int id) {
         String sql = """
-            SELECT id, nom, email, mot_de_passe_hash, role
+            SELECT id, nom, email, mot_de_passe_hash, role, photo_identite, statut_verification
             FROM utilisateur
             WHERE id = ?
         """;
@@ -100,12 +105,15 @@ public class UtilisateurDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                // on renvoie un utilisateur complet
                 return new Utilisateur(
                         rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("email"),
                         rs.getString("mot_de_passe_hash"),
-                        rs.getString("role")
+                        rs.getString("role"),
+                        rs.getString("photo_identite"),
+                        rs.getString("statut_verification")
                 );
             }
 
@@ -118,22 +126,24 @@ public class UtilisateurDAO {
 
     // --- AJOUTER UN UTILISATEUR ---
     public boolean ajouterUtilisateur(Utilisateur u) {
-    	String sql = """
-    		    INSERT INTO utilisateur (nom, email, mot_de_passe_hash, role)
-    		    VALUES (?, ?, ?, ?)
-    		""";
+        String sql = """
+            INSERT INTO utilisateur (nom, email, mot_de_passe_hash, role, photo_identite, statut_verification)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """;
 
-    		try (Connection conn = ConnexionDB.getConnection();
-    		     PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-    		    stmt.setString(1, u.getNom());
-    		    stmt.setString(2, u.getEmail());
-    		    stmt.setString(3, ""); // mot de passe vide
-    		    stmt.setString(4, u.getRole());
+            stmt.setString(1, u.getNom());
+            stmt.setString(2, u.getEmail());
+            stmt.setString(3, u.getMotDePasseHash() != null ? u.getMotDePasseHash() : "");
+            stmt.setString(4, u.getRole());
+            stmt.setString(5, u.getPhotoIdentite());
+            stmt.setString(6, u.getStatutVerification());
 
-    		    return stmt.executeUpdate() > 0;
-    		}
- catch (SQLException e) {
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
