@@ -115,10 +115,11 @@ public class PageHistorique extends JFrame {
             });
         }
     }
-}
+
 public static void main(String[] args) {
     SwingUtilities.invokeLater(() -> {
         PageHistorique page = new PageHistorique();
         page.setVisible(true);
     });
+}
 }
