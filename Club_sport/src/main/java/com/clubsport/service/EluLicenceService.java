@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.clubsport.dao.EluLicenceDAO;
+import com.clubsport.model.LicenceExportRow;
 import com.clubsport.model.StatLicenceElu;
 
 /**
@@ -34,6 +35,34 @@ public class EluLicenceService {
         String cleanedDepartement = normalize(codeDepartement);
         String cleanedCommune = normalize(codeCommune);
         return dao.findWithFilters(codeFederation.trim(), cleanedGenre, cleanedRegion, cleanedDepartement, cleanedCommune);
+    }
+
+    public List<Map<String, String>> rechercherCommunes(String query, String codeRegion, String codeDepartement, int limit)
+            throws SQLException {
+        return dao.searchCommunes(query, normalize(codeRegion), normalize(codeDepartement), limit);
+    }
+
+    public boolean communeDansPerimetre(String codeCommune, String codeRegion, String codeDepartement)
+            throws SQLException {
+        return dao.communeDansPerimetre(normalize(codeCommune), normalize(codeRegion), normalize(codeDepartement));
+    }
+
+    public Optional<String> libelleCommune(String codeCommune) throws SQLException {
+        return dao.findCommuneLabel(codeCommune);
+    }
+
+    public List<Map<String, String>> listerFederations() throws SQLException {
+        return dao.listFederations();
+    }
+
+    public List<LicenceExportRow> exporterLicencesDetail(
+            String codeFederation, String genre, String codeRegion, String codeDepartement, String codeCommune)
+            throws SQLException {
+        if (codeFederation == null || codeFederation.isBlank()) {
+            return List.of();
+        }
+        return dao.findDetailForExport(
+                codeFederation.trim(), normalize(codeRegion), normalize(codeDepartement), normalize(codeCommune));
     }
 
     private String normalize(String value) {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Espace Élus | Dashboard</title>
+    <title>Espace élus | Dashboard</title>
     
     <!-- Bootstrap 5 & Google Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,7 +30,7 @@
     <nav class="sidebar shadow">
         <div class="p-4 text-center">
             <h4 class="fw-bold mb-0">Sport<span class="text-primary">Data</span></h4>
-            <small class="text-muted">Portail Collectivités</small>
+            <small class="text-muted">Portail Collectivit?s</small>
         </div>
         <hr class="mx-3 border-secondary">
         <div class="nav flex-column">
@@ -38,7 +38,7 @@
             <a href="<%= request.getContextPath() %>/elu/licences" class="nav-link"><i class="fas fa-chart-line"></i> Statistiques Licences</a>
             <!-- Futurs modules ici -->
             <a href="#" class="nav-link"><i class="fas fa-map-marked-alt"></i> Cartographie</a>
-            <a href="#" class="nav-link"><i class="fas fa-file-export"></i> Exports DATA</a>
+            <a href="<%= request.getContextPath() %>/elu/licences" class="nav-link"><i class="fas fa-file-export"></i> Exports DATA</a>
         </div>
         <div class="mt-auto p-3">
             <a href="<%= request.getContextPath() %>/index.html" class="btn btn-outline-light w-100 btn-sm">
@@ -51,7 +51,7 @@
     <main class="main-content">
         <div class="container-fluid">
             <div class="mb-5">
-                <h1 class="h2 fw-bold mb-1">Espace Élus</h1>
+                <h1 class="h2 fw-bold mb-1">Espace ?lus</h1>
                 <p class="text-muted mb-0">Bienvenue sur votre outil d'analyse territoriale.</p>
             </div>
 
@@ -65,9 +65,9 @@
                                 <i class="fas fa-users-viewfinder fs-4"></i>
                             </div>
                             <h5 class="fw-bold">Statistiques Licences</h5>
-                            <p class="text-muted small">Analyse croisée par commune, genre et fédération sur votre territoire.</p>
+                            <p class="text-muted small">Analyse crois?e par commune, genre et f?d?ration sur votre territoire.</p>
                             <a href="<%= request.getContextPath() %>/elu/licences" class="btn btn-primary btn-sm w-100 rounded-pill mt-3">
-                                Accéder au module
+                                Acc?der au module
                             </a>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                         <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center text-center">
                             <i class="fas fa-plus-circle fs-1 text-light-emphasis mb-3"></i>
                             <h5 class="text-muted">Nouveau module</h5>
-                            <p class="small text-muted">Bientôt disponible pour vos analyses.</p>
+                            <p class="small text-muted">Bient?t disponible pour vos analyses.</p>
                         </div>
                     </div>
                 </div>
