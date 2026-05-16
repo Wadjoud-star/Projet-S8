@@ -31,6 +31,7 @@ services:
     volumes:
       - ./docker/.keystore:/usr/local/tomcat/conf/.keystore
       - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
+      - ./uploads:/data/uploads
 
     networks:
       - club_network

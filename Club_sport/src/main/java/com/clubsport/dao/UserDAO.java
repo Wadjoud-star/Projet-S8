@@ -16,12 +16,14 @@ import com.clubsport.model.*;
  */
 public class UserDAO {
 	public boolean addUser(User u) {
-		String sql = "INSERT INTO utilisateur (nom, email, mot_de_passe_hash, role) VALUES(?,?,?,?)";
+		String sql = "INSERT INTO utilisateur (nom, email, mot_de_passe_hash, role, photo_identite, statut_verification) VALUES(?,?,?,?,?,?)";
 		try (Connection conn = ConnexionDB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, u.getNom());
 			stmt.setString(2, u.getEmail());
 			stmt.setString(3, u.getPassword());
 			stmt.setString(4, u.getRole());
+			stmt.setString(5, u.getIdentitePath());
+			stmt.setString(6, u.getStatut());
 
 			return stmt.executeUpdate() > 0;
 		} catch (SQLException e) {
@@ -37,7 +39,7 @@ public class UserDAO {
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				return new User(rs.getString("email"), rs.getString("nom"), rs.getString("mot_de_passe_hash"),
-						rs.getString("role"));
+						rs.getString("role"), rs.getString("photo_identite"), rs.getString("statut_verification"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -61,7 +63,7 @@ public class UserDAO {
 		}
 	}
 	public static void main(String[] args) {
-		User u = new User("tata", "tata@gmail.com", "Afikjksndvkjbb##hvk]]", "elu");
+		User u = new User("tata", "tata@gmail.com", "Afikjksndvkjbb##hvk]]", "elu", "u");
 		UserDAO udao = new UserDAO();
 		boolean validate = udao.addUser(u);
 		if(validate) {

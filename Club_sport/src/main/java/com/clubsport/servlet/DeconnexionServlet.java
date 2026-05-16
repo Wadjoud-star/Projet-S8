@@ -36,7 +36,8 @@ public class DeconnexionServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_OK);
 			response.setContentType("application/json");
 			PrintWriter out = response.getWriter();
-			out.print("{\"message\" : \"Logout OK\"}");
+			//out.print("{\"message\" : \"Logout OK\"}");
+			response.sendRedirect(request.getContextPath() + "/authentification.html");
 			return;
 		}
 		LogoutSession.invalidate();
