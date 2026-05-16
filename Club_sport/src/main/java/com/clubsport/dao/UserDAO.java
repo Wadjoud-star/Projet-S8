@@ -8,8 +8,8 @@ import com.clubsport.util.*;
 import com.clubsport.model.*;
 
 /**
- * UserDAO est la classe qui sert de database connection avec la classe User
- * elle même
+ * UserDAO est la classe qui sert de database connection entre la classe User
+ * et la table utilisateur
  * 
  * @author bpenw
  * @version 1.0

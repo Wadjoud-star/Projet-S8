@@ -14,11 +14,13 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import org.mindrot.bcrypt.BCrypt;
+
 import com.clubsport.dao.*;
 import com.clubsport.model.*;
 import com.clubsport.util.*;
 
-import org.mindrot.bcrypt.*;
+
 
 /**
  * Servlet implementation class InscriptionServlet
