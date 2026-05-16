@@ -2,7 +2,7 @@ package com.clubsport.dao;
 
 import java.sql.*;
 
-import org.mindrot.bcrypt.BCrypt;
+import org.mindrot.jbcrypt.BCrypt;
 
 import com.clubsport.util.*;
 import com.clubsport.model.*;
