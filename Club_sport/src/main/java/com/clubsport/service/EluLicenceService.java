@@ -55,6 +55,17 @@ public class EluLicenceService {
         return dao.listFederations();
     }
 
+    public List<Map<String, String>> agregerLicencesParRegion(String codeFederation, String codeDepartement)
+            throws SQLException {
+        return dao.findLicencesAgregeesParRegion(normalize(codeFederation), normalize(codeDepartement));
+    }
+
+    public List<Map<String, String>> agregerLicencesParCommune(
+            String codeFederation, String codeRegion, String codeDepartement) throws SQLException {
+        return dao.findLicencesAgregeesParCommune(
+                normalize(codeFederation), normalize(codeRegion), normalize(codeDepartement));
+    }
+
     public List<LicenceExportRow> exporterLicencesDetail(
             String codeFederation, String genre, String codeRegion, String codeDepartement, String codeCommune)
             throws SQLException {

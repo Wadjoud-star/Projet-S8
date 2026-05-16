@@ -53,12 +53,15 @@
         <div class="nav flex-column">
             <a href="<%= request.getContextPath() %>/elu" class="nav-link"><i class="fas fa-th-large"></i> Dashboard</a>
             <a href="<%= request.getContextPath() %>/elu/licences" class="nav-link active"><i class="fas fa-chart-line"></i> Statistiques Licences</a>
-            <a href="#" class="nav-link"><i class="fas fa-map-marked-alt"></i> Cartographie</a>
+            <a href="<%= request.getContextPath() %>/elu/cartographie" class="nav-link"><i class="fas fa-map-marked-alt"></i> Cartographie</a>
             <a href="<%= request.getContextPath() %>/elu/licences" class="nav-link"><i class="fas fa-file-export"></i> Exports DATA</a>
         </div>
         <div class="mt-auto p-3">
-            <a href="<%= request.getContextPath() %>/index.html" class="btn btn-outline-light w-100 btn-sm">
-                <i class="fas fa-sign-out-alt"></i> Quitter l'espace
+            <a href="<%= request.getContextPath() %>/api/logout" class="btn btn-outline-light w-100 btn-sm mb-2">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </a>
+            <a href="<%= request.getContextPath() %>/elu" class="btn btn-link btn-sm w-100 text-muted text-decoration-none">
+                Retour au dashboard
             </a>
         </div>
     </nav>

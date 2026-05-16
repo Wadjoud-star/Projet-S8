@@ -15,7 +15,7 @@ import com.clubsport.dao.*;
 import com.clubsport.model.*;
 import com.clubsport.util.*;
 
-import org.mindrot.bcrypt.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Servlet implementation class InscriptionServlet
@@ -42,13 +42,17 @@ public class InscriptionServlet extends HttpServlet {
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
 
-		String nom = request.getParameter("nom");
+		String prenom = request.getParameter("prenom");
+		String nomFamille = request.getParameter("nom");
+		String nom = (prenom != null && !prenom.isBlank())
+				? prenom.trim() + " " + (nomFamille != null ? nomFamille.trim() : "")
+				: nomFamille;
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		String confirm = request.getParameter("confirm");
-		String pass_hash = BCrypt.hashpw(password, BCrypt.gensalt());
 		String role = request.getParameter("type");
-		if (nom == null || email == null || password == null || role == null || confirm == null || nom.isEmpty()
+		if (nomFamille == null || nomFamille.isBlank() || prenom == null || prenom.isBlank()
+				|| email == null || password == null || role == null || confirm == null || nom.isEmpty()
 				|| email.isEmpty() || password.isEmpty() || role.isEmpty() || confirm.isEmpty()) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			//out.print("{\"Message\": " + "\"Parametres manquants\"}");
@@ -65,6 +69,7 @@ public class InscriptionServlet extends HttpServlet {
 			response.sendRedirect(request.getContextPath() + "/errorRegister.html?message=" + msg);
 			return;
 		}
+		String pass_hash = BCrypt.hashpw(password, BCrypt.gensalt());
 		UserDAO udao = new UserDAO();
 		User u = new User(email, nom, pass_hash, role);
 		boolean validate = udao.addUser(u);

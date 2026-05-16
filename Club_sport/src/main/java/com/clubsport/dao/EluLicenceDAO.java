@@ -196,6 +196,107 @@ public class EluLicenceDAO {
     /**
      * Détail exportable : une ligne par commune du périmètre (mêmes filtres que la synthèse).
      */
+    /** Agrégat licences par région (cartographie). */
+    public List<Map<String, String>> findLicencesAgregeesParRegion(
+            String codeFederation, String codeDepartement) throws SQLException {
+        String fed = normalize(codeFederation);
+        if (fed.isEmpty()) {
+            return List.of();
+        }
+        String dept = normalize(codeDepartement);
+        String sql = "SELECT c.code_region AS code, r.nom_region AS nom, "
+                + "SUM(sl.total_licencies) AS total_licencies, "
+                + "SUM(sl.licencies_femmes) AS licencies_femmes, "
+                + "SUM(sl.licencies_hommes) AS licencies_hommes "
+                + "FROM statistique_licencies sl "
+                + "JOIN commune c ON c.code_commune = sl.code_commune "
+                + "JOIN region r ON r.code_region = c.code_region "
+                + "WHERE sl.code_federation = ? "
+                + "AND (? = '' OR " + DEPT_SQL + " = ?) "
+                + "GROUP BY c.code_region, r.nom_region "
+                + "ORDER BY total_licencies DESC";
+        return queryAgregatCarto(sql, fed, dept);
+    }
+
+    /** Agrégat licences par commune (cartographie). */
+    public List<Map<String, String>> findLicencesAgregeesParCommune(
+            String codeFederation, String codeRegion, String codeDepartement) throws SQLException {
+        String fed = normalize(codeFederation);
+        if (fed.isEmpty()) {
+            return List.of();
+        }
+        String region = normalize(codeRegion);
+        String dept = normalize(codeDepartement);
+        String sql = "SELECT c.code_commune, c.nom_commune, c.code_region, "
+                + "COALESCE(NULLIF(c.code_departement, ''), " + DEPT_SQL + ") AS code_departement_eff, "
+                + "SUM(sl.total_licencies) AS total_licencies, "
+                + "SUM(sl.licencies_femmes) AS licencies_femmes, "
+                + "SUM(sl.licencies_hommes) AS licencies_hommes "
+                + "FROM statistique_licencies sl "
+                + "JOIN commune c ON c.code_commune = sl.code_commune "
+                + "WHERE sl.code_federation = ? "
+                + "AND (? = '' OR c.code_region = ?) "
+                + "AND (? = '' OR " + DEPT_SQL + " = ?) "
+                + "GROUP BY c.code_commune, c.nom_commune, c.code_region, code_departement_eff "
+                + "HAVING SUM(sl.total_licencies) > 0 "
+                + "ORDER BY total_licencies DESC "
+                + "LIMIT 2500";
+        Connection conn = ConnexionDB.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, fed);
+            ps.setString(2, region);
+            ps.setString(3, region);
+            ps.setString(4, dept);
+            ps.setString(5, dept);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Map<String, String>> out = new ArrayList<>();
+                while (rs.next()) {
+                    Map<String, String> row = new LinkedHashMap<>();
+                    row.put("code", rs.getString("code_commune"));
+                    row.put("nom", rs.getString("nom_commune"));
+                    row.put("codeRegion", rs.getString("code_region"));
+                    row.put("codeDepartement", rs.getString("code_departement_eff"));
+                    row.put("total", String.valueOf(rs.getInt("total_licencies")));
+                    row.put("f", String.valueOf(rs.getInt("licencies_femmes")));
+                    row.put("h", String.valueOf(rs.getInt("licencies_hommes")));
+                    out.add(row);
+                }
+                return out;
+            }
+        } finally {
+            ConnexionDB.fermer(conn);
+        }
+    }
+
+    private List<Map<String, String>> queryAgregatCarto(String sql, String fed, String deptFilter)
+            throws SQLException {
+        Connection conn = ConnexionDB.getConnection();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, fed);
+            ps.setString(2, deptFilter);
+            ps.setString(3, deptFilter);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Map<String, String>> out = new ArrayList<>();
+                while (rs.next()) {
+                    Map<String, String> row = new LinkedHashMap<>();
+                    row.put("code", rs.getString("code"));
+                    row.put("nom", rs.getString("nom"));
+                    row.put("total", String.valueOf(rs.getInt("total_licencies")));
+                    row.put("f", String.valueOf(rs.getInt("licencies_femmes")));
+                    row.put("h", String.valueOf(rs.getInt("licencies_hommes")));
+                    out.add(row);
+                }
+                return out;
+            }
+        } finally {
+            ConnexionDB.fermer(conn);
+        }
+    }
+
+    private static String normalize(String value) {
+        return value == null ? "" : value.trim();
+    }
+
     public List<LicenceExportRow> findDetailForExport(
             String codeFederation, String codeRegion, String codeDepartement, String codeCommune)
             throws SQLException {

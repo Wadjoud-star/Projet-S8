@@ -1,7 +1,5 @@
 
-
-
-
+version: '3.8'
 
 services:
   mysql:
@@ -25,13 +23,14 @@ services:
     restart: always
     depends_on:
       - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
     ports:
       - "8080:8080"
       - "8443:8443"
     volumes:
-      - ./docker/.keystore:/usr/local/tomcat/conf/.keystore
-      - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
-
+      -  C:/Users/bpenw/eclipse-workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/Club_sport:/usr/local/tomcat/webapps/Club_sport
     networks:
       - club_network
 
