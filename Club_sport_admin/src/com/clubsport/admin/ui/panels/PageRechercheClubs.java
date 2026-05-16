@@ -125,7 +125,7 @@ public class PageRechercheClubs extends JFrame {
         // détermine quel bouton radio est sélectionné
         if (rbCommune.isSelected()) colonne = "commune";
         if (rbCodePostal.isSelected()) colonne = "code_postal";
-        if (rbLicencies.isSelected()) colonne = "total_licencies"; // recherche minimum
+        if (rbLicencies.isSelected()) colonne = "licencies"; // recherche minimum
         if (rbFederation.isSelected()) colonne = "federation";
 
         // Récupération MySQL via RechercheDAO
