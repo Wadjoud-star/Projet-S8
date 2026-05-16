@@ -15,7 +15,7 @@ import com.clubsport.dao.*;
 import com.clubsport.model.*;
 import com.clubsport.util.*;
 
-import org.mindrot.bcrypt.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Servlet implementation class InscriptionServlet
