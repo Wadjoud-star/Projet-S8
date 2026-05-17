@@ -42,8 +42,9 @@
         <div class="nav flex-column flex-grow-1">
             <a href="<%= ctx %>/elu" class="nav-link"><i class="fas fa-th-large"></i> Dashboard</a>
             <a href="<%= ctx %>/elu/licences" class="nav-link"><i class="fas fa-chart-line"></i> Statistiques Licences</a>
+            <a href="<%= ctx %>/elu/visualisation" class="nav-link"><i class="fas fa-chart-pie"></i> Visualisation</a>
             <a href="<%= ctx %>/elu/cartographie" class="nav-link active"><i class="fas fa-map-marked-alt"></i> Cartographie</a>
-            <a href="<%= ctx %>/elu/licences" class="nav-link"><i class="fas fa-file-export"></i> Exports DATA</a>
+            <a href="<%= ctx %>/elu/licences" class="nav-link"><i class="fas fa-file-export"></i> Exports CSV</a>
         </div>
         <div class="p-3 mt-auto">
             <a href="<%= ctx %>/api/logout" class="btn btn-outline-light w-100 btn-sm mb-2">

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Succes Inscription</title>
+</head>
+<body>
+	<h1>Succès</h1>
+	<p id="message"></p>
+	<script>
+	
+	const params = new URLSearchParams(window.location.search);
+
+	const message = params.get("message");
+
+	document.getElementById("message").textContent = message;
+
+	setTimeout(() => {
+		window.location.href = "authentification.html";
+	}, 3000);
+	</script>
+</body>
+</html>

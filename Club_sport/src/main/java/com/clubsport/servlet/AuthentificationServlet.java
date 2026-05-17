@@ -55,6 +55,13 @@ public class AuthentificationServlet extends HttpServlet {
 			return;
 		}
 
+		String statut = u.getStatut() == null ? "" : u.getStatut().trim();
+		if (!statut.isEmpty() && !"VALIDE".equalsIgnoreCase(statut)) {
+			redirectError(request, response,
+					"Inscription en attente de validation par l'administrateur");
+			return;
+		}
+
 		String role = u.getRole() == null ? "" : u.getRole().trim();
 		HttpSession session = request.getSession(true);
 		session.setAttribute("Email", u.getEmail());

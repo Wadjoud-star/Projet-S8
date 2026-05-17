@@ -30,7 +30,9 @@ services:
       - "8080:8080"
       - "8443:8443"
     volumes:
-      -  C:/Users/bpenw/eclipse-workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/Club_sport:/usr/local/tomcat/webapps/Club_sport
+      - ./docker/.keystore:/usr/local/tomcat/conf/.keystore
+      - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
+      - ./uploads:/data/uploads
     networks:
       - club_network
 

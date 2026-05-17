@@ -36,8 +36,9 @@
         <div class="nav flex-column flex-grow-1">
             <a href="<%= ctx %>/elu" class="nav-link active"><i class="fas fa-th-large"></i> Dashboard</a>
             <a href="<%= ctx %>/elu/licences" class="nav-link"><i class="fas fa-chart-line"></i> Statistiques Licences</a>
+            <a href="<%= ctx %>/elu/visualisation" class="nav-link"><i class="fas fa-chart-pie"></i> Visualisation</a>
             <a href="<%= ctx %>/elu/cartographie" class="nav-link"><i class="fas fa-map-marked-alt"></i> Cartographie</a>
-            <a href="<%= ctx %>/elu/licences" class="nav-link"><i class="fas fa-file-export"></i> Exports DATA</a>
+            <a href="<%= ctx %>/elu/licences" class="nav-link"><i class="fas fa-file-export"></i> Exports CSV</a>
         </div>
         <div class="p-3 mt-auto">
             <a href="<%= ctx %>/api/logout" class="btn btn-outline-light w-100 btn-sm mb-2">
@@ -67,10 +68,8 @@
                                 <i class="fas fa-users-viewfinder fs-4"></i>
                             </div>
                             <h5 class="fw-bold">Statistiques Licences</h5>
-                            <p class="text-muted small">Analyse crois&eacute;e par commune, genre et f&eacute;d&eacute;ration sur votre territoire.</p>
-                            <a href="<%= ctx %>/elu/licences" class="btn btn-primary btn-sm w-100 rounded-pill mt-3">
-                                Acc&eacute;der au module
-                            </a>
+                            <p class="text-muted small">Analyse crois&eacute;e par commune, genre et f&eacute;d&eacute;ration.</p>
+                            <a href="<%= ctx %>/elu/licences" class="btn btn-primary btn-sm w-100 rounded-pill mt-3">Acc&eacute;der</a>
                         </div>
                     </div>
                 </div>
@@ -79,11 +78,24 @@
                     <div class="card stat-card shadow-sm h-100">
                         <div class="card-body p-4">
                             <div class="icon-box bg-success-subtle text-success">
+                                <i class="fas fa-chart-pie fs-4"></i>
+                            </div>
+                            <h5 class="fw-bold">Visualisation</h5>
+                            <p class="text-muted small">Graphiques H/F, classement des communes et export PDF.</p>
+                            <a href="<%= ctx %>/elu/visualisation" class="btn btn-success btn-sm w-100 rounded-pill mt-3">Acc&eacute;der</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="card stat-card shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <div class="icon-box bg-info-subtle text-info">
                                 <i class="fas fa-map-marked-alt fs-4"></i>
                             </div>
                             <h5 class="fw-bold">Cartographie</h5>
-                            <p class="text-muted small">Visualisation choropl&egrave;the des licences par r&eacute;gion et par commune.</p>
-                            <a href="<%= ctx %>/elu/cartographie" class="btn btn-success btn-sm w-100 rounded-pill mt-3">Ouvrir la carte</a>
+                            <p class="text-muted small">Carte choropl&egrave;the par r&eacute;gion et d&eacute;tail communal.</p>
+                            <a href="<%= ctx %>/elu/cartographie" class="btn btn-info btn-sm w-100 rounded-pill mt-3 text-white">Ouvrir la carte</a>
                         </div>
                     </div>
                 </div>

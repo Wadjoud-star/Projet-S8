@@ -13,7 +13,9 @@ import jakarta.servlet.http.*;
 
 @WebFilter(urlPatterns = {
         "/elu", "/elu/licences", "/elu/licences/communes-search", "/elu/licences/export",
-        "/elu/cartographie", "/elu/cartographie/data", "/acteur"})
+        "/elu/cartographie", "/elu/cartographie/data",
+        "/elu/visualisation", "/elu/export-pdf",
+        "/acteur"})
 
 public class AuthenticationFilter implements Filter {
 
