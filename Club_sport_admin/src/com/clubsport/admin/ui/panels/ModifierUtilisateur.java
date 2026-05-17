@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ModifierUtilisateur extends JFrame {
-
+// champs que l'admin peut modifier
     private JTextField txtNom; // champ de texte pour nom et mail
     private JTextField txtEmail;
     private JComboBox<String> comboRole; // champ pour la combobox
@@ -30,7 +30,7 @@ public class ModifierUtilisateur extends JFrame {
         UIManager.put("TextField.font", new Font("Segoe UI", Font.PLAIN, 14));
         UIManager.put("ComboBox.font", new Font("Segoe UI", Font.PLAIN, 14));
         UIManager.put("Button.font", new Font("Segoe UI", Font.PLAIN, 14));
-
+// paneau principal
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // composants empilés verticalement
         panel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25)); // marges plus larges
@@ -81,21 +81,23 @@ public class ModifierUtilisateur extends JFrame {
         panel.add(Box.createVerticalStrut(12));
 
         // Photo identité
-        panel.add(new JLabel("Photo d'identité (chemin ou URL) :"));
-
+        panel.add(new JLabel("Photo d'identité (chemin ou URL) :"));// Indique à l’admin ce qu’il doit saisir :
+//récupères la valeur  stockée en base  mets dans le champ.
         txtPhoto = new JTextField(utilisateur.getPhotoIdentite());
+        
         txtPhoto.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
         panel.add(txtPhoto);
+        // Ajoute un espace vertical avant le bouton.
         panel.add(Box.createVerticalStrut(10));
 
         // --- Bouton Voir l'image ---
         JButton btnVoirImage = new JButton("Voir l'image");
-        btnVoirImage.setBackground(new Color(200, 200, 200));
+        btnVoirImage.setBackground(new Color(200, 200, 200));// couleur du fond gris clair ;
         btnVoirImage.setFocusPainted(false);
         btnVoirImage.setPreferredSize(new Dimension(150, 30));
 
         btnVoirImage.addActionListener(e -> {
-            String chemin = txtPhoto.getText().trim();
+            String chemin = txtPhoto.getText().trim();//recup le texte du champ txtPhoto ,enlèves les espaces au début/fin avec trim().
 
             if (chemin.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Aucune image à afficher.");
@@ -107,8 +109,11 @@ public class ModifierUtilisateur extends JFrame {
 
                 // URL ou fichier local
                 if (chemin.startsWith("http")) {
-                    icon = new ImageIcon(new java.net.URL(chemin));
-                } else {
+                    icon = new ImageIcon(new java.net.URL(chemin));//chemin.startsWith("http"): considères  URL web.
+                    //Tu crées un ImageIcon à partir d’un objet URL
+                } 
+                else {//sinon un chemin de fichier sur le disque (C:\... ou /home/...)
+                	// passes directement le chemin au constructeur ImageIcon.
                     icon = new ImageIcon(chemin);
                 }
 
