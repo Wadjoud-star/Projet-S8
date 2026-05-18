@@ -18,6 +18,7 @@ com\clubsport\servlet\GestionHorairesServlet.class
 com\clubsport\dao\EluLicenceDAO.class
 com\clubsport\servlet\ClubDetailServlet.class
 com\clubsport\servlet\ActeurAccueilServlet.class
+com\clubsport\servlet\MembresClubServlet.class
 com\clubsport\servlet\ExportPDFServlet.class
 com\clubsport\dao\RegionDAO.class
 com\clubsport\dao\FederationDAO.class

@@ -11,6 +11,21 @@ body { font-family: Arial; background: #f4f6f9; }
 textarea { width: 100%; height: 260px; padding: 15px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; }
 button { margin-top: 20px; padding: 12px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; }
 button:hover { background: #1d4ed8; }
+        .retour-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 18px;
+    background: white;
+    color: #1e3a5f;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.retour-btn:hover {
+    background: #f3f4f6;
+}
 </style>
 </head>
 <body>
@@ -26,6 +41,7 @@ button:hover { background: #1d4ed8; }
         <form action="/acteur/gerer-horaires" method="post">
             <textarea name="horaires">${club.horaires}</textarea>
             <button type="submit">Enregistrer</button>
+            <a href="/acteur" class="retour-btn"> Retour</a>
         </form>
     </div>
 </div>

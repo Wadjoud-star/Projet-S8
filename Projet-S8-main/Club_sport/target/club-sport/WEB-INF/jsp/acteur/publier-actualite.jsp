@@ -41,6 +41,21 @@ button {
     border: none;
     border-radius: 8px;
 }
+        .retour-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 18px;
+    background: white;
+    color: #1e3a5f;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.retour-btn:hover {
+    background: #f3f4f6;
+}
 </style>
 </head>
 
@@ -59,6 +74,7 @@ button {
         <form action="/acteur/publier-actualite" method="post">
             <textarea name="actualite">${club.actualite}</textarea>
             <button type="submit">Publier</button>
+            <a href="/acteur" class="retour-btn"> Retour</a>
         </form>
     </div>
 

@@ -76,7 +76,23 @@
         button:hover {
             background: #1d4ed8;
         }
+        .retour-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 18px;
+    background: white;
+    color: #1e3a5f;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.retour-btn:hover {
+    background: #f3f4f6;
+}
     </style>
+    
 </head>
 
 <body>
@@ -99,6 +115,9 @@
             <p><strong>Nombre de licenciés :</strong> ${club.nbLicencies}</p>
             <p><strong>Femmes :</strong> ${club.nbFemmes}</p>
             <p><strong>Hommes :</strong> ${club.nbHommes}</p>
+            <a href="/acteur/membres-club">
+    <button type="button">Afficher</button>
+</a>
         </div>
 
         <!-- 右边：修改表单 -->
@@ -125,6 +144,7 @@
                 <input type="number" name="nbHommes" value="${club.nbHommes}" required>
 
                 <button type="submit">Enregistrer</button>
+                <a href="/acteur" class="retour-btn"> Retour</a>
             </form>
         </div>
 
