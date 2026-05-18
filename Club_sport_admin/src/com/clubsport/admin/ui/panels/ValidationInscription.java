@@ -1,20 +1,23 @@
 package com.clubsport.admin.ui.panels;
 
 import com.clubsport.admin.model.Utilisateur;
+import com.clubsport.admin.dao.UtilisateurDAO; // ← nécessaire pour la mise à jour BDD
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ValidationInscription extends JFrame {
 
-    private Utilisateur utilisateur; // l'utilisateur dont on affiche les infos et on stocke les infos 
+    private Utilisateur utilisateur; // l'utilisateur dont on affiche les infos
+    private Runnable parentRefreshCallback; // ← callback pour rafraîchir PageGestionComptes
 
-    // --- Constructeur : on reçoit l'utilisateur sélectionné ---
-    public ValidationInscription(Utilisateur utilisateur) {
-        this.utilisateur = utilisateur; // on affecte à l'attribut de la classe 
+    // --- Constructeur : on reçoit l'utilisateur + un callback pour rafraîchir la page parent ---
+    public ValidationInscription(Utilisateur utilisateur, Runnable refreshCallback) {
+        this.utilisateur = utilisateur;
+        this.parentRefreshCallback = refreshCallback; // on stocke le callback
 
         setTitle("Validation de l'identité");
-        setSize(450, 400);
+        setSize(500, 420);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -24,18 +27,18 @@ public class ValidationInscription extends JFrame {
         add(titre, BorderLayout.NORTH);
 
         // --- PANEL CENTRAL AVEC LES INFOS ---
-        JPanel panelInfos = new JPanel(new GridBagLayout()); // panel flexible 
-        GridBagConstraints gbc = new GridBagConstraints(); // pour configurer la position et le style des composants
+        JPanel panelInfos = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
         // Texte explicatif
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2; // label a deux colonnes
+        gbc.gridwidth = 2;
         panelInfos.add(new JLabel("Informations du compte :"), gbc);
 
-        gbc.gridwidth = 1; // composants suivants
+        gbc.gridwidth = 1;
 
         // --- Nom ---
         gbc.gridx = 0;
@@ -68,7 +71,7 @@ public class ValidationInscription extends JFrame {
 
         gbc.gridx = 1;
         JComboBox<String> comboStatut = new JComboBox<>(new String[]{
-                "EN_ATTENTE", "VERIFIE", "REFUSE"
+                "EN_ATTENTE", "VALIDE", "REFUSE" // ← on ajoute VALIDE dans la liste
         });
         comboStatut.setSelectedItem(utilisateur.getStatutVerification());
         panelInfos.add(comboStatut, gbc);
@@ -84,14 +87,19 @@ public class ValidationInscription extends JFrame {
 
         add(panelInfos, BorderLayout.CENTER);
 
-        // --- BOUTON FERMER ---
-        JButton btnFermer = new JButton("Fermer");
-        btnFermer.addActionListener(e -> dispose());
-
+        // --- PANEL BAS AVEC LES BOUTONS ---
         JPanel bottom = new JPanel();
+
+        JButton btnValiderInscription = new JButton("Valider inscription"); // ← NOUVEAU BOUTON
+        JButton btnFermer = new JButton("Fermer");
+
+        bottom.add(btnValiderInscription);
         bottom.add(btnFermer);
 
         add(bottom, BorderLayout.SOUTH);
+
+        // --- ACTION : Fermer ---
+        btnFermer.addActionListener(e -> dispose());
 
         // --- ACTION : Voir justificatif ---
         btnVoirJustificatif.addActionListener(e -> {
@@ -107,15 +115,11 @@ public class ValidationInscription extends JFrame {
             try {
                 ImageIcon icon;
 
-                // --- NOUVEAU : Correction du chemin relatif ---
-                // Si le chemin commence par "uploads/", on le relie au dossier du projet Club_sport
+                // Correction du chemin relatif
                 if (!chemin.startsWith("http") && chemin.startsWith("uploads/")) {
-
-                    // Ici on suppose que Club_sport_admin et Club_sport sont côte à côte
                     chemin = "../Club_sport/" + chemin;
                 }
 
-                // Vérification que le fichier existe
                 java.io.File file = new java.io.File(chemin);
                 if (!file.exists()) {
                     JOptionPane.showMessageDialog(this,
@@ -125,10 +129,8 @@ public class ValidationInscription extends JFrame {
                     return;
                 }
 
-                // Chargement de l'image
                 icon = new ImageIcon(chemin);
 
-                // Redimensionner proprement
                 Image img = icon.getImage();
                 Image scaled = img.getScaledInstance(400, -1, Image.SCALE_SMOOTH);
                 icon = new ImageIcon(scaled);
@@ -140,6 +142,36 @@ public class ValidationInscription extends JFrame {
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,
                         "Impossible de charger l'image.\nChemin : " + chemin,
+                        "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // --- ACTION : Valider l'inscription ---
+        btnValiderInscription.addActionListener(e -> {
+
+            // On force le statut à VALIDE
+            String nouveauStatut = "VALIDE";
+
+            // Mise à jour dans la base
+            boolean ok = UtilisateurDAO.updateStatutVerification(utilisateur.getId(), nouveauStatut);
+
+            if (ok) {
+                // On met aussi à jour l'objet en mémoire
+                utilisateur.setStatutVerification(nouveauStatut);
+
+                JOptionPane.showMessageDialog(this,
+                        "L'inscription a été validée avec succès !");
+
+                // Rafraîchir la page GestionDeCompte
+                if (parentRefreshCallback != null) {
+                    parentRefreshCallback.run();
+                }
+
+                dispose(); // ferme la fenêtre
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Erreur lors de la mise à jour.",
                         "Erreur",
                         JOptionPane.ERROR_MESSAGE);
             }

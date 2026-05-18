@@ -47,6 +47,23 @@ public class UtilisateurDAO {
 
         return liste;
     }
+    public static boolean updateStatutVerification(int idUtilisateur, String statut) {
+        String sql = "UPDATE utilisateur SET statut_verification = ? WHERE id = ?";
+
+        try (Connection conn = ConnexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, statut);      // nouveau statut : VALIDE, REFUSE, etc.
+            stmt.setInt(2, idUtilisateur);  // id de l'utilisateur à modifier
+
+            return stmt.executeUpdate() > 0; // true si au moins 1 ligne modifiée
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 
     // supprimer un utilisateur

@@ -125,8 +125,11 @@ public class PageGestionComptes extends JFrame {
                 return;
             }
 
-            ValidationInscription fen = new ValidationInscription(utilisateur);
+            ValidationInscription fen = new ValidationInscription(utilisateur, () -> {
+                chargerComptes(); // ← rafraîchire le tableau
+            });
             fen.setVisible(true);
+
         });
     }
 
