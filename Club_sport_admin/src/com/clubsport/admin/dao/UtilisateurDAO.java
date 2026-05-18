@@ -65,6 +65,7 @@ public class UtilisateurDAO {
     }
 
 
+
     // supprimer un utilisateur
     public boolean supprimerUtilisateur(int id) {
         String sql = "DELETE FROM utilisateur WHERE id = ?";

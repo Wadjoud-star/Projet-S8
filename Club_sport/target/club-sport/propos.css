@@ -1,0 +1,134 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f9;
+    color: #222;
+    line-height: 1.6;
+}
+
+.navbar {
+    height: 70px;
+    background: #1f2933;
+    color: white;
+    display: flex;
+    /* in the middle*/
+    align-items: center;
+    /*left point to right point*/
+    justify-content: space-between;
+    padding: 0 8%;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    /* in the middle*/
+    letter-spacing: 1px;
+}
+
+.navbar nav a {
+    color: #d9e2ec;
+    /*no underline*/
+    text-decoration: none;
+    margin-left: 25px;
+    font-size: 16px;
+}
+
+.navbar nav a:hover,
+.navbar nav a.active {
+    color: #ffffff;
+    border-bottom: 2px solid #4da3ff;
+    padding-bottom: 5px;
+}
+
+.page {
+    width: 85%;
+    max-width: 1100px;
+    margin: 40px auto;
+}
+
+.main {
+    background: linear-gradient(135deg, #1f2933, #334e68);
+    color: white;
+    padding: 45px;
+    border-radius: 18px;
+    margin-bottom: 35px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.main h1 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.main p {
+    font-size: 18px;
+    color: #e6edf5;
+}
+
+.content {
+    display: grid;
+    /*2 coloums*/
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.card {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border-left: 5px solid #4da3ff;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    color: #1f2933;
+}
+
+.card p {
+    font-size: 16px;
+    color: #444;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    margin-top: 50px;
+    background: #1f2933;
+    color: #d9e2ec;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 18px;
+    }
+
+    .navbar nav {
+        margin-top: 12px;
+    }
+
+    .page {
+        width: 92%;
+    }
+
+    .main {
+        padding: 30px;
+    }
+
+    .main h1 {
+        font-size: 28px;
+    }
+
+    .content {
+        grid-template-columns: 1fr;
+    }
+}

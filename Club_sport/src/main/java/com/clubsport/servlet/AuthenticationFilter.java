@@ -2,6 +2,8 @@ package com.clubsport.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -11,7 +13,11 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.*;
 
-@WebFilter(urlPatterns = {"/elu", "/elu/licences"})
+@WebFilter(urlPatterns = {
+        "/elu", "/elu/licences", "/elu/licences/communes-search", "/elu/licences/export",
+        "/elu/cartographie", "/elu/cartographie/data",
+        "/elu/visualisation", "/elu/export-pdf",
+        "/acteur"})
 
 public class AuthenticationFilter implements Filter {
 
@@ -28,8 +34,11 @@ public class AuthenticationFilter implements Filter {
 		} else {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			response.setContentType("application/json");
-			PrintWriter out = response.getWriter();
-			out.print("{\"error\" : \"Authentification required\"}");
+			//PrintWriter out = response.getWriter();
+			//out.print("{\"error\" : \"Authentification required\"}");
+			String msg = URLEncoder.encode("Veuillez vous identifier pour accéder à cette page",
+					StandardCharsets.UTF_8);
+			response.sendRedirect(request.getContextPath() + "/errorLogin.html?message=" + msg);
 			return;
 		}
 	}

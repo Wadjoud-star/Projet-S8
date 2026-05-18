@@ -104,6 +104,7 @@ public class ValidationInscription extends JFrame {
         // --- ACTION : Voir justificatif ---
         btnVoirJustificatif.addActionListener(e -> {
 
+            // récupère le chemin de la photo stocké en base (ex: "uploads/12345_image.jpg")
             String chemin = utilisateur.getPhotoIdentite();
 
             if (chemin == null || chemin.isEmpty()) {

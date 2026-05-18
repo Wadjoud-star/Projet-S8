@@ -1,25 +1,39 @@
 package com.clubsport.util;
 
-import java.sql.DriverManager;
 import java.sql.Connection;
-
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnexionDB {
 
-	private static final String URL = "jdbc:mysql://mysql:3306/clubs_sportifs";
-    //private static final String URL      = "jdbc:mysql://localhost:3307/clubs_sportifs";
-    private static final String USER     = "root";
+    /**
+     * Eclipse + MySQL Docker sur le Mac : par défaut 127.0.0.1:3306.
+     * Tomcat dans Docker (compose) : définir MYSQL_HOST=mysql.
+     */
+    private static final String JDBC_URL = buildJdbcUrl();
+    private static final String USER = "root";
     private static final String PASSWORD = "root";
-    private static final String DRIVER   = "com.mysql.cj.jdbc.Driver";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 
-    // Constructeur privé : personne ne peut faire new ConnexionDB()
-    private ConnexionDB() {}
+    private ConnexionDB() {
+    }
+
+    private static String buildJdbcUrl() {
+        String host = System.getenv("MYSQL_HOST");
+        if (host == null || host.isBlank()) {
+            host = "127.0.0.1";
+        }
+        String port = System.getenv("MYSQL_PORT");
+        if (port == null || port.isBlank()) {
+            port = "3306";
+        }
+        return "jdbc:mysql://" + host + ":" + port + "/clubs_sportifs";
+    }
 
     public static Connection getConnection() throws SQLException {
         try {
             Class.forName(DRIVER);
-            return DriverManager.getConnection(URL, USER, PASSWORD);
+            return DriverManager.getConnection(JDBC_URL, USER, PASSWORD);
         } catch (ClassNotFoundException e) {
             throw new SQLException("Driver MySQL introuvable : " + e.getMessage());
         }

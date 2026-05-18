@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f9;
+    color: #222;
+}
+
+.navbar {
+    height: 70px;
+    background: #1f2933;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8%;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.navbar a {
+    color: #d9e2ec;
+    text-decoration: none;
+    margin-left: 25px;
+}
+
+.navbar a:hover {
+    color: white;
+}
+
+.container {
+    width: 85%;
+    max-width: 1100px;
+    margin: 40px auto;
+}
+
+.main {
+    background: linear-gradient(135deg, #1f2933, #334e68);
+    color: white;
+    padding: 40px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+}
+
+.main h1 {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.main p {
+    font-size: 18px;
+    color: #e6edf5;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.card {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    border-left: 5px solid #4da3ff;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    margin-bottom: 12px;
+    color: #1f2933;
+}
+
+.card p {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.card button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.card button:hover {
+    background: #1d4ed8;
+}
+
+@media (max-width: 768px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        width: 92%;
+    }
+     .navbar {
+        height: auto;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 8%;
+        gap: 15px;
+    }
+
+    .logo {
+        text-align: center;
+        font-size: 26px;
+    }
+
+    .navbar nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .navbar a {
+        margin-left: 0;
+    }
+}
