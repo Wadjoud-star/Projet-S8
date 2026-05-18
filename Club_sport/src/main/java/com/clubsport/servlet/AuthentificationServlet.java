@@ -56,7 +56,7 @@ public class AuthentificationServlet extends HttpServlet {
 		}
 
 		String statut = u.getStatut() == null ? "" : u.getStatut().trim();
-		if (!statut.isEmpty() && !"VALIDE".equalsIgnoreCase(statut)) {
+		if (!statut.isEmpty() && !isCompteValide(statut)) {
 			redirectError(request, response,
 					"Inscription en attente de validation par l'administrateur");
 			return;
@@ -86,5 +86,10 @@ public class AuthentificationServlet extends HttpServlet {
 
 	private String safe(String value) {
 		return value == null ? "" : value.trim();
+	}
+
+	/** Aligné avec l'app admin (VERIFIE) et les comptes de test (VALIDE). */
+	private boolean isCompteValide(String statut) {
+		return "VALIDE".equalsIgnoreCase(statut) || "VERIFIE".equalsIgnoreCase(statut);
 	}
 }
