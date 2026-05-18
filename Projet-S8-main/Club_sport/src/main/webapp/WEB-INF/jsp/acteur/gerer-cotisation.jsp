@@ -1,0 +1,34 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gérer les cotisations</title>
+<style>
+body { font-family: Arial; background: #f4f6f9; }
+.container { width: 90%; margin: 40px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 18px rgba(0,0,0,0.08); }
+textarea { width: 100%; height: 220px; padding: 15px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; }
+button { margin-top: 20px; padding: 12px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; }
+button:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h2>Cotisation actuelle</h2>
+        <p>${club.cotisation}</p>
+    </div>
+
+    <div class="card">
+        <h2>Modifier la cotisation</h2>
+        <form action="/acteur/gerer-cotisation" method="post">
+            <textarea name="cotisation">${club.cotisation}</textarea>
+            <button type="submit">Enregistrer</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

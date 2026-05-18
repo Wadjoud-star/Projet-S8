@@ -1,0 +1,42 @@
+
+
+
+
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: club_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: clubs_sportifs
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - club_network
+
+  tomcat:
+    build: .
+    container_name: club_tomcat
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ./docker/.keystore:/usr/local/tomcat/conf/.keystore
+      - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
+      - ./uploads:/data/uploads
+
+    networks:
+      - club_network
+
+volumes:
+  mysql_data:
+networks:
+  club_network:
