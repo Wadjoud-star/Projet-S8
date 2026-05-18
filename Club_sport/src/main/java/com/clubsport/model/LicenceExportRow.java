@@ -1,25 +1,22 @@
 package com.clubsport.model;
 
 /**
- * Données affichées pour une ligne de {@code statistique_licencies}
- * avec libellés commune / fédération (jointures).
+ * Une ligne du fichier CSV exporté (détail par commune).
  */
-public class StatLicenceElu {
+public class LicenceExportRow {
 
     private String codeRegion;
     private String nomRegion;
     private String codeDepartement;
-    /** Libellé du département (table {@code departement}), utile pour l'affichage périmètre département. */
     private String nomDepartement;
     private String codeCommune;
     private String nomCommune;
+    private int population;
     private String codeFederation;
     private String nomFederation;
-    private String genre;
     private int totalLicencies;
     private int licenciesFemmes;
     private int licenciesHommes;
-    private int valeurGenre;
 
     public String getCodeRegion() {
         return codeRegion;
@@ -69,6 +66,14 @@ public class StatLicenceElu {
         this.nomCommune = nomCommune;
     }
 
+    public int getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(int population) {
+        this.population = population;
+    }
+
     public String getCodeFederation() {
         return codeFederation;
     }
@@ -107,21 +112,5 @@ public class StatLicenceElu {
 
     public void setLicenciesHommes(int licenciesHommes) {
         this.licenciesHommes = licenciesHommes;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public int getValeurGenre() {
-        return valeurGenre;
-    }
-
-    public void setValeurGenre(int valeurGenre) {
-        this.valeurGenre = valeurGenre;
     }
 }

@@ -1,7 +1,5 @@
 
-
-
-
+version: '3.8'
 
 services:
   mysql:
@@ -25,6 +23,9 @@ services:
     restart: always
     depends_on:
       - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
     ports:
       - "8080:8080"
       - "8443:8443"
@@ -32,7 +33,6 @@ services:
       - ./docker/.keystore:/usr/local/tomcat/conf/.keystore
       - ./docker/server.xml:/usr/local/tomcat/conf/server.xml
       - ./uploads:/data/uploads
-
     networks:
       - club_network
 

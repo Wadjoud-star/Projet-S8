@@ -19,7 +19,7 @@ public class User {
 		this.nom = nom;
 		this.password = password;
 		this.role = role;
-		this.statut = "En_ATTENTE";
+		this.statut = "EN_ATTENTE";
 		this.identitePath = identitePath;
 	}
 	public User(String email, String nom, String password, String role, String identitePath, String statut) {

@@ -49,17 +49,30 @@ public class EluLicencesServlet extends HttpServlet {
         req.setAttribute("genre", safe(genre).isEmpty() ? "TOTAL" : safe(genre));
 
         if (codeFederation == null || codeFederation.isBlank()) {
-            req.setAttribute("erreur", "Merci de renseigner le code fédération.");
+            req.setAttribute("erreur", "Merci de choisir une fédération.");
             loadFilterData(req);
             req.getRequestDispatcher("/WEB-INF/jsp/elus/licences-form.jsp").forward(req, resp);
             return;
         }
 
         try {
+            if (!safe(codeCommune).isEmpty()
+                    && !eluLicenceService.communeDansPerimetre(safe(codeCommune), safe(codeRegion), safe(codeDepartement))) {
+                req.setAttribute("erreur",
+                        "La commune choisie ne correspond pas à la région ou au département sélectionné.");
+                loadFilterData(req);
+                req.getRequestDispatcher("/WEB-INF/jsp/elus/licences-form.jsp").forward(req, resp);
+                return;
+            }
+            if (!safe(codeCommune).isEmpty()) {
+                req.setAttribute("communeLibelle",
+                        eluLicenceService.libelleCommune(safe(codeCommune)).orElse(safe(codeCommune)));
+            }
             Optional<StatLicenceElu> stat = eluLicenceService.consulterLicences(
                     codeFederation, genre, codeRegion, codeDepartement, codeCommune);
             req.setAttribute("stat", stat.orElse(null));
-            req.getRequestDispatcher("/WEB-INF/jsp/elus/licences-resultat.jsp").forward(req, resp);
+            loadFilterData(req);
+            req.getRequestDispatcher("/WEB-INF/jsp/elus/licences-form.jsp").forward(req, resp);
         } catch (SQLException e) {
             throw new ServletException("Erreur d'accès à la base de données.", e);
         }
@@ -68,14 +81,16 @@ public class EluLicencesServlet extends HttpServlet {
     private void loadFilterData(HttpServletRequest req) {
         List<Map<String, String>> regions = Collections.emptyList();
         List<Map<String, String>> departements = Collections.emptyList();
+        List<Map<String, String>> federations = Collections.emptyList();
         try {
             regions = eluLicenceService.listerRegions();
             departements = eluLicenceService.listerDepartements();
+            federations = eluLicenceService.listerFederations();
         } catch (SQLException e) {
             e.printStackTrace();
             req.setAttribute(
                     "erreurGeo",
-                    "Les listes régions/départements n'ont pas pu être chargées (vérifie MySQL et la publication Eclipse).");
+                    "Les listes régions/départements/fédérations n'ont pas pu être chargées (vérifie MySQL et la publication Eclipse).");
         }
         if (regions == null) {
             regions = new ArrayList<>();
@@ -83,8 +98,12 @@ public class EluLicencesServlet extends HttpServlet {
         if (departements == null) {
             departements = new ArrayList<>();
         }
+        if (federations == null) {
+            federations = new ArrayList<>();
+        }
         req.setAttribute("regions", regions);
         req.setAttribute("departements", departements);
+        req.setAttribute("federations", federations);
     }
 
     private String safe(String value) {

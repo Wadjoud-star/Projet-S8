@@ -32,43 +32,43 @@ public class UserDAO {
 		}
 	}
 
-	public User getUserbymail(String email) {
-		String sql = "SELECT* FROM utilisateur WHERE email = ?";
+	public User getUserbymail(String email) throws SQLException {
+		String sql = "SELECT * FROM utilisateur WHERE email = ?";
 		try (Connection conn = ConnexionDB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, email);
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				return new User(rs.getString("email"), rs.getString("nom"), rs.getString("mot_de_passe_hash"),
-						rs.getString("role"), rs.getString("photo_identite"), rs.getString("statut_verification"));
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					return new User(rs.getString("email"), rs.getString("nom"), rs.getString("mot_de_passe_hash"),
+							rs.getString("role"), rs.getString("photo_identite"), rs.getString("statut_verification"));
+				}
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
-	public boolean validateUser(String email, String password, String role) {
-		String sql = "SELECT* FROM utilisateur WHERE email = ? AND role = ?";
-		try (Connection conn = ConnexionDB.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-			stmt.setString(1, email);
-			stmt.setString(2, role);
-			ResultSet rs = stmt.executeQuery();
-			if(rs.next()) {
-				String hash = rs.getString("mot_de_passe_hash");
-	            return BCrypt.checkpw(password, hash);
-			}
+
+	/** Vérifie le mot de passe pour un utilisateur déjà chargé (rôle lu en base). */
+	public boolean verifyPassword(User user, String plainPassword) {
+		if (user == null || plainPassword == null) {
 			return false;
-		} catch (SQLException e) {
-			e.printStackTrace();
+		}
+		String hash = user.getPassword();
+		if (hash == null || hash.isBlank()) {
+			return false;
+		}
+		try {
+			return BCrypt.checkpw(plainPassword, hash);
+		} catch (IllegalArgumentException e) {
 			return false;
 		}
 	}
+
 	public static void main(String[] args) {
-		User u = new User("tata", "tata@gmail.com", "Afikjksndvkjbb##hvk]]", "elu", "u");
+		User u = new User("tata", "tata@gmail.com", "Afikjksndvkjbb##hvk]]", "elu", "uploads/demo.pdf");
 		UserDAO udao = new UserDAO();
 		boolean validate = udao.addUser(u);
-		if(validate) {
+		if (validate) {
 			System.out.println("Success!");
-		}else {
+		} else {
 			System.out.println("Failed!");
 		}
 	}
