@@ -61,8 +61,7 @@ public class ValidationInscription extends JFrame {
         gbc.gridx = 1;
         panelInfos.add(new JLabel(utilisateur.getRole()), gbc);
 
-
-     // --- Statut de vérification ---
+        // --- Statut de vérification ---
         gbc.gridx = 0;
         gbc.gridy = 4;
         panelInfos.add(new JLabel("Statut vérification :"), gbc);
@@ -96,10 +95,10 @@ public class ValidationInscription extends JFrame {
 
         // --- ACTION : Voir justificatif ---
         btnVoirJustificatif.addActionListener(e -> {
-            // récupère le chemin de la photo
-            String chemin = utilisateur.getPhotoIdentite(); // VARCHAR stocké en base
 
-            // si rien on affiche un message d'erreur 
+            // récupère le chemin de la photo stocké en base (ex: "uploads/12345_image.jpg")
+            String chemin = utilisateur.getPhotoIdentite();
+
             if (chemin == null || chemin.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Aucun justificatif disponible.");
                 return;
@@ -108,13 +107,26 @@ public class ValidationInscription extends JFrame {
             try {
                 ImageIcon icon;
 
-                // Si c'est une URL
-                if (chemin.startsWith("http")) {
-                    icon = new ImageIcon(new java.net.URL(chemin));
-                } else {
-                    // Sinon chemin local
-                    icon = new ImageIcon(chemin);
+                // --- NOUVEAU : Correction du chemin relatif ---
+                // Si le chemin commence par "uploads/", on le relie au dossier du projet Club_sport
+                if (!chemin.startsWith("http") && chemin.startsWith("uploads/")) {
+
+                    // Ici on suppose que Club_sport_admin et Club_sport sont côte à côte
+                    chemin = "../Club_sport/" + chemin;
                 }
+
+                // Vérification que le fichier existe
+                java.io.File file = new java.io.File(chemin);
+                if (!file.exists()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Le fichier n'existe pas :\n" + chemin,
+                            "Erreur",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Chargement de l'image
+                icon = new ImageIcon(chemin);
 
                 // Redimensionner proprement
                 Image img = icon.getImage();

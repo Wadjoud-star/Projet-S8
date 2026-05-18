@@ -48,6 +48,7 @@ public class UtilisateurDAO {
         return liste;
     }
 
+
     // supprimer un utilisateur
     public boolean supprimerUtilisateur(int id) {
         String sql = "DELETE FROM utilisateur WHERE id = ?";
