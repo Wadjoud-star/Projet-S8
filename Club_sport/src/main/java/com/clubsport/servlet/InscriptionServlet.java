@@ -14,7 +14,7 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import org.mindrot.bcrypt.BCrypt;
+import org.mindrot.jbcrypt.BCrypt;
 
 import com.clubsport.dao.*;
 import com.clubsport.model.*;
