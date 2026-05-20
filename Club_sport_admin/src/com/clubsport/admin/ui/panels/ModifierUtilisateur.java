@@ -81,7 +81,7 @@ public class ModifierUtilisateur extends JFrame {
         panel.add(Box.createVerticalStrut(12));
 
         // Photo identité
-        panel.add(new JLabel("Photo d'identité (chemin ou URL) :"));// Indique à l’admin ce qu’il doit saisir :
+        panel.add(new JLabel("Photo d'identité  :"));
 //récupères la valeur  stockée en base  mets dans le champ.
         txtPhoto = new JTextField(utilisateur.getPhotoIdentite());
         

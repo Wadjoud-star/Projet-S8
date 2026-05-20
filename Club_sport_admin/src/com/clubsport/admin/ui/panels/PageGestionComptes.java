@@ -162,7 +162,7 @@ public class PageGestionComptes extends JFrame {
         }
     }
 
-    // --- RÉCUPÉRER LES IDS SÉLECTIONNÉS ---
+    //récupérer les identifiants des clients sélectionner 
     private List<Integer> getSelectedIds() {
         List<Integer> ids = new ArrayList<>();
 
@@ -175,7 +175,7 @@ public class PageGestionComptes extends JFrame {
         return ids;
     }
 
-    // --- MODIFIER ---
+    //MODIFIER
     private void modifierSelection() {
         List<Integer> ids = getSelectedIds();
 
@@ -208,7 +208,7 @@ public class PageGestionComptes extends JFrame {
         });
     }
 
-    // --- SUPPRIMER ---
+    // SUPPRIMER 
     private void supprimerSelection() {
         List<Integer> ids = getSelectedIds();
 
@@ -232,7 +232,7 @@ public class PageGestionComptes extends JFrame {
         chargerComptes();
     }
 
-    // --- MAIN ---
+    // 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             PageGestionComptes fen = new PageGestionComptes();
