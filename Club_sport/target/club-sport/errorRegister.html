@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Erreur d'inscription</title>
+</head>
+
+<body>
+
+	<h1>Erreur</h1>
+
+	<p id="message"></p>
+
+	<script>
+
+		const params = new URLSearchParams(window.location.search);
+
+		const message = params.get("message");
+
+		document.getElementById("message").textContent = message;
+
+		setTimeout(() => {
+			window.location.href = "inscription.html";
+		}, 3000);
+
+	</script>
+
+</body>
+
+</html>

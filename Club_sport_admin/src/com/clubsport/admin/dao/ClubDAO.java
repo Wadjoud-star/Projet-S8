@@ -62,7 +62,7 @@ public class ClubDAO {
         Federation federation = chargerFederation(conn, rs.getString("code_federation"));
 
         // --- Chargement des statistiques ---
-        StatistiqueLicencies stats = chargerStatistiques(conn, idClub, commune, federation);
+        StatistiqueLicencies stats = chargerStatistiques(conn, idClub);
 
         // --- Chargement de l'espace club ---
         EspaceClub espace = chargerEspaceClub(conn, idClub);

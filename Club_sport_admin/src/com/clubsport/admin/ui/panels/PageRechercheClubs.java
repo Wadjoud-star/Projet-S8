@@ -2,6 +2,7 @@ package com.clubsport.admin.ui.panels;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public class PageRechercheClubs extends JFrame {
     private JTextField txtRecherche; // champ de recherche de saisie
     private JTable table; // tableau qui affiche les résultats 
     private DefaultTableModel model; // modèle du tableau
+
+    private JComboBox<String> cbTri; // menu déroulant pour trier
 
     private RechercheDAO rechercheDAO = new RechercheDAO(); // objet de la base de données (nouveau DAO)
 
@@ -41,16 +44,18 @@ public class PageRechercheClubs extends JFrame {
 
         // Attribue un nom à chaque bouton 
         rbCommune = new JRadioButton("Commune");
-        rbCodePostal = new JRadioButton("Code postal");
+        rbCodePostal = new JRadioButton("Code region");
         rbLicencies = new JRadioButton("Licenciés minimum"); // recherche minimum
         rbFederation = new JRadioButton("Fédération");
-// creation des boutons (radio) 
+
+        // creation des boutons (radio) 
         ButtonGroup group = new ButtonGroup();
         group.add(rbCommune);
         group.add(rbCodePostal);
         group.add(rbLicencies);
         group.add(rbFederation);
-// un seul bouton selectionner 
+
+        // un seul bouton selectionner 
         rbCommune.setSelected(true); // par défaut le bouton commune est sélectionné 
 
         panelCriteres.add(rbCommune);
@@ -69,8 +74,21 @@ public class PageRechercheClubs extends JFrame {
         // si clique sur bouton cela fait appel à la fonction de recherche
         btnChercher.addActionListener(e -> rechercherClubs());
 
+        // --- TRI ---
+        JLabel lblTrier = new JLabel("Trier par :");
+
+        String[] optionsTri = {
+                "Fédération", "Commune", "Région", "Code postal",
+                "Total licenciés", "Hommes", "Femmes",
+                "Nb clubs", "Établissements", "Structures"
+        };
+
+        cbTri = new JComboBox<>(optionsTri);
+
         panelRecherche.add(txtRecherche);
         panelRecherche.add(btnChercher);
+        panelRecherche.add(lblTrier);
+        panelRecherche.add(cbTri);
 
         panelHaut.add(panelRecherche);
 
@@ -79,7 +97,7 @@ public class PageRechercheClubs extends JFrame {
         //  TABLEAU 
         // colonnes adaptées aux résultats statistiques
         String[] colonnes = {
-                "Fédération", "Commune", "Région", "Code postal",
+                "Fédération", "Commune", "Région", "Code region",
                 "Total licenciés", "Hommes", "Femmes",
                 "Nb clubs", "Établissements", "Structures"
         };
@@ -128,5 +146,13 @@ public class PageRechercheClubs extends JFrame {
                     r.getTotalStructures()
             });
         }
+
+        // tri les résultats
+        int colonneTri = cbTri.getSelectedIndex(); // même ordre que les colonnes du tableau
+//TableRowSorter classe Swing qui permet de trier les lignes d’un tableau.
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);// attache un model pour trier le tableau 
+
+        sorter.toggleSortOrder(colonneTri); // permet le tri croissant
     }
 }
