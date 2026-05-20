@@ -8,20 +8,17 @@ public class Utilisateur {
     private int id;
     private String nom;
     private String email;
-    private String motDePasseHash;
+    private String motDePasseHash; // mot de passe hashé (SHA-256 ou BCrypt)
     private String role;
-
-    // état de l'inscription de l'utilisateur (SUPPRIMÉ DE LA BDD)
-    // private String etatInscription = "En cours";
 
     private List<HistoriqueConnexion> historiques; // liste des connexions
 
     private String photoIdentite = null; // photo d'identité stockée en BDD
-    private String statutVerification = "EN_ATTENTE"; // nouveau champ BDD
+    private String statutVerification = "EN_ATTENTE"; // statut de vérification (EN_ATTENTE, VALIDE, REFUSE)
 
     public Utilisateur() {}
 
-    // Construire un objet utilisateur (constructeur complet utilisé par le DAO)
+    // --- Constructeur complet utilisé par le DAO ---
     public Utilisateur(int id, String nom, String email, String motDePasseHash, String role,
                        String photoIdentite, String statutVerification) {
 
@@ -34,6 +31,8 @@ public class Utilisateur {
         this.statutVerification = statutVerification;
         this.historiques = new ArrayList<>();
     }
+
+    // --- Constructeur intermédiaire ---
     public Utilisateur(int id, String nom, String email, String motDePasseHash, String role) {
         this.id = id;
         this.nom = nom;
@@ -42,7 +41,7 @@ public class Utilisateur {
         this.role = role;
     }
 
-    // Constructeur simplifié (si besoin ailleurs)
+    // --- Constructeur simplifié ---
     public Utilisateur(int id, String nom, String email, String role) {
         this.id = id;
         this.nom = nom;
@@ -50,6 +49,7 @@ public class Utilisateur {
         this.role = role;
     }
 
+    // --- GETTERS ---
     public int getId() {
         return id;
     }
@@ -74,8 +74,47 @@ public class Utilisateur {
         return historiques;
     }
 
+    public String getPhotoIdentite() {
+        return photoIdentite;
+    }
+
+    public String getStatutVerification() {
+        return statutVerification;
+    }
+
+    // --- SETTERS ---
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public void setPhotoIdentite(String photoIdentite) {
+        this.photoIdentite = photoIdentite;
+    }
+
+    public void setStatutVerification(String statutVerification) {
+        this.statutVerification = statutVerification;
+    }
+
+    // setter ajouté pour gérer le mot de passe hashé
+    public void setMotDePasseHash(String motDePasseHash) {
+        this.motDePasseHash = motDePasseHash;
+    }
+
+    // --- MÉTHODES UTILES ---
+
     // ajouter une connexion
     public void ajouterConnexion(HistoriqueConnexion historique) {
+        if (this.historiques == null) {
+            this.historiques = new ArrayList<>();
+        }
         this.historiques.add(historique);
     }
 
@@ -94,30 +133,9 @@ public class Utilisateur {
         return "club".equalsIgnoreCase(role);
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     // Afficher de façon lisible
     @Override
     public String toString() {
         return nom + " (" + role + ")";
     }
-
-    // méthodes pour les photos à récupérer dans la bdd
-    public String getPhotoIdentite() { return photoIdentite; }
-    public void setPhotoIdentite(String photoIdentite) { this.photoIdentite = photoIdentite; }
-
-    // nouveau champ : statut de vérification
-    public String getStatutVerification() { return statutVerification; }
-    public void setStatutVerification(String statutVerification) { this.statutVerification = statutVerification; }
-
 }
