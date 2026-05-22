@@ -143,7 +143,7 @@ public class UtilisateurDAO {
         return null;
     }
 
-    // --- AJOUTER UN UTILISATEUR ---
+    // Methode pour ajouter un utilisateur
     // Le mot de passe est déjà hashé dans l'UI avant d'arriver ici
     public boolean ajouterUtilisateur(Utilisateur u) {
         String sql = """

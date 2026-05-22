@@ -15,17 +15,26 @@ public class PageGestionComptes extends JFrame {
     private JTable table;
     private DefaultTableModel model;
 
+    // --- BOUTONS DE TRI ---
+    private JRadioButton triNomAZ;
+    private JRadioButton triNomZA;
+    private JRadioButton triStatut;
+
     private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
 
     public PageGestionComptes() {
         setTitle("Gestion des comptes");
-        setSize(750, 550);
+        setSize(900, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         // --- PANEL HAUT ---
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        topPanel.add(new JLabel("Type : "));
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS)); // empile verticalement
+
+        // --- LIGNE 1 : TYPE + CHERCHER ---
+        JPanel ligne1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        ligne1.add(new JLabel("Type : "));
 
         comboType = new JComboBox<>(new String[]{
                 "Élus", "Présidents", "Entraîneurs", "Sportifs", "Administrateurs"
@@ -38,8 +47,36 @@ public class PageGestionComptes extends JFrame {
         btnChercher.setPreferredSize(new Dimension(110, 35));
         btnChercher.addActionListener(e -> chargerComptes());
 
-        topPanel.add(comboType);
-        topPanel.add(btnChercher);
+        ligne1.add(comboType);
+        ligne1.add(btnChercher);
+
+        topPanel.add(ligne1);
+
+        // --- LIGNE 2 : TRI ---
+        JPanel ligne2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        ligne2.add(new JLabel("Trier par : "));
+
+        triNomAZ = new JRadioButton("Nom A→Z");
+        triNomZA = new JRadioButton("Nom Z→A");
+        triStatut = new JRadioButton("Statut");
+
+        ButtonGroup groupTri = new ButtonGroup();
+        groupTri.add(triNomAZ);
+        groupTri.add(triNomZA);
+        groupTri.add(triStatut);
+
+        triNomAZ.setSelected(true); // tri par défaut
+
+        ligne2.add(triNomAZ);
+        ligne2.add(triNomZA);
+        ligne2.add(triStatut);
+
+        // --- RAFRAICHIR AUTOMATIQUEMENT AU CHANGEMENT DE TRI ---
+        triNomAZ.addActionListener(e -> chargerComptes());
+        triNomZA.addActionListener(e -> chargerComptes());
+        triStatut.addActionListener(e -> chargerComptes());
+
+        topPanel.add(ligne2);
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -100,6 +137,7 @@ public class PageGestionComptes extends JFrame {
 
         btnCreer.addActionListener(e -> {
             CreerUtilisateur fen = new CreerUtilisateur();
+            fen.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             fen.setVisible(true);
 
             fen.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -129,7 +167,6 @@ public class PageGestionComptes extends JFrame {
                 chargerComptes(); // ← rafraîchire le tableau
             });
             fen.setVisible(true);
-
         });
     }
 
@@ -150,6 +187,29 @@ public class PageGestionComptes extends JFrame {
 
         List<Utilisateur> utilisateurs = utilisateurDAO.getUtilisateursParRole(roleBDD);
 
+        // --- TRI ---
+        if (triNomAZ.isSelected()) {
+            utilisateurs.sort((a, b) -> a.getNom().compareToIgnoreCase(b.getNom()));
+        }
+        else if (triNomZA.isSelected()) {
+            utilisateurs.sort((a, b) -> b.getNom().compareToIgnoreCase(a.getNom()));
+        }
+        else if (triStatut.isSelected()) {
+
+            utilisateurs.sort((a, b) -> {
+                String sa = a.getStatutVerification();
+                String sb = b.getStatutVerification();
+
+                sa = (sa == null) ? "" : sa.toUpperCase();
+                sb = (sb == null) ? "" : sb.toUpperCase();
+
+                int pa = getPrioriteStatut(sa);
+                int pb = getPrioriteStatut(sb);
+
+                return Integer.compare(pa, pb);
+            });
+        }
+
         for (Utilisateur u : utilisateurs) {
             model.addRow(new Object[]{
                     false,
@@ -157,9 +217,17 @@ public class PageGestionComptes extends JFrame {
                     u.getNom(),
                     u.getEmail(),
                     u.getRole(),
-                    u.getStatutVerification() // ✔ NOUVEAU
+                    u.getStatutVerification()
             });
         }
+    }
+
+    // --- PRIORITÉ DES STATUTS ---
+    private int getPrioriteStatut(String statut) {
+        if (statut.contains("ATTENTE")) return 0; // EN_ATTENTE
+        if (statut.startsWith("VALIDE")) return 1; // VALIDE
+        if (statut.startsWith("REFUS")) return 2; // REFUSE
+        return 3;
     }
 
     //récupérer les identifiants des clients sélectionner 

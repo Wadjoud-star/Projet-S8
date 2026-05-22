@@ -1,5 +1,6 @@
 com\clubsport\service\ClubService.class
 com\clubsport\servlet\EluAccueilServlet.class
+com\clubsport\servlet\EluCommuneSearchServlet.class
 com\clubsport\servlet\StatsServlet.class
 com\clubsport\util\JsonUtil.class
 com\clubsport\util\ConnexionDB.class
@@ -7,6 +8,7 @@ com\clubsport\model\StatClubs.class
 com\clubsport\model\Federation.class
 com\clubsport\dao\ClubDAO.class
 com\clubsport\model\Departement.class
+com\clubsport\model\LicenceExportRow.class
 com\clubsport\servlet\FederationServlet.class
 com\clubsport\dao\EluVisualisationDAO.class
 com\clubsport\model\ClassementCommune.class
@@ -15,12 +17,16 @@ com\clubsport\model\User.class
 com\clubsport\model\Club.class
 com\clubsport\dao\EluLicenceDAO.class
 com\clubsport\servlet\ClubDetailServlet.class
+com\clubsport\util\CsvExportUtil.class
 com\clubsport\servlet\ActeurAccueilServlet.class
+com\clubsport\servlet\EluCartographieDataServlet.class
 com\clubsport\servlet\ExportPDFServlet.class
 com\clubsport\dao\RegionDAO.class
 com\clubsport\dao\FederationDAO.class
 com\clubsport\dao\UserDAO.class
+com\clubsport\model\LicenceSearchExtras.class
 com\clubsport\util\Test.class
+com\clubsport\servlet\EluLicencesExportServlet.class
 com\clubsport\servlet\InscriptionServlet.class
 com\clubsport\dao\StatLicenciesDAO.class
 com\clubsport\model\Region.class
@@ -33,5 +39,6 @@ com\clubsport\servlet\EluVisualisationServlet.class
 com\clubsport\model\StatLicenceElu.class
 com\clubsport\servlet\ClubServlet.class
 com\clubsport\servlet\RegionServlet.class
+com\clubsport\servlet\EluCartographieServlet.class
 com\clubsport\servlet\AuthentificationServlet.class
 com\clubsport\servlet\CheckAuthServlet.class

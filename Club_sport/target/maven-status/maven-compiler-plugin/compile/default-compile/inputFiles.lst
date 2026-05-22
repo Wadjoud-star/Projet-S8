@@ -11,6 +11,8 @@ C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Cl
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Commune.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Departement.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Federation.java
+C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\LicenceExportRow.java
+C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\LicenceSearchExtras.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Region.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\StatClubs.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\model\StatLicenceElu.java
@@ -25,6 +27,10 @@ C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\ClubServlet.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\DeconnexionServlet.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluAccueilServlet.java
+C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluCartographieDataServlet.java
+C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluCartographieServlet.java
+C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluCommuneSearchServlet.java
+C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluLicencesExportServlet.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluLicencesServlet.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluVisualisationServlet.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\ExportPDFServlet.java
@@ -33,5 +39,6 @@ C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\RegionServlet.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\StatsServlet.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\util\ConnexionDB.java
+C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\util\CsvExportUtil.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\util\JsonUtil.java
 C:\Users\biagi\Desktop\Projet-S8\Club_sport\src\main\java\com\clubsport\util\Test.java

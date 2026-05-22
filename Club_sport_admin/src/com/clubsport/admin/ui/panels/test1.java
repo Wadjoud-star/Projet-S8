@@ -20,7 +20,7 @@ public class test1 extends JFrame {
 
         mainPanel.add(Box.createVerticalStrut(40)); // espace en haut 
 
-        // --- 3 BLOCS CLIQUABLES ---
+        // --- 4 BLOCS CLIQUABLES ---
         mainPanel.add(createClickableBlock("Gestion des comptes", () -> {
             new PageGestionComptes().setVisible(true);// les faire apparaitre 
         }));
@@ -34,11 +34,19 @@ public class test1 extends JFrame {
         mainPanel.add(createClickableBlock("Recherche de clubs", () -> {
             new PageRechercheClubs().setVisible(true);
         }));
+        mainPanel.add(Box.createVerticalStrut(30));
+
+        // --- NOUVEAU : GESTION ADMINISTRATEUR ---
+        mainPanel.add(createClickableBlock("Gestion administrateur", () -> {
+            // ⚠️ La page sera créée ensuite
+            new PageAuditAdministrateur().setVisible(true);
+        }));
 
         mainPanel.add(Box.createVerticalGlue());// un espace en bas
         add(mainPanel, BorderLayout.CENTER);// ajoute le panel a la fenetre 
     }
-// creation de la fonction pour pouvoir cliquer . Définie par un titre et une action 
+
+    // creation de la fonction pour pouvoir cliquer . Définie par un titre et une action 
     private JPanel createClickableBlock(String title, Runnable action) {
         JPanel panel = new JPanel();
         // Pannel de taille fixe 
@@ -61,12 +69,12 @@ public class test1 extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 action.run(); // ouvre  nouvelle page
             }
-// quand la souris entre sur le bloc cliquable change de couleur
+            // quand la souris entre sur le bloc cliquable change de couleur
             @Override
             public void mouseEntered(MouseEvent e) {
                 panel.setBackground(new Color(220, 220, 220));
             }
-// quand la souris sort du cadre redevient couleur normale 
+            // quand la souris sort du cadre redevient couleur normale 
             @Override
             public void mouseExited(MouseEvent e) {
                 panel.setBackground(new Color(245, 245, 245));
@@ -75,7 +83,8 @@ public class test1 extends JFrame {
 
         return panel;
     }
-//Lance l’interface affiche la fenêtre
+
+    //Lance l’interface affiche la fenêtre
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new test1().setVisible(true));
     }
