@@ -1,6 +1,7 @@
 package com.clubsport.admin.ui.panels;
 
 import com.clubsport.admin.dao.UtilisateurDAO;
+import com.clubsport.admin.dao.AuditDAO; // ➕ ajout pour l’audit
 import com.clubsport.admin.model.Utilisateur;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ public class CreerUtilisateur extends JFrame {
     private JTextField txtPhoto; // champ pour la photo
 
     private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
+    private AuditDAO auditDAO = new AuditDAO(); // ➕ DAO pour enregistrer l’action dans l’audit
 
     public CreerUtilisateur() {
 
@@ -183,6 +185,13 @@ public class CreerUtilisateur extends JFrame {
         boolean ok = utilisateurDAO.ajouterUtilisateur(u);
 
         if (ok) {
+
+            // ➕ ENREGISTREMENT DANS L’AUDIT
+            // ⚠️ Remplacer 1 par l’ID réel de l’admin connecté
+            int idAdmin = 1;
+            String details = "Création de l’utilisateur : " + nom;
+            auditDAO.enregistrerAction(idAdmin, "Création utilisateur", details);
+
             JOptionPane.showMessageDialog(this, "Utilisateur créé avec succès.");
             dispose();
         } else {

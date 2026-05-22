@@ -1,30 +1,43 @@
 package com.clubsport.admin.ui.panels;
 
+import com.clubsport.admin.dao.AuditDAO;
+import com.clubsport.admin.model.AuditAction;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class PageAuditAdministrateur extends JFrame {
 
     private JTable table;
     private DefaultTableModel model;
 
+    // DAO pour récupérer les actions depuis la base
+    private AuditDAO auditDAO = new AuditDAO();
+
+    // Format d'affichage de la date
+    private final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
     public PageAuditAdministrateur() {
+
+        // --- Configuration de la fenêtre ---
         setTitle("Gestion administrateur - Audit des actions");
-        setSize(800, 500);
+        setSize(900, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Le titre de ma page 
+        // --- Titre ---
         JLabel titre = new JLabel("Audit des actions administratives", SwingConstants.CENTER);
         titre.setFont(new Font("Arial", Font.BOLD, 22));
         titre.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         add(titre, BorderLayout.NORTH);
 
-        // Le tableau
+        // --- Tableau ---
         model = new DefaultTableModel(
-                new Object[]{"Administrateur", "Action", "Date"},
+                new Object[]{"Administrateur", "Action", "Détails", "Date"},
                 0
         );
 
@@ -34,23 +47,23 @@ public class PageAuditAdministrateur extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
-        // --- DONNÉES FICTIVES AU LANCEMENT ---
-        chargerDonneesFictives();
+        // Chargement initial des données réelles
+        chargerDonneesReelles();
 
-        //Un bouton pour actualiser la page 
+        // --- Bouton Actualiser ---
         JButton btnActualiser = new JButton("Actualiser");
         btnActualiser.setPreferredSize(new Dimension(120, 35));
         btnActualiser.addActionListener(e -> {
-            model.setRowCount(0); // vide le tableau
-            chargerDonneesFictives(); // recharge les données
+            model.setRowCount(0);   // vide le tableau
+            chargerDonneesReelles(); // recharge depuis la BDD
         });
 
-        //LE bouton pour fermer la page 
+        // --- Bouton Fermer ---
         JButton btnFermer = new JButton("Fermer");
         btnFermer.setPreferredSize(new Dimension(120, 35));
         btnFermer.addActionListener(e -> dispose());
 
-        //Bas de la page 
+        // --- Bas de page ---
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(btnActualiser);
         bottomPanel.add(btnFermer);
@@ -58,16 +71,21 @@ public class PageAuditAdministrateur extends JFrame {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    // Méthode pour ajouter une ligne
-    public void ajouterAction(String admin, String action, String date) {
-        model.addRow(new Object[]{admin, action, date});
-    }
+    /**
+     * Charge les actions d’audit depuis la base de données
+     * et les ajoute dans le tableau.
+     */
+    private void chargerDonneesReelles() {
+        List<AuditAction> actions = auditDAO.getAllActions();
 
-    // Méthode pour charger des données fictives
-    private void chargerDonneesFictives() {
-        model.addRow(new Object[]{"AdminA", "Ajout d’un utilisateur", LocalDateTime.now()});
-        model.addRow(new Object[]{"AdminB", "Suppression d’un club", LocalDateTime.now()});
-        model.addRow(new Object[]{"AdminC", "Modification d’un profil", LocalDateTime.now()});
+        for (AuditAction a : actions) {
+            model.addRow(new Object[]{
+                    a.getAdminNom(),
+                    a.getTypeAction(),
+                    a.getDetails(),
+                    a.getDateAction().format(formatter)
+            });
+        }
     }
 
     public static void main(String[] args) {
