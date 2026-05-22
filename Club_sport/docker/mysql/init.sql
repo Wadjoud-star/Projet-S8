@@ -127,6 +127,20 @@ CREATE TABLE historique_connexion (
     FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id)
 );
 
+CREATE TABLE audit_action (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_admin INT NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    details TEXT NULL,
+    date_action TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_audit_action_admin
+        FOREIGN KEY (id_admin) REFERENCES utilisateur(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+    INDEX idx_audit_action_date (date_action DESC),
+    INDEX idx_audit_action_admin (id_admin)
+);
+
 CREATE TABLE espace_club (
     id INT AUTO_INCREMENT PRIMARY KEY,
     actualites TEXT NULL,
