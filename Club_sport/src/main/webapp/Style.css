@@ -82,6 +82,11 @@ body {
 	top: 56px;
 }
 
+#listeClubs {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
 #map {
 	height: calc(100vh - 56px);
 	width: 100%;

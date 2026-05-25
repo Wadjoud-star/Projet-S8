@@ -31,7 +31,6 @@ public class PageGestionComptes extends JFrame {
                 "Élus", "Présidents", "Entraîneurs", "Sportifs", "Administrateurs"
         });
 
-        //  Bouton Chercher
         JButton btnChercher = new JButton("Chercher");
         btnChercher.setBackground(new Color(0, 120, 215));
         btnChercher.setForeground(Color.WHITE);
@@ -44,12 +43,12 @@ public class PageGestionComptes extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Le tableau avec les cases a selectionner 
-        String[] colonnes = {"Sélection", "Identifiant", "Nom"};
+        // --- TABLEAU ---
+        String[] colonnes = {"Sélection", "Identifiant", "Nom", "Email", "Rôle", "Statut Vérification"};
 
         model = new DefaultTableModel(colonnes, 0) {
             @Override
-            public Class<?> getColumnClass(int columnIndex) {// definit le type de colonne du tableau
+            public Class<?> getColumnClass(int columnIndex) {
                 return columnIndex == 0 ? Boolean.class : String.class;
             }
 
@@ -64,34 +63,77 @@ public class PageGestionComptes extends JFrame {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // --- PANEL BAS : Boutons Modifier / Supprimer ---
+        // --- PANEL BAS ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        Color bleu = new Color(0, 120, 215);
 
-        // --- Bouton Modifier harmonisé ---
         JButton btnModifier = new JButton("Modifier");
-        btnModifier.setBackground(new Color(0, 120, 215));
+        btnModifier.setBackground(bleu);
         btnModifier.setForeground(Color.WHITE);
-        btnModifier.setFocusPainted(false);
         btnModifier.setPreferredSize(new Dimension(110, 35));
 
-        // Bouton Supprimer 
         JButton btnSupprimer = new JButton("Supprimer");
-        btnSupprimer.setBackground(new Color(200, 200, 200));
-        btnSupprimer.setFocusPainted(false);
+        btnSupprimer.setBackground(bleu);
+        btnSupprimer.setForeground(Color.WHITE);
         btnSupprimer.setPreferredSize(new Dimension(110, 35));
+
+        JButton btnCreer = new JButton("Créer");
+        btnCreer.setBackground(bleu);
+        btnCreer.setForeground(Color.WHITE);
+        btnCreer.setPreferredSize(new Dimension(110, 35));
+
+        JButton btnValider = new JButton("Valider");
+        btnValider.setBackground(bleu);
+        btnValider.setForeground(Color.WHITE);
+        btnValider.setPreferredSize(new Dimension(110, 35));
 
         bottomPanel.add(btnModifier);
         bottomPanel.add(btnSupprimer);
+        bottomPanel.add(btnCreer);
+        bottomPanel.add(btnValider);
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- ACTION MODIFIER ---
+        // --- ACTIONS ---
         btnModifier.addActionListener(e -> modifierSelection());
-
-        // --- ACTION SUPPRIMER ---
         btnSupprimer.addActionListener(e -> supprimerSelection());
+
+        btnCreer.addActionListener(e -> {
+            CreerUtilisateur fen = new CreerUtilisateur();
+            fen.setVisible(true);
+
+            fen.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent e) {
+                    chargerComptes();
+                }
+            });
+        });
+
+        btnValider.addActionListener(e -> {
+            List<Integer> ids = getSelectedIds();
+
+            if (ids.size() != 1) {
+                JOptionPane.showMessageDialog(this, "Sélectionnez un seul compte à valider.");
+                return;
+            }
+
+            Utilisateur utilisateur = utilisateurDAO.getUtilisateurParId(ids.get(0));
+
+            if (utilisateur == null) {
+                JOptionPane.showMessageDialog(this, "Impossible de charger cet utilisateur.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            ValidationInscription fen = new ValidationInscription(utilisateur, () -> {
+                chargerComptes(); // ← rafraîchire le tableau
+            });
+            fen.setVisible(true);
+
+        });
     }
 
+    // --- CHARGER LES COMPTES ---
     private void chargerComptes() {
         model.setRowCount(0);
 
@@ -108,36 +150,32 @@ public class PageGestionComptes extends JFrame {
 
         List<Utilisateur> utilisateurs = utilisateurDAO.getUtilisateursParRole(roleBDD);
 
-        // --- AJOUT AUTOMATIQUE D’UN UTILISATEUR FICTIF A CHAQUE FOIS ---
-        Utilisateur fictif = new Utilisateur(
-                999,                      // id fictif
-                "Martin Élu",             // nom
-                "martin.elu@example.com", // email
-                "elu"                     // rôle
-        );
-        utilisateurs.add(fictif);
-
         for (Utilisateur u : utilisateurs) {
             model.addRow(new Object[]{
-                    false, // checkbox
+                    false,
                     u.getId(),
-                    u.getNom()
+                    u.getNom(),
+                    u.getEmail(),
+                    u.getRole(),
+                    u.getStatutVerification() // ✔ NOUVEAU
             });
         }
     }
 
+    //récupérer les identifiants des clients sélectionner 
     private List<Integer> getSelectedIds() {
         List<Integer> ids = new ArrayList<>();
 
-        for (int i = 0; i < model.getRowCount(); i++) {// parcourt le slignes du tableau
-            boolean selected = (boolean) model.getValueAt(i, 0);// recupere les infos de la premiere colonne 
+        for (int i = 0; i < model.getRowCount(); i++) {
+            boolean selected = (boolean) model.getValueAt(i, 0);
             if (selected) {
-                ids.add(Integer.parseInt(model.getValueAt(i, 1).toString()));// convertit la colonne 1 en texte puis en entier et on ajoute a la liste
+                ids.add(Integer.parseInt(model.getValueAt(i, 1).toString()));
             }
         }
         return ids;
     }
 
+    //MODIFIER
     private void modifierSelection() {
         List<Integer> ids = getSelectedIds();
 
@@ -149,34 +187,20 @@ public class PageGestionComptes extends JFrame {
         if (ids.size() > 1) {
             JOptionPane.showMessageDialog(this, "Vous ne pouvez modifier qu’un seul compte à la fois.");
             return;
-        }// this désigne la fenetre actuelle 
+        }
 
         int id = ids.get(0);
-
-        // Charger l'utilisateur complet
         Utilisateur utilisateur = utilisateurDAO.getUtilisateurParId(id);
-
-        // Si l'utilisateur n'existe pas en BDD (cas du fictif), on le crée manuellement
-        if (utilisateur == null && id == 999) {
-            utilisateur = new Utilisateur(
-                    999,
-                    "Martin Élu",
-                    "martin.elu@example.com",
-                    "elu"
-            );
-        }
 
         if (utilisateur == null) {
             JOptionPane.showMessageDialog(this, "Impossible de charger cet utilisateur.", "Erreur", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Ouvrir la fenêtre de modification
         ModifierUtilisateur fenetre = new ModifierUtilisateur(utilisateur);
         fenetre.setVisible(true);
 
-        // Quand la fenêtre se ferme remet  le tableau vide
-        fenetre.addWindowListener(new java.awt.event.WindowAdapter() {// permet de savoir si on ferme la fenetre 
+        fenetre.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosed(java.awt.event.WindowEvent e) {
                 chargerComptes();
@@ -184,12 +208,13 @@ public class PageGestionComptes extends JFrame {
         });
     }
 
+    // SUPPRIMER 
     private void supprimerSelection() {
         List<Integer> ids = getSelectedIds();
 
         if (ids.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Sélectionnez au moins un compte.");
-            return;// si on ne selectionne rien on demande a l'utilisateur de selectionner quelque chose
+            return;
         }
 
         int confirm = JOptionPane.showConfirmDialog(this,
@@ -200,14 +225,14 @@ public class PageGestionComptes extends JFrame {
         if (confirm != JOptionPane.YES_OPTION) return;
 
         for (int id : ids) {
-            utilisateurDAO.supprimerUtilisateur(id);// si on clique sur oui on supprime les id selectionner de la BDD
+            utilisateurDAO.supprimerUtilisateur(id);
         }
 
         JOptionPane.showMessageDialog(this, "Suppression validée.");
-        chargerComptes();// on remet à jour la page
+        chargerComptes();
     }
 
-    // --- MAIN POUR LANCER DIRECTEMENT LA PAGE ---
+    // 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             PageGestionComptes fen = new PageGestionComptes();

@@ -1,4 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<<<<<<< HEAD
+<%@ page import="com.clubsport.model.ClassementCommune" %>
+<%@ page import="java.util.List" %>
+=======
 <%@ page import="java.util.List" %>
 <%@ page import="com.clubsport.model.ClassementCommune" %>
 
@@ -14,6 +18,7 @@
   List<ClassementCommune> classement =
       (List<ClassementCommune>) request.getAttribute("classement");
 
+<<<<<<< HEAD
   StringBuilder labelsCommunes = new StringBuilder("[");
   StringBuilder dataLicencies  = new StringBuilder("[");
 
@@ -32,14 +37,87 @@
   }
   labelsCommunes.append("]");
   dataLicencies.append("]");
+=======
+  String ctx = request.getContextPath();
+>>>>>>> main
 %>
 
+>>>>>>> 096f16ab2793c7e9c92c7b554c25690503afbc29
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
+<<<<<<< HEAD
+  <title>Visualisation — Élus</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/Style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+
+  <h1 class="h3 mb-4">Visualisation des statistiques</h1>
+
+  <% if (request.getAttribute("erreur") != null) { %>
+    <div class="alert alert-danger"><%= request.getAttribute("erreur") %></div>
+  <% } %>
+
+  <%-- Formulaire filtres --%>
+  <form method="get" action="<%= request.getContextPath() %>/elu/visualisation" class="row g-3 mb-4">
+
+    <div class="col-md-4">
+      <label class="form-label">Région</label>
+      <select class="form-select" name="region" onchange="this.form.submit()">
+        <option value="">Toutes les régions</option>
+        <% List<String> regions = (List<String>) request.getAttribute("regions");
+           String regionSel = (String) request.getAttribute("region");
+           if (regions != null) for (String r : regions) { %>
+          <option value="<%= r %>" <%= r.equals(regionSel) ? "selected" : "" %>><%= r %></option>
+        <% } %>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Fédération</label>
+      <select class="form-select" name="federation">
+        <option value="">Toutes les fédérations</option>
+        <% List<String> federations = (List<String>) request.getAttribute("federations");
+           String fedSel = (String) request.getAttribute("federation");
+           if (federations != null) for (String f : federations) { %>
+          <option value="<%= f %>" <%= f.equals(fedSel) ? "selected" : "" %>><%= f %></option>
+        <% } %>
+      </select>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary me-2">Filtrer</button>
+      <a class="btn btn-outline-secondary" href="<%= request.getContextPath() %>/elu">Accueil élus</a>
+    </div>
+
+  </form>
+
+  <%-- Résumé totaux --%>
+  <% if (request.getAttribute("total") != null) { %>
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card text-center p-3">
+        <div class="fs-4 fw-bold"><%= request.getAttribute("total") %></div>
+        <div class="text-muted">Total licenciés</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center p-3">
+        <div class="fs-4 fw-bold text-primary"><%= request.getAttribute("totalHommes") %></div>
+        <div class="text-muted">Hommes</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center p-3">
+        <div class="fs-4 fw-bold text-warning"><%= request.getAttribute("totalFemmes") %></div>
+=======
   <title>Visualisation</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { background: #f8f9fa; color: #1e293b; }
@@ -49,6 +127,10 @@
 
 <body>
 <div class="container-fluid p-4">
+
+  <a href="<%= ctx %>/elu" class="btn btn-outline-secondary btn-sm mb-3 rounded-pill">
+    <i class="fas fa-arrow-left me-1"></i> Retour au dashboard &eacute;lu
+  </a>
 
   <h1 class="h2 fw-bold mb-1">Visualisation</h1>
   <p class="text-muted mb-4">Statistiques et classements des licenciés par territoire.</p>
@@ -117,12 +199,50 @@
     <div class="col-md-4">
       <div class="card stat-card shadow-sm text-center p-4">
         <div class="fs-2 fw-bold text-warning"><%= request.getAttribute("totalFemmes") != null ? request.getAttribute("totalFemmes") : 0 %></div>
+>>>>>>> 096f16ab2793c7e9c92c7b554c25690503afbc29
         <div class="text-muted">Femmes</div>
       </div>
     </div>
   </div>
 
+<<<<<<< HEAD
   <%-- Camembert + Histogramme licenciés --%>
+=======
+<<<<<<< HEAD
+  <%-- Graphiques --%>
+  <div class="row g-4">
+
+    <%-- Camembert H/F --%>
+    <div class="col-md-5">
+      <div class="card p-3">
+        <h2 class="h6 mb-3">Répartition Hommes / Femmes</h2>
+        <canvas id="chartHF"></canvas>
+      </div>
+    </div>
+
+    <%-- Classement communes --%>
+    <% List<ClassementCommune> classement = (List<ClassementCommune>) request.getAttribute("classement");
+       if (classement != null && !classement.isEmpty()) { %>
+    <div class="col-md-7">
+      <div class="card p-3">
+        <h2 class="h6 mb-3">Top 10 communes — taux de licenciés (%)</h2>
+        <canvas id="chartClassement"></canvas>
+      </div>
+    </div>
+
+    <%-- Tableau classement --%>
+    <div class="col-12">
+      <div class="card p-3">
+        <h2 class="h6 mb-3">Détail classement</h2>
+        <table class="table table-bordered table-sm">
+          <thead class="table-light">
+            <tr><th>Rang</th><th>Commune</th><th>Licenciés</th><th>Taux (%)</th></tr>
+          </thead>
+          <tbody>
+            <% for (int i = 0; i < classement.size(); i++) {
+                 ClassementCommune cc = classement.get(i); %>
+=======
+>>>>>>> main
   <div class="row g-4 mb-4">
     <div class="col-md-5">
       <div class="card main-card shadow-sm p-4">
@@ -157,11 +277,70 @@
         <tbody>
           <% for (int i = 0; i < classement.size(); i++) {
                ClassementCommune cc = classement.get(i); %>
+>>>>>>> 096f16ab2793c7e9c92c7b554c25690503afbc29
             <tr>
               <td><%= i + 1 %></td>
               <td><%= cc.getNomCommune() %></td>
               <td><%= cc.getTotalLicencies() %></td>
+<<<<<<< HEAD
               <td><%= String.format("%.2f", cc.getTauxLicencies()) %> %</td>
+=======
+<<<<<<< HEAD
+              <td><%= cc.getTauxLicencies() %> %</td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+  </div><%-- /row --%>
+
+  <script>
+    new Chart(document.getElementById('chartHF'), {
+      type: 'pie',
+      data: {
+        labels: ['Hommes', 'Femmes'],
+        datasets: [{
+          data: [<%= request.getAttribute("totalHommes") %>, <%= request.getAttribute("totalFemmes") %>],
+          backgroundColor: ['#4e79a7', '#f28e2b']
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+
+    <% if (classement != null && !classement.isEmpty()) { %>
+    new Chart(document.getElementById('chartClassement'), {
+      type: 'bar',
+      data: {
+        labels: <%= request.getAttribute("labelsCommunes") %>,
+        datasets: [{
+          label: 'Taux (%)',
+          data: <%= request.getAttribute("dataPourcentages") %>,
+          backgroundColor: '#0ea5b7'
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true } }
+      }
+    });
+    <% } %>
+  </script>
+
+  <% } %>
+
+  <div class="mt-4">
+    <a class="btn btn-outline-primary" href="<%= request.getContextPath() %>/elu/licences">Recherche licences</a>
+    <a class="btn btn-outline-secondary ms-2" href="<%= request.getContextPath() %>/elu">Accueil élus</a>
+  </div>
+
+</div>
+=======
+              <td><%= String.format("%.4f", cc.getTauxLicencies()) %> %</td>
+>>>>>>> main
             </tr>
           <% } %>
         </tbody>
@@ -247,6 +426,7 @@
 <script>
 function exportChartsPDF() {
 
+<<<<<<< HEAD
     const chartHF =
         document.getElementById("chartHF");
 
@@ -265,5 +445,8 @@ function exportChartsPDF() {
     document.getElementById("exportPdfForm").submit();
 }
 </script>
+=======
+>>>>>>> 096f16ab2793c7e9c92c7b554c25690503afbc29
+>>>>>>> main
 </body>
 </html>

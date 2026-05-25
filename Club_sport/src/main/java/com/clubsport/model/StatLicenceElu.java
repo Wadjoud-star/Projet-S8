@@ -9,6 +9,8 @@ public class StatLicenceElu {
     private String codeRegion;
     private String nomRegion;
     private String codeDepartement;
+    /** Libellé du département (table {@code departement}), utile pour l'affichage périmètre département. */
+    private String nomDepartement;
     private String codeCommune;
     private String nomCommune;
     private String codeFederation;
@@ -41,6 +43,14 @@ public class StatLicenceElu {
 
     public void setCodeDepartement(String codeDepartement) {
         this.codeDepartement = codeDepartement;
+    }
+
+    public String getNomDepartement() {
+        return nomDepartement;
+    }
+
+    public void setNomDepartement(String nomDepartement) {
+        this.nomDepartement = nomDepartement;
     }
 
     public String getCodeCommune() {

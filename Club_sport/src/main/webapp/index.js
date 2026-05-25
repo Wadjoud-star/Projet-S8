@@ -16,81 +16,156 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 var markersCluster = L.markerClusterGroup();
 map.addLayer(markersCluster);
 
-function afficherClubs(clubs) {
-    markersCluster.clearLayers(); // pour vider les anciens marqueurs
-
-    clubs.forEach(club => {
-        const marker = L.marker([club.lat, club.lng]);
-
-        marker.bindPopup(`
-        <strong>${club.nom}</strong><br>
-        <em>${club.federation}</em><br>
-        Licenciés H : ${club.licencies_h} · F : ${club.licencies_f}
-      `);
-
-        markersCluster.addLayer(marker);
+fetch('/api/federations')
+    .then(res => res.json())
+    .then(data => {
+        const select = document.getElementById('selectFederation');
+        data.forEach(fed => {
+            const option = document.createElement('option');
+            option.value = fed.codeFederation;
+            option.textContent = fed.nomFederation;
+            select.appendChild(option);
+        });
     });
+
+fetch('/api/regions')
+    .then(res => res.json())
+    .then(data => {
+        const select = document.getElementById('selectRegion');
+        data.forEach(region => {
+            const option = document.createElement('option');
+            option.value = region.codeRegion;
+            option.textContent = region.nomRegion
+            select.appendChild(option);
+        });
+    });
+
+fetch("regions.geojson")
+    .then(res => res.json())
+    .then(data => {
+
+        function styleRegion() {
+            return {
+                color: "#2563eb",
+                weight: 2,
+                fillOpacity: 0.1
+            };
+        }
+        function onEachRegion(feature, layer) {
+            layer.on({
+                click: function() {
+                    const codeRegion = feature.properties.code;
+                    const codeFederation = document.getElementById('selectFederation').value;
+                    document.getElementById('selectRegion').value = codeRegion;
+                    lancerRecherche(codeRegion, null, codeFederation, layer);
+                },
+                mouseover: function(e) {
+                    e.target.setStyle({ fillOpacity: 0.3 });
+                },
+                mouseout: function(e) {
+                    e.target.setStyle({ fillOpacity: 0.1 });
+                }
+            });
+        }
+
+        L.geoJSON(data, {
+            style: styleRegion,
+            onEachFeature: onEachRegion
+        }).addTo(map);
+    });
+document.getElementById('btnRechercher').addEventListener('click', () => {
+    const codeRegion = document.getElementById('selectRegion').value;
+    const nomCommune = document.getElementById('inputCodePostal').value.trim();
+    const codeFederation = document.getElementById('selectFederation').value;
+
+    if (!codeRegion && !nomCommune) {
+        alert("Veuillez choisir une région ou saisir une commune.");
+        return;
+    }
+
+    lancerRecherche(codeRegion, nomCommune, codeFederation, null);
+});
+function lancerRecherche(codeRegion, nomCommune, codeFederation, layer) {
+    let url = '/api/stats?';
+
+    if (codeRegion) {
+        url += `code_region=${encodeURIComponent(codeRegion)}`;
+    } else if(nomCommune){
+        url += `nom_commune=${encodeURIComponent(nomCommune)}`;
+    }
+
+    if (codeFederation) {
+        url += `&code_federation=${encodeURIComponent(codeFederation)}`;
+    }
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            afficherListeClubs(data);
+            if (layer) afficherPopup(data, layer);
+        })
+        .catch(err => console.error("Erreur :", err));
+}
+function afficherListeClubs(data) {
+    const container = document.getElementById('listeClubs');
+
+    if (!data.licences || data.licences.length === 0) {
+        container.innerHTML = '<p class="text-muted small">Aucun résultat.</p>';
+        document.getElementById('compteurResultats').textContent = '0 résultat(s)';
+        return;
+    }
+    let totalClubs = 0;
+    let totalH = 0;
+    let totalF = 0;
+
+    data.clubs.forEach(c => { totalClubs += c.nombreClubs; });
+    data.licences.forEach(l => { totalH += l.licenciesHommes; totalF += l.licenciesFemmes; });
 
     document.getElementById('compteurResultats').textContent =
-        `${clubs.length} club(s) trouvé(s)`;
-}
-function afficherListeClubs(clubs) {
-    let html = "";
-
-    clubs.forEach(club => {
+        `${totalClubs} club(s) — ${totalH + totalF} licencié(s)`;
+    let html = `
+		       <div class="mb-3 p-2 border rounded">
+		           <p class="mb-1"><strong>Total clubs :</strong> ${totalClubs}</p>
+		           <p class="mb-1"><strong>Licenciés :</strong> ${totalH + totalF}</p>
+				   <p style="color:#3b82f6">H : ${totalH}</p>
+				   <p style="color:#ec4899">F : ${totalF}</p>
+		       </div>
+		       <hr class="my-2">
+		   `;
+		   const Premiers = data.licences.slice(0, 1000);
+		       Premiers.forEach(l => {
+        const clubs = data.clubs.find(c => c.codeCommune === l.codeCommune) || {};
         html += `
-                  <p><strong>${club.nom}</strong> <small>${club.federation}</small> ${club.licencies_h} H | ${club.licencies_f} F</p>
-          `;
+		               <div class="mb-2 p-2 border rounded">
+		                   <p class="mb-1">
+		                       <strong>${l.nomCommune}</strong>
+		                       <small class="text-muted">${l.nomFederation || ''}</small>
+		                   </p>
+		                   <p class="mb-1 small"> ${clubs.nombreClubs || 0} club(s)</p>
+						   <p style="color:#3b82f6">H : ${l.licenciesHommes}</p>
+						   <p style="color:#ec4899">F : ${l.licenciesFemmes}</p>
+		               </div>
+		           `;
     });
-
-    document.getElementById("listeClubs").innerHTML = html;
+	container.innerHTML=html;
 }
-document.getElementById('btnRechercher').addEventListener('click', () => {
-    const federation = document.getElementById('selectFederation').value;
-    const codePostal = document.getElementById('inputCodePostal').value;
-    const region = document.getElementById('selectRegion').value;
-    const rayon = sliderRayon.value;
+function afficherPopup(data, layer) {
+    if (!data.licences || data.licences.length === 0) return;
 
-    afficherClubs([
-        { nom: "AS Rouen FC", lat: 49.4431, lng: 1.0993, federation: "FFF", licencies_h: 200, licencies_f: 80 },
-        { nom: "Le Havre AC", lat: 49.4938, lng: 0.1079, federation: "FFF", licencies_h: 350, licencies_f: 120 },
-        { nom: "Caen Handball", lat: 49.1829, lng: -0.3707, federation: "FFHB", licencies_h: 90, licencies_f: 75 },
-    ]);
-    afficherListeClubs([
-        { nom: "AS Rouen FC", lat: 49.4431, lng: 1.0993, federation: "FFF", licencies_h: 200, licencies_f: 80 },
-        { nom: "Le Havre AC", lat: 49.4938, lng: 0.1079, federation: "FFF", licencies_h: 350, licencies_f: 120 },
-        { nom: "Caen Handball", lat: 49.1829, lng: -0.3707, federation: "FFHB", licencies_h: 90, licencies_f: 75 },
-    ]);
-});
-fetch("regions.geojson")
-.then(res => res.json())
-.then(data => {
+    let totalClubs = 0;
+    let totalH = 0;
+    let totalF = 0;
 
-  function styleRegion() {
-    return {
-      color: "#2563eb",
-      weight: 2,
-      fillOpacity: 0.1
-    };
-  }
-  function onEachRegion(feature, layer) {
-        layer.on({
-          click: function () {
-            const nomRegion = feature.properties.nom;
-            alert("Région : " + nomRegion);
+    data.clubs.forEach(c => { totalClubs += c.nombreClubs; });
+    data.licences.forEach(l => { totalH += l.licenciesHommes; totalF += l.licenciesFemmes; });
 
-          },
-          mouseover: function (e) {
-            e.target.setStyle({ fillOpacity: 0.3 });
-          },
-          mouseout: function (e) {
-            e.target.setStyle({ fillOpacity: 0.1 });
-          }
-        });
-      }
+    const nomRegion = data.licences[0].nomRegion || '';
 
-      L.geoJSON(data, {
-        style: styleRegion,
-        onEachFeature: onEachRegion
-      }).addTo(map);
-    });
+    layer.bindPopup(`
+	        <strong>${nomRegion}</strong><br>
+	        <strong>${totalClubs}</strong> club(s)<br>
+	        <span style="color:#3b82f6">H : ${totalH}</span> 
+	        <br>
+	        <span style="color:#ec4899">F : ${totalF}</span>
+	    `).openPopup();
+}
