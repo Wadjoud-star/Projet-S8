@@ -4,7 +4,7 @@
 package com.clubsport.dao;
 
 import com.clubsport.model.*;
-import com.clubsport.util.*;
+import com.clubsport.util.ConnexionDB;
 
 import java.util.*;
 import java.sql.*;
@@ -31,7 +31,8 @@ public class StatLicenciesDAO {
 				+ "INNER JOIN federation  f ON sl.code_federation = f.code_federation " + "WHERE c.code_region = ? "
 				+ (estRenseigne(codeFederation) ? "AND sl.code_federation = ? " : "")
 				+ "GROUP BY sl.code_commune, c.nom_commune, c.code_departement, "
-				+ "  c.code_region, r.nom_region, sl.code_federation, f.nom_federation";
+				+ "  c.code_region, r.nom_region, sl.code_federation, f.nom_federation"
+				+ " ORDER BY total_licencies DESC";
 		List<StatLicenceElu> liste = new ArrayList<>();
 
 		try (Connection conn = ConnexionDB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -69,7 +70,8 @@ public class StatLicenciesDAO {
 				+ "INNER JOIN federation  f ON sl.code_federation = f.code_federation " + "WHERE c.nom_commune LIKE ? "
 				+ (estRenseigne(codeFederation) ? "AND sl.code_federation = ? " : "")
 				+ "GROUP BY sl.code_commune, c.nom_commune, c.code_departement, "
-				+ "  c.code_region, r.nom_region, sl.code_federation, f.nom_federation";
+				+ "  c.code_region, r.nom_region, sl.code_federation, f.nom_federation"
+				+" ORDER BY total_licencies DESC";
 		List<StatLicenceElu> liste = new ArrayList<>();
 
 		try (Connection conn = ConnexionDB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

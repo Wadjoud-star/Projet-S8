@@ -13,6 +13,8 @@
 
   List<ClassementCommune> classement =
       (List<ClassementCommune>) request.getAttribute("classement");
+
+  String ctx = request.getContextPath();
 %>
 
 <!DOCTYPE html>
@@ -22,6 +24,7 @@
   <title>Visualisation</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -41,6 +44,10 @@
 
 <body>
 <div class="container-fluid p-4">
+
+  <a href="<%= ctx %>/elu" class="btn btn-outline-secondary btn-sm mb-3 rounded-pill">
+    <i class="fas fa-arrow-left me-1"></i> Retour au dashboard &eacute;lu
+  </a>
 
   <h1 class="h2 fw-bold mb-1">Visualisation</h1>
   <p class="text-muted mb-4">Statistiques et classements des licenciés par territoire.</p>

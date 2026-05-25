@@ -27,7 +27,8 @@ public class StatClubsDAO {
 				+ "  SUM(sc.total_structures) AS total_structures " + "FROM statistique_clubs sc "
 				+ "INNER JOIN commune c ON sc.code_commune = c.code_commune " + "WHERE c.code_region = ? "
 				+ (estRenseigne(codeFederation) ? "AND sc.code_federation = ? " : "")
-				+ "GROUP BY sc.code_commune, sc.code_federation";
+				+ "GROUP BY sc.code_commune, sc.code_federation"
+				+" ORDER BY nb_clubs DESC";
 		List<StatClubs> liste = new ArrayList<>();
 
 		try (Connection conn = ConnexionDB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -53,7 +54,8 @@ public class StatClubsDAO {
 				+ "  SUM(sc.total_structures) AS total_structures " + "FROM statistique_clubs sc "
 				+ "INNER JOIN commune c ON sc.code_commune = c.code_commune " + "WHERE c.nom_commune LIKE ? "
 				+ (estRenseigne(codeFederation) ? "AND sc.code_federation = ? " : "")
-				+ "GROUP BY sc.code_commune, sc.code_federation";
+				+ "GROUP BY sc.code_commune, sc.code_federation"
+				+" ORDER BY nb_clubs DESC";
 		List<StatClubs> liste = new ArrayList<>();
 
 		try (Connection conn = ConnexionDB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

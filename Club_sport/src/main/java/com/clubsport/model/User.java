@@ -13,6 +13,7 @@ public class User {
 	private String role;
 	private String identitePath;
 	private String statut;
+	private int id;
 	
 	public User(String email, String nom, String password, String role, String identitePath) {
 		this.email = email;
@@ -101,6 +102,12 @@ public class User {
 
 	public void setStatut(String statut) {
 		this.statut = statut;
+	}
+	public int getId() {
+		return this.id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 }
