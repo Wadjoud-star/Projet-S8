@@ -80,12 +80,17 @@ public class AuthentificationServlet extends HttpServlet {
 					HttpSession session = request.getSession(true);
 					session.setAttribute("Email", email);
 					session.setAttribute("Role", u.getRole());
+					session.setAttribute("UserId", u.getId());
+					session.setAttribute("Nom", u.getNom());
 					response.setStatus(HttpServletResponse.SC_OK);
 					//out.print("{\"email\":\"" + email + "\", " + "\"role\":\"" + u.getRole() + "\"}");
 					if (u.getRole().equals("elu"))
 						response.sendRedirect("/elu");
-					else
+					else if(u.getRole().equalsIgnoreCase("acteur"))
 						response.sendRedirect("/acteur");
+					else if(u.getRole().equalsIgnoreCase("utilisateur"))
+						response.sendRedirect("/utilisateur");
+					
 				} else {
 					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 					// out.print("{\"message\": \" FORBIDDEN!" + "\", \"error\": \"Invalid login or

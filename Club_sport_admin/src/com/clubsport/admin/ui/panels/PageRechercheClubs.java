@@ -44,7 +44,7 @@ public class PageRechercheClubs extends JFrame {
 
         // Attribue un nom à chaque bouton 
         rbCommune = new JRadioButton("Commune");
-        rbCodePostal = new JRadioButton("Code postal");
+        rbCodePostal = new JRadioButton("Code region");
         rbLicencies = new JRadioButton("Licenciés minimum"); // recherche minimum
         rbFederation = new JRadioButton("Fédération");
 
@@ -97,7 +97,7 @@ public class PageRechercheClubs extends JFrame {
         //  TABLEAU 
         // colonnes adaptées aux résultats statistiques
         String[] colonnes = {
-                "Fédération", "Commune", "Région", "Code postal",
+                "Fédération", "Commune", "Région", "Code region",
                 "Total licenciés", "Hommes", "Femmes",
                 "Nb clubs", "Établissements", "Structures"
         };
@@ -147,12 +147,12 @@ public class PageRechercheClubs extends JFrame {
             });
         }
 
-        // --- TRI DES RÉSULTATS ---
+        // tri les résultats
         int colonneTri = cbTri.getSelectedIndex(); // même ordre que les colonnes du tableau
-
+//TableRowSorter classe Swing qui permet de trier les lignes d’un tableau.
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
+        table.setRowSorter(sorter);// attache un model pour trier le tableau 
 
-        sorter.toggleSortOrder(colonneTri); // tri croissant
+        sorter.toggleSortOrder(colonneTri); // permet le tri croissant
     }
 }

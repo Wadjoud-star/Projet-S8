@@ -25,16 +25,15 @@ public class EluLicenceService {
     }
 
     public Optional<StatLicenceElu> consulterLicences(
-            String codeFederation, String genre, String codeRegion, String codeDepartement, String codeCommune)
+            String codeFederation, String codeRegion, String codeDepartement, String codeCommune)
             throws SQLException {
         if (codeFederation == null || codeFederation.isBlank()) {
             return Optional.empty();
         }
-        String cleanedGenre = normalize(genre);
         String cleanedRegion = normalize(codeRegion);
         String cleanedDepartement = normalize(codeDepartement);
         String cleanedCommune = normalize(codeCommune);
-        return dao.findWithFilters(codeFederation.trim(), cleanedGenre, cleanedRegion, cleanedDepartement, cleanedCommune);
+        return dao.findWithFilters(codeFederation.trim(), cleanedRegion, cleanedDepartement, cleanedCommune);
     }
 
     public List<Map<String, String>> rechercherCommunes(String query, String codeRegion, String codeDepartement, int limit)
@@ -67,7 +66,7 @@ public class EluLicenceService {
     }
 
     public List<LicenceExportRow> exporterLicencesDetail(
-            String codeFederation, String genre, String codeRegion, String codeDepartement, String codeCommune)
+            String codeFederation, String codeRegion, String codeDepartement, String codeCommune)
             throws SQLException {
         if (codeFederation == null || codeFederation.isBlank()) {
             return List.of();
