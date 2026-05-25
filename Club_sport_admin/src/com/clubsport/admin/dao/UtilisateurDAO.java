@@ -2,6 +2,7 @@ package com.clubsport.admin.dao;
 
 import com.clubsport.admin.model.Utilisateur;
 import com.clubsport.admin.util.ConnexionDB;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -170,5 +171,51 @@ public class UtilisateurDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // --- NOUVELLE MÉTHODE : Vérifier la connexion d'un utilisateur (email + mot de passe)
+    // Utilise BCrypt pour comparer le mot de passe clair avec le hash stocké en base
+    public Utilisateur verifierConnexion(String email, String motDePasseClair) {
+
+        String sql = """
+            SELECT id, nom, email, mot_de_passe_hash, role, photo_identite, statut_verification
+            FROM utilisateur
+            WHERE email = ?
+        """;
+
+        try (Connection conn = ConnexionDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String hashEnBDD = rs.getString("mot_de_passe_hash");
+
+                // Vérification BCrypt : compare le mot de passe saisi avec le hash stocké
+                if (hashEnBDD != null && BCrypt.checkpw(motDePasseClair, hashEnBDD)) {
+
+                    Utilisateur u = new Utilisateur(
+                            rs.getInt("id"),
+                            rs.getString("nom"),
+                            rs.getString("email"),
+                            rs.getString("mot_de_passe_hash"),
+                            rs.getString("role"),
+                            rs.getString("photo_identite"),
+                            rs.getString("statut_verification")
+                    );
+
+                    // On vérifie que c'est un administrateur
+                    if (u.isAdmin()) {
+                        return u;
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null; // si email inconnu, mauvais mdp ou pas admin
     }
 }

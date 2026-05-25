@@ -2,6 +2,7 @@ package com.clubsport.admin.ui.panels;
 
 import com.clubsport.admin.model.Utilisateur;
 import com.clubsport.admin.dao.UtilisateurDAO; // ← nécessaire pour la mise à jour BDD
+import com.clubsport.admin.dao.AuditDAO; //
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +12,8 @@ public class ValidationInscription extends JFrame {
 
     private Utilisateur utilisateur; // l'utilisateur dont on affiche les infos
     private Runnable parentRefreshCallback; // rafraîchir PageGestionComptes
+
+    private AuditDAO auditDAO = new AuditDAO(); 
 
     // --- Constructeur : on reçoit l'utilisateur + un callback pour rafraîchir la page parent ---
     public ValidationInscription(Utilisateur utilisateur, Runnable refreshCallback) {
@@ -163,6 +166,14 @@ public class ValidationInscription extends JFrame {
 
             if (ok) {
                 utilisateur.setStatutVerification(nouveauStatut);
+
+                //  ENREGISTREMENT DANS L’AUDIT 
+                int idAdmin = 1;
+                // on récupère l'id de l'utilisateur concerné 
+                String details = "Validation de l'inscription pour l'utilisateur ID=" 
+                        + utilisateur.getId() + " (" + utilisateur.getNom() + ")";
+                // appel de la fonction du DAO
+                auditDAO.enregistrerAction(idAdmin, "Validation inscription", details);
 
                 JOptionPane.showMessageDialog(this,
                         "L'inscription a été validée avec succès !");

@@ -10,10 +10,9 @@ import java.util.List;
 
 public class AuditDAO {
 
-    /**
-     * Récupère toutes les actions d’audit enregistrées dans la base.
-     * Jointure avec la table utilisateur pour afficher le nom de l’admin.
-     */
+    // Récupère toutes les actions d’audit enregistrées dans la base.
+     //Jointure avec la table utilisateur pour afficher le nom de l’admin.
+    
     public List<AuditAction> getAllActions() {
         List<AuditAction> liste = new ArrayList<>();
 
@@ -49,16 +48,9 @@ public class AuditDAO {
         return liste;
     }
 
-    /**
-     * Enregistre une nouvelle action d’audit.
-     * Utilisé quand un admin effectue une action importante (création, suppression, modification…)
-     *
-     * @param idAdmin    ID de l’administrateur qui effectue l’action
-     * @param typeAction Type d’action (ex : "Création utilisateur")
-     * @param details    Détails supplémentaires (optionnels)
-     * @return true si l’insertion a réussi
-     */
-    public boolean enregistrerAction(int idAdmin, String typeAction, String details) {
+    // Enregistre une nouvelle action d’audit.
+
+    public static boolean enregistrerAction(int idAdmin, String typeAction, String details) {
         String sql = """
             INSERT INTO audit_action (id_admin, action, details, date_action)
             VALUES (?, ?, ?, NOW())

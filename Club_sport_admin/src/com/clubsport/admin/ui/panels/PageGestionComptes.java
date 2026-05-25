@@ -1,5 +1,6 @@
 package com.clubsport.admin.ui.panels;
 
+import com.clubsport.admin.dao.AuditDAO;
 import com.clubsport.admin.dao.UtilisateurDAO;
 import com.clubsport.admin.model.Utilisateur;
 
@@ -71,7 +72,7 @@ public class PageGestionComptes extends JFrame {
         ligne2.add(triNomZA);
         ligne2.add(triStatut);
 
-        // --- RAFRAICHIR AUTOMATIQUEMENT AU CHANGEMENT DE TRI ---
+        //Pour raffraichir la page 
         triNomAZ.addActionListener(e -> chargerComptes());
         triNomZA.addActionListener(e -> chargerComptes());
         triStatut.addActionListener(e -> chargerComptes());
@@ -80,7 +81,7 @@ public class PageGestionComptes extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // --- TABLEAU ---
+        // Le tableau
         String[] colonnes = {"Sélection", "Identifiant", "Nom", "Email", "Rôle", "Statut Vérification"};
 
         model = new DefaultTableModel(colonnes, 0) {
@@ -100,7 +101,7 @@ public class PageGestionComptes extends JFrame {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // --- PANEL BAS ---
+        // Bas de la page 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         Color bleu = new Color(0, 120, 215);
 
@@ -131,7 +132,7 @@ public class PageGestionComptes extends JFrame {
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- ACTIONS ---
+        //quand on clique sur un bouton 
         btnModifier.addActionListener(e -> modifierSelection());
         btnSupprimer.addActionListener(e -> supprimerSelection());
 
@@ -170,7 +171,7 @@ public class PageGestionComptes extends JFrame {
         });
     }
 
-    // --- CHARGER LES COMPTES ---
+    //Fonction pour charger les comptes 
     private void chargerComptes() {
         model.setRowCount(0);
 
@@ -187,7 +188,7 @@ public class PageGestionComptes extends JFrame {
 
         List<Utilisateur> utilisateurs = utilisateurDAO.getUtilisateursParRole(roleBDD);
 
-        // --- TRI ---
+        // Foction pour tirier les role 
         if (triNomAZ.isSelected()) {
             utilisateurs.sort((a, b) -> a.getNom().compareToIgnoreCase(b.getNom()));
         }
@@ -276,8 +277,9 @@ public class PageGestionComptes extends JFrame {
         });
     }
 
-    // SUPPRIMER 
+ // SUPPRIMER 
     private void supprimerSelection() {
+        //récupérer les identifiants des clients sélectionner 
         List<Integer> ids = getSelectedIds();
 
         if (ids.isEmpty()) {
@@ -292,13 +294,20 @@ public class PageGestionComptes extends JFrame {
 
         if (confirm != JOptionPane.YES_OPTION) return;
 
+        //  SUPPRESSION utilisateur de la base
         for (int id : ids) {
             utilisateurDAO.supprimerUtilisateur(id);
         }
 
+        //Enregistrement des actions de l'admin 
+        int idAdmin = 1;
+        String details = "Suppression de " + ids.size() + " compte(s) : " + ids;
+        AuditDAO.enregistrerAction(idAdmin, "Suppression utilisateur", details);
+
         JOptionPane.showMessageDialog(this, "Suppression validée.");
-        chargerComptes();
+        chargerComptes(); // rafraîchir le tableau
     }
+
 
     // 
     public static void main(String[] args) {

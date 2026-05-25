@@ -23,19 +23,19 @@ public class PageAuditAdministrateur extends JFrame {
 
     public PageAuditAdministrateur() {
 
-        // --- Configuration de la fenêtre ---
+        //Configuration de la fenêtre
         setTitle("Gestion administrateur - Audit des actions");
         setSize(900, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // --- Titre ---
+        //Titre 
         JLabel titre = new JLabel("Audit des actions administratives", SwingConstants.CENTER);
         titre.setFont(new Font("Arial", Font.BOLD, 22));
         titre.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         add(titre, BorderLayout.NORTH);
 
-        // --- Tableau ---
+        // Tableau 
         model = new DefaultTableModel(
                 new Object[]{"Administrateur", "Action", "Détails", "Date"},
                 0
@@ -50,7 +50,7 @@ public class PageAuditAdministrateur extends JFrame {
         // Chargement initial des données réelles
         chargerDonneesReelles();
 
-        // --- Bouton Actualiser ---
+        // Bouton Actualise
         JButton btnActualiser = new JButton("Actualiser");
         btnActualiser.setPreferredSize(new Dimension(120, 35));
         btnActualiser.addActionListener(e -> {
@@ -58,12 +58,12 @@ public class PageAuditAdministrateur extends JFrame {
             chargerDonneesReelles(); // recharge depuis la BDD
         });
 
-        // --- Bouton Fermer ---
+        // Bouton Fermer 
         JButton btnFermer = new JButton("Fermer");
         btnFermer.setPreferredSize(new Dimension(120, 35));
         btnFermer.addActionListener(e -> dispose());
 
-        // --- Bas de page ---
+        //Bas de page 
         JPanel bottomPanel = new JPanel();
         bottomPanel.add(btnActualiser);
         bottomPanel.add(btnFermer);
@@ -71,10 +71,7 @@ public class PageAuditAdministrateur extends JFrame {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * Charge les actions d’audit depuis la base de données
-     * et les ajoute dans le tableau.
-     */
+   // charger les données de la BDD et les ajouter au tableau 
     private void chargerDonneesReelles() {
         List<AuditAction> actions = auditDAO.getAllActions();
 

@@ -186,8 +186,7 @@ public class CreerUtilisateur extends JFrame {
 
         if (ok) {
 
-            // ➕ ENREGISTREMENT DANS L’AUDIT
-            // ⚠️ Remplacer 1 par l’ID réel de l’admin connecté
+            // Enregistrer la modification dans la page d'audit 
             int idAdmin = 1;
             String details = "Création de l’utilisateur : " + nom;
             auditDAO.enregistrerAction(idAdmin, "Création utilisateur", details);
