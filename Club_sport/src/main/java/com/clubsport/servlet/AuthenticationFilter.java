@@ -17,7 +17,8 @@ import jakarta.servlet.http.*;
         "/elu", "/elu/licences", "/elu/licences/communes-search", "/elu/licences/export",
         "/elu/cartographie", "/elu/cartographie/data",
         "/elu/visualisation", "/elu/export-pdf",
-        "/acteur"})
+        "/acteur",
+        "/utilisateur", "/utilisateur/profil"})
 
 public class AuthenticationFilter implements Filter {
 

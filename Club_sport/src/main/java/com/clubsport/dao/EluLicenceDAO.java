@@ -68,7 +68,7 @@ public class EluLicenceDAO {
         }
     }
 
-    /** Fédérations pour liste déroulante : {@code code}, {@code label} (nom + code). */
+    /** Fédérations pour liste déroulante : {@code code}, {@code label} (nom affiché). */
     public List<Map<String, String>> listFederations() throws SQLException {
         String sql = "SELECT code_federation, nom_federation FROM federation ORDER BY nom_federation";
         Connection conn = ConnexionDB.getConnection();
@@ -80,7 +80,7 @@ public class EluLicenceDAO {
                 String code = rs.getString("code_federation");
                 String nom = rs.getString("nom_federation");
                 row.put("code", code);
-                row.put("label", nom + " (" + code + ")");
+                row.put("label", nom);
                 out.add(row);
             }
             return out;
@@ -157,8 +157,8 @@ public class EluLicenceDAO {
                     row.put("nom", nom);
                     row.put("codeRegion", rs.getString("code_region"));
                     row.put("codeDepartement", cdept);
-                    String deptPart = (ndept != null && !ndept.isBlank()) ? " (" + ndept + ")" : (" (" + cdept + ")");
-                    row.put("label", nom + deptPart + " — " + code);
+                    String deptPart = (ndept != null && !ndept.isBlank()) ? " (" + ndept + ")" : "";
+                    row.put("label", nom + deptPart);
                     out.add(row);
                 }
                 return out;
@@ -366,7 +366,7 @@ public class EluLicenceDAO {
     }
 
     public Optional<StatLicenceElu> findWithFilters(
-            String codeFederation, String genre, String codeRegion, String codeDepartement, String codeCommune)
+            String codeFederation, String codeRegion, String codeDepartement, String codeCommune)
             throws SQLException {
         String sumSql = "SELECT SUM(sl.total_licencies) AS total_licencies, "
                 + "SUM(sl.licencies_femmes) AS licencies_femmes, "
@@ -407,9 +407,6 @@ public class EluLicenceDAO {
             s.setTotalLicencies(total);
             s.setLicenciesFemmes(femmes);
             s.setLicenciesHommes(hommes);
-            s.setGenre(genre);
-            s.setValeurGenre(resolveGenreValue(genre, s));
-
             applyGeoLabels(conn, s, codeRegion, codeDepartement, codeCommune);
             return Optional.of(s);
         } finally {

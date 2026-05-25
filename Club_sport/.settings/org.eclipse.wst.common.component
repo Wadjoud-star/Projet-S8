@@ -3,6 +3,8 @@
     <wb-module deploy-name="Club_sport">
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <!-- Secours si les .class ne sont pas republiés après un Clean -->
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/classes"/>
         <property name="context-root" value="Club_sport"/>
         <property name="java-output-path" value="/Club_sport/target/classes"/>
     </wb-module>

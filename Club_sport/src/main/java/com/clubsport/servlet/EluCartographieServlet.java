@@ -21,7 +21,6 @@ public class EluCartographieServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setCharacterEncoding("UTF-8");
-        req.setAttribute("genre", "TOTAL");
         loadFilterData(req);
         req.getRequestDispatcher("/WEB-INF/jsp/elus/cartographie.jsp").forward(req, resp);
     }

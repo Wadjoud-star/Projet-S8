@@ -67,12 +67,17 @@ public class AuthentificationServlet extends HttpServlet {
 		session.setAttribute("Email", u.getEmail());
 		session.setAttribute("Role", role);
 		session.setAttribute("Nom", u.getNom());
+		if (u.getId() > 0) {
+			session.setAttribute("UserId", u.getId());
+		}
 
 		String ctx = request.getContextPath();
 		if ("elu".equalsIgnoreCase(role)) {
 			response.sendRedirect(ctx + "/elu");
 		} else if ("acteur".equalsIgnoreCase(role)) {
 			response.sendRedirect(ctx + "/acteur");
+		} else if ("utilisateur".equalsIgnoreCase(role)) {
+			response.sendRedirect(ctx + "/utilisateur");
 		} else {
 			redirectError(request, response, "Rôle du compte non reconnu");
 		}

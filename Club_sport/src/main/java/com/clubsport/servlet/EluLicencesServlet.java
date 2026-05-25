@@ -29,7 +29,6 @@ public class EluLicencesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("genre", "TOTAL");
         loadFilterData(req);
         req.getRequestDispatcher("/WEB-INF/jsp/elus/licences-form.jsp").forward(req, resp);
     }
@@ -40,13 +39,11 @@ public class EluLicencesServlet extends HttpServlet {
         String codeDepartement = req.getParameter("codeDepartement");
         String codeCommune = req.getParameter("codeCommune");
         String codeFederation = req.getParameter("codeFederation");
-        String genre = req.getParameter("genre");
 
         req.setAttribute("codeRegion", safe(codeRegion));
         req.setAttribute("codeDepartement", safe(codeDepartement));
         req.setAttribute("codeCommune", safe(codeCommune));
         req.setAttribute("codeFederation", safe(codeFederation));
-        req.setAttribute("genre", safe(genre).isEmpty() ? "TOTAL" : safe(genre));
 
         if (codeFederation == null || codeFederation.isBlank()) {
             req.setAttribute("erreur", "Merci de choisir une fédération.");
@@ -69,7 +66,7 @@ public class EluLicencesServlet extends HttpServlet {
                         eluLicenceService.libelleCommune(safe(codeCommune)).orElse(safe(codeCommune)));
             }
             Optional<StatLicenceElu> stat = eluLicenceService.consulterLicences(
-                    codeFederation, genre, codeRegion, codeDepartement, codeCommune);
+                    codeFederation, codeRegion, codeDepartement, codeCommune);
             req.setAttribute("stat", stat.orElse(null));
             loadFilterData(req);
             req.getRequestDispatcher("/WEB-INF/jsp/elus/licences-form.jsp").forward(req, resp);
