@@ -10,17 +10,48 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/acteur/publier-actualite")
+@WebServlet("/acteur/actualites")
 public class PublierActualiteServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
     private ClubDAO clubDAO = new ClubDAO();
+
+    private String escapeHtml(String input) {
+        if (input == null) return "";
+
+        return input
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#x27;");
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Club club = clubDAO.findById(2);
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("UserId") == null) {
+            response.sendRedirect(request.getContextPath() + "/authentification.jsp");
+            return;
+        }
+
+        int userId = (int) session.getAttribute("UserId");
+
+        Club club = clubDAO.findByUserId(userId);
+
+        if (club == null) {
+            response.sendRedirect(request.getContextPath() + "/acteur/creer-club");
+            return;
+        }
 
         request.setAttribute("club", club);
 
@@ -32,10 +63,29 @@ public class PublierActualiteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String actualite = request.getParameter("actualite");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
-        clubDAO.updateActualite(2, actualite);
+        HttpSession session = request.getSession(false);
 
-        response.sendRedirect("/acteur/publier-actualite");
+        if (session == null || session.getAttribute("UserId") == null) {
+            response.sendRedirect(request.getContextPath() + "/authentification.jsp");
+            return;
+        }
+
+        int userId = (int) session.getAttribute("UserId");
+
+        Club club = clubDAO.findByUserId(userId);
+
+        if (club == null) {
+            response.sendRedirect(request.getContextPath() + "/acteur/creer-club");
+            return;
+        }
+
+        String actualite = escapeHtml(request.getParameter("actualite"));
+
+        clubDAO.updateActualite(club.getIdClub(), actualite);
+
+        response.sendRedirect(request.getContextPath() + "/acteur/actualites");
     }
 }
