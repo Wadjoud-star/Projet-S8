@@ -1,8 +1,9 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace utilisateur - Sport Club</title>
     <link rel="stylesheet" href="./utilisateur.css">
 </head>
@@ -11,59 +12,62 @@
 <header class="navbar">
     <div class="logo">SPORT CLUB</div>
     <nav>
-        <a href="index.html">Accueil</a>
-        <a href="propos.html">À propos</a>
+        <a href="/">Accueil</a>
+        <a href="/propos">À propos</a>
         <a href="/api/logout">Déconnexion</a>
     </nav>
 </header>
 
 <main class="container">
     <section class="main">
-        <h1 id="titrePage">Je écrire dans le java</h1>
-        <p id="descriptionPage">Je écrirt dans le java.</p>
+        <h1>Espace club</h1>
+        <p>Gérez les informations publiques de votre club sportif.</p>
     </section>
 
-    <section class="cards" id="contenuUtilisateur">
+    <section class="cards">
+
+        <div class="card">
+            <h2>Créer mon club</h2>
+            <p>Créer votre club sportif et renseigner ses informations principales.</p>
+            <a href="/acteur/creer-club">
+                <button type="button">Créer</button>
+            </a>
+        </div>
+
+        <div class="card">
+            <h2>Gérer l’espace club</h2>
+            <p>Modifier les informations générales du club visibles par le public.</p>
+            <a href="/acteur/gestion-club">
+                <button type="button">Gérer</button>
+            </a>
+        </div>
+
+        <div class="card">
+    <h2>Publier des actualités</h2>
+    <p>Ajouter ou modifier les actualités du club.</p>
+    <a href="/acteur/actualites">
+        <button type="button">Publier</button>
+    </a>
+</div>
+
+<div class="card">
+    <h2>Gérer les horaires</h2>
+    <p>Mettre à jour les horaires des activités sportives.</p>
+    <a href="/acteur/horaires">
+        <button type="button">Modifier</button>
+    </a>
+</div>
+
+<div class="card">
+    <h2>Gérer les cotisations</h2>
+    <p>Modifier les montants des cotisations du club.</p>
+    <a href="/acteur/cotisations">
+        <button type="button">Modifier</button>
+    </a>
+</div>
+
     </section>
 </main>
-
-<script>
-    const params = new URLSearchParams(window.location.search);
-    const type = params.get("type");
-
-    const titre = document.getElementById("titrePage");
-    const description = document.getElementById("descriptionPage");
-    const contenu = document.getElementById("contenuUtilisateur");
-
-        titre.textContent = "Espace club";
-        description.textContent = "Gérez les informations publiques de votre club sportif.";
-
-        contenu.innerHTML = `
-            <div class="card">
-                <h2>Gérer l’espace club</h2>
-                <p>Modifier les informations générales du club visibles par le public.</p>
-                <button onclick="window.location.href='/acteur/gestion-club'">Gérer</button>
-            </div>
-
-            <div class="card">
-                <h2>Publier des actualités</h2>
-                <p>Ajouter ou modifier les actualités du club.</p>
-                <button onclick="window.location.href='/acteur/publier-actualite'"> Publier</button>
-            </div>
-
-            <div class="card">
-                <h2>Gérer les horaires</h2>
-                <p>Mettre à jour les horaires des activités sportives.</p>
-                <a href="/acteur/gerer-horaires"><button>Modifier</button></a>
-            </div>
-
-            <div class="card">
-                <h2>Gérer les cotisations</h2>
-                <p>Modifier les montants des cotisations du club.</p>
-                <a href="/acteur/gerer-cotisation"><button>Modifier</button></a>
-            </div>
-        `;
-</script>
 
 </body>
 </html>
