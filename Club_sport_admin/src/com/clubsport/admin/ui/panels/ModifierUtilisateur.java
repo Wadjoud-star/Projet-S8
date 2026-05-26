@@ -6,6 +6,8 @@ import com.clubsport.admin.model.Utilisateur;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.awt.Desktop;
 
 public class ModifierUtilisateur extends JFrame {
 
@@ -95,21 +97,40 @@ public class ModifierUtilisateur extends JFrame {
         panel.add(txtPhoto);
         panel.add(Box.createVerticalStrut(10));
 
-        // --- Bouton Voir l'image ---
-        JButton btnVoirImage = new JButton("Voir l'image");
+        // --- Bouton Voir l'image / PDF ---
+        JButton btnVoirImage = new JButton("Voir le fichier");
         btnVoirImage.setBackground(new Color(200, 200, 200)); // couleur du fond gris clair
         btnVoirImage.setFocusPainted(false);
         btnVoirImage.setPreferredSize(new Dimension(150, 30));
 
+        // ➕ Gestion images + PDF
         btnVoirImage.addActionListener(e -> {
             String chemin = txtPhoto.getText().trim(); // recup le texte du champ txtPhoto
 
             if (chemin.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Aucune image à afficher.");
+                JOptionPane.showMessageDialog(this, "Aucun fichier à afficher.");
                 return;
             }
 
             try {
+                // --- Si c'est un PDF ---
+                if (chemin.toLowerCase().endsWith(".pdf")) {
+
+                    File pdfFile = new File(chemin);
+
+                    if (!pdfFile.exists()) {
+                        JOptionPane.showMessageDialog(this,
+                                "Le fichier PDF est introuvable.\nChemin : " + chemin,
+                                "Erreur",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    Desktop.getDesktop().open(pdfFile); // ouvre le PDF avec le lecteur par défaut
+                    return;
+                }
+
+                // --- Sinon, c'est une image ---
                 ImageIcon icon;
 
                 // URL ou fichier local
@@ -126,11 +147,11 @@ public class ModifierUtilisateur extends JFrame {
 
                 JLabel labelImage = new JLabel(icon);
 
-                JOptionPane.showMessageDialog(this, labelImage, "Aperçu de l'image", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(this, labelImage, "Aperçu du fichier", JOptionPane.PLAIN_MESSAGE);
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,
-                        "Impossible de charger l'image.\nChemin : " + chemin,
+                        "Impossible d'ouvrir le fichier.\nChemin : " + chemin,
                         "Erreur",
                         JOptionPane.ERROR_MESSAGE);
             }
@@ -160,7 +181,7 @@ public class ModifierUtilisateur extends JFrame {
 
         panel.add(panelBoutons);
 
-     // --- Action bouton Valider ---
+        // --- Action bouton Valider ---
         btnValider.addActionListener(e -> {
             // Mise à jour de l'objet utilisateur
             utilisateur.setNom(txtNom.getText());
