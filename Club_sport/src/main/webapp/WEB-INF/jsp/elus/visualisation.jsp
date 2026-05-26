@@ -1,18 +1,85 @@
+
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.clubsport.model.ClassementCommune" %>
 
-<%
-  List<String> regions = (List<String>) request.getAttribute("regions");
-  String regionSel = (String) request.getAttribute("region");
 
-  List<String> federations = (List<String>) request.getAttribute("federations");
-  String fedSel = (String) request.getAttribute("codeFederation");
+<%
+
+  List<String> regions = (List<String>) request.getAttribute("regions");
 
   String nomCommuneSel = (String) request.getAttribute("nomCommune");
 
-  List<ClassementCommune> classement =
-      (List<ClassementCommune>) request.getAttribute("classement");
+
+ 
+
+  List<String> federations = (List<String>) request.getAttribute("federations");
+
+  String fedSel = (String) request.getAttribute("codeFederation");
+
+ 
+
+  String nomCommuneSel = (String) request.getAttribute("nomCommune");
+
+ 
+
+  List<ClassementCommune> classement =
+
+      (List<ClassementCommune>) request.getAttribute("classement");
+
+ 
+
+  String ctx = request.getContextPath();
+
+ 
+
+  StringBuilder labelsCommunes = new StringBuilder("[");
+
+  StringBuilder dataLicencies = new StringBuilder("[");
+
+ 
+
+  if (classement != null) {
+
+ 
+
+      for (int i = 0; i < classement.size(); i++) {
+
+ 
+
+          ClassementCommune cc = classement.get(i);
+
+ 
+
+          labelsCommunes.append("\"")
+
+              .append(cc.getNomCommune().replace("\"", "\\\""))
+
+              .append("\"");
+
+ 
+
+          dataLicencies.append(cc.getTotalLicencies());
+
+ 
+
+          if (i < classement.size() - 1) {
+
+              labelsCommunes.append(",");
+
+              dataLicencies.append(",");
+
+          }
+
+      }
+
+  }
+
+ 
+
+  labelsCommunes.append("]");
+
+  dataLicencies.append("]");
 
   String ctx = request.getContextPath();
 
@@ -43,8 +110,11 @@
 %>
 
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
 
   <meta charset="UTF-8">
   <title>Visualisation</title>
@@ -600,5 +670,7 @@
 
 </script>
 
+
 </body>
+
 </html>

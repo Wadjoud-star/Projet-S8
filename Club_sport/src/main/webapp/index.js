@@ -15,6 +15,15 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 var markersCluster = L.markerClusterGroup();
 map.addLayer(markersCluster);
+var userIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/64/64113.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32]
+});
+var userLatLng = null;
+var marqueurCourant = null;
+var cercleCourant = null;
 document.getElementById("btn-geoloc").addEventListener("click", function() {
     if (!navigator.geolocation) {
         alert("La géolocalisation n'est pas supportée par votre navigateur.");
@@ -27,17 +36,26 @@ document.getElementById("btn-geoloc").addEventListener("click", function() {
             var lon = position.coords.longitude;
 
             userLatLng = L.latLng(lat, lon);
-
             map.setView([lat, lon], 13);
+            if (marqueurCourant) {
+                map.removeLayer(marqueurCourant);
+            }
 
-            L.marker([lat, lon], { icon: userIcon })
+            marqueurCourant = L.marker([lat, lon], { icon: userIcon })
                 .addTo(map)
                 .bindPopup("Vous êtes ici")
                 .openPopup();
-        },
-        function(error) {
-            console.error("Erreur de géolocalisation :", error);
-            alert("Impossible de récupérer votre position.");
+
+            fetch(`https://geo.api.gouv.fr/communes?lat=${lat}&lon=${lon}&fields=nom,code&format=json`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const commune = data[0];
+                        document.getElementById('inputCodePostal').value = commune.nom;
+                        const codeFederation = document.getElementById('selectFederation').value;
+                        lancerRecherche(null, commune.nom, codeFederation, null);
+                    }
+                });
         }
     );
 });
@@ -136,7 +154,30 @@ document.getElementById('btnRechercher').addEventListener('click', () => {
     const codeRegion = document.getElementById('selectRegion').value;
     const nomCommune = document.getElementById('inputCodePostal').value.trim();
     const codeFederation = document.getElementById('selectFederation').value;
-
+    const rayon = sliderRayon.value;
+    if (userLatLng) {
+        const rayon = sliderRayon.value;
+        const codeFederation = document.getElementById('selectFederation').value;
+        fetch(`https://geo.api.gouv.fr/communes?lat=${userLatLng.lat}&lon=${userLatLng.lng}&distanceMaxKm=${rayon}&fields=nom,codeRegion&format=json`)
+            .then(res => res.json())
+            .then(communes => {
+                if (communes.length === 0) {
+                    alert("Aucune commune trouvée dans ce rayon.");
+                    return;
+                }
+                const codeRegion = communes[0].codeRegion;
+				if (cercleCourant) {
+				    map.removeLayer(cercleCourant);
+				}
+               cercleCourant = L.circle([userLatLng.lat, userLatLng.lng], {
+                    radius: rayon * 1000,
+                    color: '#2563eb',
+                    fillOpacity: 0.1
+                }).addTo(map);
+                lancerRecherche(codeRegion, null, codeFederation, null);
+            });
+			return;
+    }
     if (!codeRegion && !nomCommune) {
         alert("Veuillez choisir une région ou saisir une commune.");
         return;
@@ -165,6 +206,10 @@ function lancerRecherche(codeRegion, nomCommune, codeFederation, layer) {
         })
         .catch(err => console.error("Erreur :", err));
 }
+function separateur(nombre) {
+    return nombre.toLocaleString('fr-FR');
+}
+
 function afficherListeClubs(data) {
     const container = document.getElementById('listeClubs');
 
@@ -181,13 +226,13 @@ function afficherListeClubs(data) {
     data.licences.forEach(l => { totalH += l.licenciesHommes; totalF += l.licenciesFemmes; });
 
     document.getElementById('compteurResultats').textContent =
-        `${totalClubs} club(s) — ${totalH + totalF} licencié(s)`;
+        `${separateur(totalClubs)} club(s) — ${separateur(totalH + totalF)} licencié(s)`;
     let html = `
 		       <div class="mb-3 p-2 border rounded">
-		           <p class="mb-1"><strong>Total clubs :</strong> ${totalClubs}</p>
-		           <p class="mb-1"><strong>Licenciés :</strong> ${totalH + totalF}</p>
-				   <p style="color:#3b82f6">H : ${totalH}</p>
-				   <p style="color:#ec4899">F : ${totalF}</p>
+		           <p class="mb-1"><strong>Total clubs :</strong> ${separateur(totalClubs)}</p>
+		           <p class="mb-1"><strong>Licenciés :</strong> ${separateur(totalH + totalF)}</p>
+				   <p style="color:#3b82f6">H : ${separateur(totalH)}</p>
+				   <p style="color:#ec4899">F : ${separateur(totalF)}</p>
 		       </div>
 		       <hr class="my-2">
 		   `;
@@ -200,9 +245,9 @@ function afficherListeClubs(data) {
 		                       <strong>${l.nomCommune}</strong>
 		                       <small class="text-muted">${l.nomFederation || ''}</small>
 		                   </p>
-		                   <p class="mb-1 small"> ${clubs.nombreClubs || 0} club(s)</p>
-						   <p style="color:#3b82f6">H : ${l.licenciesHommes}</p>
-						   <p style="color:#ec4899">F : ${l.licenciesFemmes}</p>
+		                   <p class="mb-1 small"> ${clubs.nombreClubs ? separateur(clubs.nombreClubs) : 0} club(s)</p>
+						   <p style="color:#3b82f6">H : ${separateur(l.licenciesHommes)}</p>
+						   <p style="color:#ec4899">F : ${separateur(l.licenciesFemmes)}</p>
 		               </div>
 		           `;
     });
@@ -222,9 +267,9 @@ function afficherPopup(data, layer) {
 
     layer.bindPopup(`
 	        <strong>${nomRegion}</strong><br>
-	        <strong>${totalClubs}</strong> club(s)<br>
-	        <span style="color:#3b82f6">H : ${totalH}</span> 
+	        <strong>${separateur(totalClubs)}</strong> club(s)<br>
+	        <span style="color:#3b82f6">H : ${separateur(totalH)}</span> 
 	        <br>
-	        <span style="color:#ec4899">F : ${totalF}</span>
+	        <span style="color:#ec4899">F : ${separateur(totalF)}</span>
 	    `).openPopup();
 }

@@ -22,6 +22,10 @@ public class CreerClubServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("UserId") == null) {
@@ -34,20 +38,25 @@ public class CreerClubServlet extends HttpServlet {
         if (clubDAO.userHasClub(userId)) {
             request.setAttribute("message", "Vous avez déjà créé un club.");
             request.getRequestDispatcher("/WEB-INF/jsp/acteur/club-deja-cree.jsp")
-                   .forward(request, response);
+                    .forward(request, response);
             return;
         }
 
+        request.setAttribute("regions", clubDAO.listRegions());
+        request.setAttribute("communes", clubDAO.listCommunes());
+        request.setAttribute("federations", clubDAO.listFederations());
+
         request.getRequestDispatcher("/WEB-INF/jsp/acteur/creer-club.jsp")
-               .forward(request, response);
+                .forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
 
@@ -61,7 +70,7 @@ public class CreerClubServlet extends HttpServlet {
         if (clubDAO.userHasClub(userId)) {
             request.setAttribute("message", "Vous avez déjà créé un club.");
             request.getRequestDispatcher("/WEB-INF/jsp/acteur/club-deja-cree.jsp")
-                   .forward(request, response);
+                    .forward(request, response);
             return;
         }
 
@@ -70,16 +79,14 @@ public class CreerClubServlet extends HttpServlet {
         club.setNom(request.getParameter("nom"));
         club.setAdresse(request.getParameter("adresse"));
         club.setCodePostal(request.getParameter("codePostal"));
-
         club.setLatitude(0.0);
         club.setLongitude(0.0);
-
         club.setNbLicencies(Integer.parseInt(request.getParameter("nbLicencies")));
         club.setNbFemmes(Integer.parseInt(request.getParameter("nbFemmes")));
         club.setNbHommes(Integer.parseInt(request.getParameter("nbHommes")));
 
-        club.setCodeFederation("FED001");
-        club.setCodeCommune("75056");
+        club.setCodeCommune(request.getParameter("codeCommune"));
+        club.setCodeFederation(request.getParameter("codeFederation"));
 
         int idClub = clubDAO.createClub(club, userId);
 
@@ -87,8 +94,12 @@ public class CreerClubServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/acteur/gestion-club");
         } else {
             request.setAttribute("message", "Erreur lors de la création du club.");
+            request.setAttribute("regions", clubDAO.listRegions());
+            request.setAttribute("communes", clubDAO.listCommunes());
+            request.setAttribute("federations", clubDAO.listFederations());
+
             request.getRequestDispatcher("/WEB-INF/jsp/acteur/creer-club.jsp")
-                   .forward(request, response);
+                    .forward(request, response);
         }
     }
 }

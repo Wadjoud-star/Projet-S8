@@ -210,20 +210,33 @@ public Club findByUserId(int userId) {
     }
 
     public void updateActualite(int idClub, String actualite) {
-        String sql = "UPDATE espace_club SET actualites=? WHERE id_club=?";
+    String sql = """
+        UPDATE espace_club
+        SET actualites = CONCAT(
+            COALESCE(actualites, ''),
+            CASE 
+                WHEN actualites IS NULL OR actualites = '' THEN ''
+                ELSE '\n\n'
+            END,
+            ?,
+            '\nPublié le : ',
+            DATE_FORMAT(NOW(), '%d/%m/%Y %H:%i')
+        ),
+        date_maj = NOW()
+        WHERE id_club = ?
+    """;
 
-        try (Connection conn = ConnexionDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (Connection conn = ConnexionDB.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, actualite);
-            ps.setInt(2, idClub);
+        ps.setString(1, actualite);
+        ps.setInt(2, idClub);
+        ps.executeUpdate();
 
-            ps.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
 
     public void updateHoraires(int idClub, String horaires) {
         String sql = "UPDATE espace_club SET horaires=? WHERE id_club=?";
@@ -240,7 +253,77 @@ public Club findByUserId(int userId) {
             e.printStackTrace();
         }
     }
+public java.util.List<java.util.Map<String, String>> listRegions() {
+    String sql = "SELECT code_region, nom_region FROM region ORDER BY nom_region";
+    java.util.List<java.util.Map<String, String>> list = new java.util.ArrayList<>();
 
+    try (Connection conn = ConnexionDB.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            java.util.Map<String, String> row = new java.util.HashMap<>();
+            row.put("code", rs.getString("code_region"));
+            row.put("nom", rs.getString("nom_region"));
+            list.add(row);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
+
+public java.util.List<java.util.Map<String, String>> listCommunes() {
+    String sql = """
+        SELECT code_commune, nom_commune, code_region
+        FROM commune
+        ORDER BY nom_commune
+    """;
+
+    java.util.List<java.util.Map<String, String>> list = new java.util.ArrayList<>();
+
+    try (Connection conn = ConnexionDB.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            java.util.Map<String, String> row = new java.util.HashMap<>();
+            row.put("code", rs.getString("code_commune"));
+            row.put("nom", rs.getString("nom_commune"));
+            row.put("codeRegion", rs.getString("code_region"));
+            list.add(row);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
+
+public java.util.List<java.util.Map<String, String>> listFederations() {
+    String sql = "SELECT code_federation, nom_federation FROM federation ORDER BY nom_federation";
+    java.util.List<java.util.Map<String, String>> list = new java.util.ArrayList<>();
+
+    try (Connection conn = ConnexionDB.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            java.util.Map<String, String> row = new java.util.HashMap<>();
+            row.put("code", rs.getString("code_federation"));
+            row.put("nom", rs.getString("nom_federation"));
+            list.add(row);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
     public void updateCotisation(int idClub, String cotisation) {
     String sql = "UPDATE espace_club SET cotisations=?, date_maj=NOW() WHERE id_club=?";
 

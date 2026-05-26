@@ -2,19 +2,25 @@ package com.clubsport.admin.ui.panels;
 
 import com.clubsport.admin.model.Utilisateur;
 import com.clubsport.admin.dao.UtilisateurDAO; // ← nécessaire pour la mise à jour BDD
+import com.clubsport.admin.dao.AuditDAO; //
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class ValidationInscription extends JFrame {
 
     private Utilisateur utilisateur; // l'utilisateur dont on affiche les infos
     private Runnable parentRefreshCallback; // rafraîchir PageGestionComptes
 
-    // --- Constructeur : on reçoit l'utilisateur + un callback pour rafraîchir la page parent ---
-    public ValidationInscription(Utilisateur utilisateur, Runnable refreshCallback) {
+    private Utilisateur adminConnecte; // ➕ admin connecté
+    private AuditDAO auditDAO = new AuditDAO(); 
+
+    // --- Constructeur : on reçoit l'utilisateur + un callback pour rafraîchir la page parent + admin connecté ---
+    public ValidationInscription(Utilisateur utilisateur, Runnable refreshCallback, Utilisateur adminConnecte) {
         this.utilisateur = utilisateur;
         this.parentRefreshCallback = refreshCallback; // on stocke le callback
+        this.adminConnecte = adminConnecte; // ➕ on stocke l’admin connecté
 
         setTitle("Validation de l'identité");
         setSize(500, 420);
@@ -26,7 +32,7 @@ public class ValidationInscription extends JFrame {
         titre.setFont(new Font("Segoe UI", Font.BOLD, 20));
         add(titre, BorderLayout.NORTH);
 
-        //  CENTRE AVEC LES INFOS ---
+        // --- CENTRE AVEC LES INFOS ---
         JPanel panelInfos = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -40,7 +46,7 @@ public class ValidationInscription extends JFrame {
 
         gbc.gridwidth = 1;
 
-        //Nom
+        // Nom
         gbc.gridx = 0;
         gbc.gridy = 1;
         panelInfos.add(new JLabel("Nom :"), gbc);
@@ -56,7 +62,7 @@ public class ValidationInscription extends JFrame {
         gbc.gridx = 1;
         panelInfos.add(new JLabel(utilisateur.getEmail()), gbc);
 
-        //  Rôle 
+        // Rôle 
         gbc.gridx = 0;
         gbc.gridy = 3;
         panelInfos.add(new JLabel("Rôle :"), gbc);
@@ -64,19 +70,19 @@ public class ValidationInscription extends JFrame {
         gbc.gridx = 1;
         panelInfos.add(new JLabel(utilisateur.getRole()), gbc);
 
-        //  Statut de vérification
+        // Statut de vérification
         gbc.gridx = 0;
         gbc.gridy = 4;
         panelInfos.add(new JLabel("Statut vérification :"), gbc);
 
         gbc.gridx = 1;
         JComboBox<String> comboStatut = new JComboBox<>(new String[]{
-                "EN_ATTENTE", "VALIDE", "REFUSE" //  liste des mots dans la combobox
+                "EN_ATTENTE", "VALIDE", "REFUSE" // liste des mots dans la combobox
         });
         comboStatut.setSelectedItem(utilisateur.getStatutVerification());
         panelInfos.add(comboStatut, gbc);
 
-        // pour  Justificatif
+        // Justificatif
         gbc.gridx = 0;
         gbc.gridy = 5;
         panelInfos.add(new JLabel("Justificatif :"), gbc);
@@ -98,14 +104,13 @@ public class ValidationInscription extends JFrame {
 
         add(bottom, BorderLayout.SOUTH);
 
-        // Fermer la fenetre
+        // Fermer la fenêtre
         btnFermer.addActionListener(e -> dispose());
 
-        // pour  Voir justificatif  
-        btnVoirJustificatif.addActionListener(e -> {// on ajoute un ActionListener au bouton btnVoirJustificatif
+        // --- Voir justificatif (image OU PDF) ---
+        btnVoirJustificatif.addActionListener(e -> {
 
-
-            String chemin = utilisateur.getPhotoIdentite();//récupère depuis l’objet utilisateur le chemin du fichier
+            String chemin = utilisateur.getPhotoIdentite(); // récupère le chemin du fichier
 
             if (chemin == null || chemin.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Aucun justificatif disponible.");
@@ -113,14 +118,13 @@ public class ValidationInscription extends JFrame {
             }
 
             try {
-                ImageIcon icon;// déclare une variable qui contiendra l’image à afficher.
-
-                // !chemin.startsWith("http") pour pointer sur  un fichier local commencant par https....
+                // Si c'est un chemin relatif "uploads/..."
                 if (!chemin.startsWith("http") && chemin.startsWith("uploads/")) {
-                    chemin = "../Club_sport/" + chemin;// le chemin de l'image 
+                    chemin = "../Club_sport/" + chemin; // chemin local
                 }
 
-                java.io.File file = new java.io.File(chemin);// java.io : bibliothèque de java
+                File file = new File(chemin);
+
                 if (!file.exists()) {
                     JOptionPane.showMessageDialog(this,
                             "Le fichier n'existe pas :\n" + chemin,
@@ -129,11 +133,18 @@ public class ValidationInscription extends JFrame {
                     return;
                 }
 
-                icon = new ImageIcon(chemin);//On crée un objet ImageIcon avec chemin du fichier et la fenetre charge l’image en mémoire.
+                // --- CAS PDF ---
+                if (chemin.toLowerCase().endsWith(".pdf")) {
+                    Desktop.getDesktop().open(file); // ouvre le PDF avec Adobe Reader / navigateur
+                    return;
+                }
+
+                // --- CAS IMAGE ---
+                ImageIcon icon = new ImageIcon(chemin);
 
                 Image img = icon.getImage();
-                Image scaled = img.getScaledInstance(400, -1, Image.SCALE_SMOOTH);// On redimensionne l’image 
-                icon = new ImageIcon(scaled);//  recrée un nouvel ImageIcon avec l’image redimensionné.
+                Image scaled = img.getScaledInstance(400, -1, Image.SCALE_SMOOTH);
+                icon = new ImageIcon(scaled);
 
                 JLabel labelImage = new JLabel(icon);
 
@@ -141,24 +152,33 @@ public class ValidationInscription extends JFrame {
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,
-                        "Impossible de charger l'image.\nChemin : " + chemin,
+                        "Impossible d'ouvrir le fichier.\nChemin : " + chemin,
                         "Erreur",
                         JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        // pour Valider l'inscription 
+        // --- Valider l'inscription ---
         btnValiderInscription.addActionListener(e -> {
 
-            // on passe le statut en valide
             String nouveauStatut = "VALIDE";
 
             // Mise à jour dans la base
             boolean ok = UtilisateurDAO.updateStatutVerification(utilisateur.getId(), nouveauStatut);
 
             if (ok) {
-                // On met aussi à jour l'objet utilisateur
                 utilisateur.setStatutVerification(nouveauStatut);
+
+            //  ENREGISTREMENT DANS L’AUDIT 
+                int idAdmin = (adminConnecte != null) ? adminConnecte.getId() : 20;
+
+                auditDAO.enregistrerAction(
+                        idAdmin,
+                        "Validation inscription",
+                        "Validation de l'inscription pour l'utilisateur ID=" 
+                                + utilisateur.getId() + " (" + utilisateur.getNom() + ")"
+                );
+
 
                 JOptionPane.showMessageDialog(this,
                         "L'inscription a été validée avec succès !");

@@ -37,17 +37,19 @@
 			<div class="mb-4">
 				<label for="password" class="form-label">Mot de passe</label> <input
 					type="password" id="password" class="form-control"
+
 					placeholder="Mot de passe" name="password" required />
 			</div>
-			<p class="text-muted small mb-4">Votre espace (élu ou
-				acteur) est défini lors de l'inscription.</p>
+			<p class="text-muted small mb-4">Votre espace (élu, 
+				acteur ou membre du grand public) est défini lors de l'inscription.</p>
+
 			<div class="text-center">
 				<button type="submit" class="btn btn-success" id="submit-btn">
 					Se connecter</button>
 			</div>
 		</form>
 		<p class="text-center mt-3 text-muted" style="font-size: 0.88rem">
-			Vous avez un statut particulier et pas de compte ? <a
+			Vous avez un statut particulier ou êtes du grand public et pas de compte ? <a
 				href="inscription.jsp" class="text-success">S'inscrire</a>
 		</p>
 		<p class="text-center mt-3">

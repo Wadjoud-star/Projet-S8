@@ -53,6 +53,7 @@
 					<option value="acteur">Acteur du monde sportif (President
 						de club, entraîneur...)</option>
 					<option value="elu">Elu (maires, députés...)</option>
+					<option value="utilisateur">Grand public</option>
 				</select>
 			</div>
 			<div class="mb-4">
@@ -66,11 +67,11 @@
 			</div>
 		</form>
 		<p class="text-center mt-3 text-muted" style="font-size: 0.88rem">
-			Vous avez un statut particulier et avez un compte ? <a
+			Vous avez un statut particulier ou êtes du grand public et avez un compte ? <a
 				href="authentification.jsp" class="text-success">Se connecter</a>
 		</p>
 		<p class="text-center mt-3">
-			<a href="index.html" class="text-decoration-none"> ← Retour à la
+			<a href="index.html" class="text-decoration-none">← Retour à la
 				page d'accueil </a>
 		</p>
 		<% String erreur = (String) session.getAttribute("erreur"); if(erreur

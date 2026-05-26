@@ -5,7 +5,7 @@ package com.clubsport.dao;
 
 import com.clubsport.model.*;
 import com.clubsport.util.*;
-
+import java.text.*;
 import java.sql.*;
 import java.util.*;
 
@@ -20,7 +20,12 @@ public class StatClubsDAO {
 	private boolean estRenseigne(String val) {
 		return val != null && !val.trim().isEmpty();
 	}
-
+	
+	private String separateur(int nombre) {
+		NumberFormat nf = NumberFormat.getInstance(Locale.FRANCE);
+		String resultat = nf.format(nombre);
+		return resultat;
+	}
 	public List<StatClubs> findParRegion(String codeRegion, String codeFederation) throws SQLException {
 		String sql = "SELECT sc.code_commune, sc.code_federation, " + "  SUM(sc.nb_clubs) AS nb_clubs, "
 				+ "  SUM(sc.nb_etablissements_professionnels) AS nb_etablissements_professionnels, "
