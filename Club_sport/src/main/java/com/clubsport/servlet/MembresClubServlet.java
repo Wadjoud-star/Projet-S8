@@ -16,23 +16,37 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/acteur/membres-club")
 public class MembresClubServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //列表加键值对
+
         List<Map<String, String>> membres = new ArrayList<>();
 
-        try {
-            Connection conn = ConnexionDB.getConnection();
+        HttpSession session = request.getSession(false);
 
-            PreparedStatement ps = conn.prepareStatement(
-                "SELECT id, nom, email, role, statut_verification FROM utilisateur WHERE id_club = ?"
-            );
-            //这里要改成本club的而不是固定id_club=2
-            ps.setInt(1, 2);
+        if (session == null || session.getAttribute("UserId") == null) {
+            response.sendRedirect(request.getContextPath() + "/authentification.jsp");
+            return;
+        }
+
+        int userId = (int) session.getAttribute("UserId");
+
+        String sql = """
+            SELECT u.id, u.nom, u.email, u.role, u.statut_verification
+            FROM utilisateur u
+            JOIN espace_club e ON u.id = e.id
+            WHERE e.id = ?
+        """;
+
+        try (Connection conn = ConnexionDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
 
             ResultSet rs = ps.executeQuery();
 
@@ -46,14 +60,12 @@ public class MembresClubServlet extends HttpServlet {
                 membres.add(m);
             }
 
-            ConnexionDB.fermer(conn);
-
         } catch (Exception e) {
-            //打印错误
             e.printStackTrace();
         }
 
         request.setAttribute("membres", membres);
+
         request.getRequestDispatcher("/WEB-INF/jsp/acteur/membres-club.jsp")
                 .forward(request, response);
     }
