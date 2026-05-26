@@ -210,20 +210,33 @@ public Club findByUserId(int userId) {
     }
 
     public void updateActualite(int idClub, String actualite) {
-        String sql = "UPDATE espace_club SET actualites=? WHERE id_club=?";
+    String sql = """
+        UPDATE espace_club
+        SET actualites = CONCAT(
+            COALESCE(actualites, ''),
+            CASE 
+                WHEN actualites IS NULL OR actualites = '' THEN ''
+                ELSE '\n\n'
+            END,
+            ?,
+            '\nPublié le : ',
+            DATE_FORMAT(NOW(), '%d/%m/%Y %H:%i')
+        ),
+        date_maj = NOW()
+        WHERE id_club = ?
+    """;
 
-        try (Connection conn = ConnexionDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (Connection conn = ConnexionDB.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, actualite);
-            ps.setInt(2, idClub);
+        ps.setString(1, actualite);
+        ps.setInt(2, idClub);
+        ps.executeUpdate();
 
-            ps.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
 
     public void updateHoraires(int idClub, String horaires) {
         String sql = "UPDATE espace_club SET horaires=? WHERE id_club=?";
