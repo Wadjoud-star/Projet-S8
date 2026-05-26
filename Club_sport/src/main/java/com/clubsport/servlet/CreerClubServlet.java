@@ -1,99 +1,105 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+package com.clubsport.servlet;
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Créer mon club</title>
-</head>
-<body>
+import java.io.IOException;
 
-<h1>Créer mon club</h1>
+import com.clubsport.dao.ClubDAO;
+import com.clubsport.model.Club;
 
-<p style="color:red;">${message}</p>
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-<form action="${pageContext.request.contextPath}/acteur/creer-club" method="post">
+@WebServlet("/acteur/creer-club")
+public class CreerClubServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-    <label>Nom du club</label><br>
-    <input type="text" name="nom" required><br><br>
+    private ClubDAO clubDAO = new ClubDAO();
 
-    <label>Adresse</label><br>
-    <input type="text" name="adresse" required><br><br>
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    <label>Code postal</label><br>
-    <input type="text" name="codePostal" required><br><br>
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
 
-    <label>Région</label><br>
-    <select id="regionSelect" required>
-        <option value="">-- Choisir une région --</option>
-        <c:forEach var="r" items="${regions}">
-            <option value="${r.code}">${r.nom}</option>
-        </c:forEach>
-    </select><br><br>
+        HttpSession session = request.getSession(false);
 
-    <label>Commune</label><br>
-    <select name="codeCommune" id="communeSelect" required>
-        <option value="">-- Choisir une commune --</option>
-        <c:forEach var="c" items="${communes}">
-            <option value="${c.code}" data-region="${c.codeRegion}">
-                ${c.nom} (${c.code})
-            </option>
-        </c:forEach>
-    </select><br><br>
+        if (session == null || session.getAttribute("UserId") == null) {
+            response.sendRedirect(request.getContextPath() + "/authentification.jsp");
+            return;
+        }
 
-    <label>Fédération</label><br>
-    <select name="codeFederation" required>
-        <option value="">-- Choisir une fédération --</option>
-        <c:forEach var="f" items="${federations}">
-            <option value="${f.code}">
-                ${f.nom} (${f.code})
-            </option>
-        </c:forEach>
-    </select><br><br>
+        int userId = (int) session.getAttribute("UserId");
 
-    <label>Nombre de licenciés</label><br>
-    <input type="number" name="nbLicencies" required><br><br>
+        if (clubDAO.userHasClub(userId)) {
+            request.setAttribute("message", "Vous avez déjà créé un club.");
+            request.getRequestDispatcher("/WEB-INF/jsp/acteur/club-deja-cree.jsp")
+                    .forward(request, response);
+            return;
+        }
 
-    <label>Nombre de femmes</label><br>
-    <input type="number" name="nbFemmes" required><br><br>
+        request.setAttribute("regions", clubDAO.listRegions());
+        request.setAttribute("communes", clubDAO.listCommunes());
+        request.setAttribute("federations", clubDAO.listFederations());
 
-    <label>Nombre d’hommes</label><br>
-    <input type="number" name="nbHommes" required><br><br>
+        request.getRequestDispatcher("/WEB-INF/jsp/acteur/creer-club.jsp")
+                .forward(request, response);
+    }
 
-    <button type="submit">Créer</button>
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-</form>
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
 
-<br>
+        HttpSession session = request.getSession(false);
 
-<a href="${pageContext.request.contextPath}/acteur">
-    <button type="button">Retour</button>
-</a>
+        if (session == null || session.getAttribute("UserId") == null) {
+            response.sendRedirect(request.getContextPath() + "/authentification.jsp");
+            return;
+        }
 
-<script>
-    const regionSelect = document.getElementById("regionSelect");
-    const communeSelect = document.getElementById("communeSelect");
-    const allCommunes = Array.from(communeSelect.options);
+        int userId = (int) session.getAttribute("UserId");
 
-    regionSelect.addEventListener("change", function () {
-        const selectedRegion = this.value;
+        if (clubDAO.userHasClub(userId)) {
+            request.setAttribute("message", "Vous avez déjà créé un club.");
+            request.getRequestDispatcher("/WEB-INF/jsp/acteur/club-deja-cree.jsp")
+                    .forward(request, response);
+            return;
+        }
 
-        communeSelect.innerHTML = "";
+        Club club = new Club();
 
-        allCommunes.forEach(option => {
-            if (option.value === "") {
-                communeSelect.appendChild(option);
-                return;
-            }
+        club.setNom(request.getParameter("nom"));
+        club.setAdresse(request.getParameter("adresse"));
+        club.setCodePostal(request.getParameter("codePostal"));
+        club.setLatitude(0.0);
+        club.setLongitude(0.0);
+        club.setNbLicencies(Integer.parseInt(request.getParameter("nbLicencies")));
+        club.setNbFemmes(Integer.parseInt(request.getParameter("nbFemmes")));
+        club.setNbHommes(Integer.parseInt(request.getParameter("nbHommes")));
 
-            if (option.dataset.region === selectedRegion) {
-                communeSelect.appendChild(option);
-            }
-        });
+        club.setCodeCommune(request.getParameter("codeCommune"));
+        club.setCodeFederation(request.getParameter("codeFederation"));
 
-        communeSelect.value = "";
-    });
-</script>
+        int idClub = clubDAO.createClub(club, userId);
 
-</body>
-</html>
+        if (idClub > 0) {
+            response.sendRedirect(request.getContextPath() + "/acteur/gestion-club");
+        } else {
+            request.setAttribute("message", "Erreur lors de la création du club.");
+            request.setAttribute("regions", clubDAO.listRegions());
+            request.setAttribute("communes", clubDAO.listCommunes());
+            request.setAttribute("federations", clubDAO.listFederations());
+
+            request.getRequestDispatcher("/WEB-INF/jsp/acteur/creer-club.jsp")
+                    .forward(request, response);
+        }
+    }
+}
