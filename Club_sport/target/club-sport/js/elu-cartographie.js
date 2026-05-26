@@ -4,19 +4,27 @@
     const ctx = window.ELU_CARTO_CTX || '';
     const geoJsonUrl = window.ELU_CARTO_GEOJSON || ctx + '/regions.geojson';
 <<<<<<< HEAD
+<<<<<<< HEAD
     const PALETTE = ['#ffffcc', '#d9f0a3', '#addd8e', '#78c679', '#31a354', '#006837'];
 =======
     /** Dégradé lisible : faible → fort volume de licences */
     const PALETTE = ['#fff7bc', '#fec44f', '#fe9929', '#ec7014', '#cc4c02', '#8c2d04'];
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+    const PALETTE = ['#ffffcc', '#d9f0a3', '#addd8e', '#78c679', '#31a354', '#006837'];
+>>>>>>> chloe
 
     const regionSelect = document.getElementById('codeRegion');
     const departementSelect = document.getElementById('codeDepartement');
     const federationEl = document.getElementById('codeFederation');
 <<<<<<< HEAD
+<<<<<<< HEAD
     const genreSelect = document.getElementById('genre');
 =======
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+    const genreSelect = document.getElementById('genre');
+>>>>>>> chloe
     const btn = document.getElementById('btnAfficherCarto');
     const statusEl = document.getElementById('carto-status');
 
@@ -34,6 +42,7 @@
     let communesLayer = L.layerGroup().addTo(map);
     let legendControl = null;
     let geoJsonCache = null;
+<<<<<<< HEAD
 <<<<<<< HEAD
     let lastMin = 0;
     let lastMax = 0;
@@ -117,12 +126,19 @@
         return PALETTE[idx];
     }
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+    let lastMin = 0;
+    let lastMax = 0;
+>>>>>>> chloe
 
     function setStatus(msg) {
         if (statusEl) statusEl.textContent = msg || '';
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
     function metric(row, genre) {
         if (genre === 'F') return parseInt(row.f, 10) || 0;
         if (genre === 'H') return parseInt(row.h, 10) || 0;
@@ -136,8 +152,11 @@
         return PALETTE[idx];
     }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
     function filterDepartements() {
         const region = regionSelect.value;
         const current = departementSelect.value;
@@ -179,6 +198,9 @@
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
     function statsMap(rows, genre) {
         const m = new Map();
         (rows || []).forEach(function (row) {
@@ -188,14 +210,20 @@
     }
 
     function updateLegend(min, max, label) {
+<<<<<<< HEAD
 =======
     function updateLegend(scale) {
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
         if (legendControl) {
             map.removeControl(legendControl);
             legendControl = null;
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
         legendControl = L.control({ position: 'bottomright' });
         legendControl.onAdd = function () {
             const div = L.DomUtil.create('div', 'carto-legend');
@@ -207,6 +235,7 @@
                     + Math.round(v0).toLocaleString('fr-FR')
                     + ' &ndash; '
                     + Math.round(v1).toLocaleString('fr-FR') + '<br>';
+<<<<<<< HEAD
 =======
         const ranges = scale.ranges;
         legendControl = L.control({ position: 'bottomright' });
@@ -217,6 +246,8 @@
             for (let i = 0; i < ranges.length; i++) {
                 html += '<i style="background:' + ranges[i].color + '"></i> ' + ranges[i].label + '<br>';
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
             }
             div.innerHTML = html;
             return div;
@@ -225,6 +256,9 @@
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
     function renderRegions(geojson, rows, genre) {
         const values = statsMap(rows, genre);
         const nums = Array.from(values.values());
@@ -232,6 +266,7 @@
         const max = nums.length ? Math.max.apply(null, nums) : 0;
         lastMin = min;
         lastMax = max;
+<<<<<<< HEAD
 =======
     function renderRegions(geojson, rows) {
         const byCode = statsMapByCode(rows);
@@ -239,6 +274,8 @@
         const max = totals.length ? Math.max.apply(null, totals) : 0;
         const legendScale = buildLegendScale(max);
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
 
         if (regionsLayer) {
             map.removeLayer(regionsLayer);
@@ -248,12 +285,16 @@
             style: function (feature) {
                 const code = feature.properties && feature.properties.code;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
                 const v = values.get(String(code)) || 0;
                 return {
                     color: '#475569',
                     weight: 1,
                     fillColor: colorFor(v, min, max),
                     fillOpacity: v > 0 ? 0.75 : 0.15
+<<<<<<< HEAD
 =======
                 const stats = byCode.get(String(code)) || { total: 0, f: 0, h: 0 };
                 const v = stats.total;
@@ -263,21 +304,29 @@
                     fillColor: colorFor(v, legendScale),
                     fillOpacity: v > 0 ? 0.78 : 0.12
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
                 };
             },
             onEachFeature: function (feature, layer) {
                 const code = feature.properties && feature.properties.code;
                 const nom = feature.properties && feature.properties.nom;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
                 const v = values.get(String(code)) || 0;
                 layer.bindPopup(
                     '<strong>' + (nom || code) + '</strong><br>'
                     + 'Licences : <strong>' + v.toLocaleString('fr-FR') + '</strong>'
                 );
+<<<<<<< HEAD
 =======
                 const stats = byCode.get(String(code)) || { total: 0, f: 0, h: 0 };
                 layer.bindPopup(popupHtml(nom || code, stats));
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
             }
         }).addTo(map);
 
@@ -286,10 +335,14 @@
         } catch (e) { /* ignore */ }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         updateLegend(min, max, 'Licences par r\u00e9gion');
 =======
         updateLegend(legendScale);
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+        updateLegend(min, max, 'Licences par r\u00e9gion');
+>>>>>>> chloe
     }
 
     function gouvCommunesUrl(codeRegion, codeDepartement) {
@@ -304,6 +357,9 @@
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
     function renderCommunes(statsRows, geoCommunes, genre) {
         communesLayer.clearLayers();
         const stats = new Map();
@@ -312,6 +368,7 @@
         });
 
         let maxV = 0;
+<<<<<<< HEAD
 =======
     function renderCommunes(statsRows, geoCommunes) {
         communesLayer.clearLayers();
@@ -319,11 +376,16 @@
 
         let maxTotal = 0;
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
         const markers = [];
 
         (geoCommunes || []).forEach(function (c) {
             const row = stats.get(String(c.code));
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
             if (!row) return;
             const v = metric(row, genre);
             if (v <= 0 || !c.centre || !c.centre.coordinates) return;
@@ -348,6 +410,7 @@
                 + 'F : ' + (parseInt(m.row.f, 10) || 0).toLocaleString('fr-FR')
                 + ' &middot; H : ' + (parseInt(m.row.h, 10) || 0).toLocaleString('fr-FR')
             );
+<<<<<<< HEAD
 =======
             if (!row || row.total <= 0 || !c.centre || !c.centre.coordinates) return;
             maxTotal = Math.max(maxTotal, row.total);
@@ -367,6 +430,8 @@
             });
             circle.bindPopup(popupHtml(m.nom, m.stats));
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
             communesLayer.addLayer(circle);
         });
 
@@ -374,10 +439,14 @@
             const bounds = L.latLngBounds(markers.map(function (m) { return [m.lat, m.lng]; }));
             map.fitBounds(bounds.pad(0.08), { maxZoom: 11 });
 <<<<<<< HEAD
+<<<<<<< HEAD
             setStatus(markers.length + ' commune(s) affich\u00e9e(s).');
 =======
             setStatus(fmtNum(markers.length) + ' commune(s) affich\u00e9e(s).');
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+            setStatus(markers.length + ' commune(s) affich\u00e9e(s).');
+>>>>>>> chloe
         } else {
             setStatus('Aucune commune avec donn\u00e9es pour ce p\u00e9rim\u00e8tre.');
         }
@@ -388,9 +457,13 @@
         const codeRegion = regionSelect.value.trim();
         const codeDepartement = departementSelect.value.trim();
 <<<<<<< HEAD
+<<<<<<< HEAD
         const genre = genreSelect ? genreSelect.value : 'TOTAL';
 =======
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+        const genre = genreSelect ? genreSelect.value : 'TOTAL';
+>>>>>>> chloe
 
         if (!codeFederation) {
             alert('Veuillez choisir une f\u00e9d\u00e9ration.');
@@ -413,11 +486,15 @@
         Promise.all([regionPromise, geoPromise])
             .then(function (res) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> chloe
                 renderRegions(res[1], res[0], genre);
 
                 const gouvUrl = gouvCommunesUrl(codeRegion, codeDepartement);
                 if (!gouvUrl) {
                     setStatus((res[0] || []).length + ' r\u00e9gion(s) avec donn\u00e9es. S\u00e9lectionnez une r\u00e9gion ou un d\u00e9partement pour le d\u00e9tail communal.');
+<<<<<<< HEAD
 =======
                 renderRegions(res[1], res[0]);
 
@@ -426,6 +503,8 @@
                     const n = (res[0] || []).length;
                     setStatus(fmtNum(n) + ' r\u00e9gion(s). S\u00e9lectionnez une r\u00e9gion ou un d\u00e9partement pour le d\u00e9tail communal.');
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
                     return null;
                 }
 
@@ -437,10 +516,14 @@
             .then(function (pair) {
                 if (!pair) return;
 <<<<<<< HEAD
+<<<<<<< HEAD
                 renderCommunes(pair[0], pair[1], genre);
 =======
                 renderCommunes(pair[0], pair[1]);
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+                renderCommunes(pair[0], pair[1], genre);
+>>>>>>> chloe
             })
             .catch(function (err) {
                 console.error(err);

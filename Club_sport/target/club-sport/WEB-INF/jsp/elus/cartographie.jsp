@@ -27,10 +27,10 @@
 <body>
 <%
     String ctx = request.getContextPath();
-<<<<<<< HEAD
+
+
     String genre = request.getAttribute("genre") == null ? "TOTAL" : String.valueOf(request.getAttribute("genre"));
-=======
->>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+
     List<Map<String, String>> regions = (List<Map<String, String>>) request.getAttribute("regions");
     List<Map<String, String>> departements = (List<Map<String, String>>) request.getAttribute("departements");
     List<Map<String, String>> federations = (List<Map<String, String>>) request.getAttribute("federations");
@@ -92,11 +92,15 @@
                                 <% } } %>
                             </select>
                         </div>
-<<<<<<< HEAD
+
+
                         <div class="col-md-3">
-=======
+
                         <div class="col-md-4">
->>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+
+
+                        <div class="col-md-3">
+
                             <label class="form-label" for="codeFederation">F&eacute;d&eacute;ration</label>
                             <% if (federations == null || federations.isEmpty()) { %>
                             <input class="form-control" id="codeFederation" name="codeFederation" type="text" maxlength="10" required placeholder="Code">
@@ -109,7 +113,9 @@
                             </select>
                             <% } %>
                         </div>
-<<<<<<< HEAD
+
+
+
                         <div class="col-md-3">
                             <label class="form-label" for="genre">Indicateur (genre)</label>
                             <select class="form-select" id="genre" name="genre">
@@ -118,8 +124,7 @@
                                 <option value="H" <%= "H".equalsIgnoreCase(genre) ? "selected" : "" %>>Hommes</option>
                             </select>
                         </div>
-=======
->>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+
                         <div class="col-12">
                             <button type="button" class="btn btn-primary px-4 rounded-pill" id="btnAfficherCarto">
                                 <i class="fas fa-map me-2"></i>Afficher sur la carte
@@ -145,10 +150,12 @@
     window.ELU_CARTO_CTX = '<%= ctx %>';
     window.ELU_CARTO_GEOJSON = '<%= ctx %>/regions.geojson';
 </script>
-<<<<<<< HEAD
+
 <script src="<%= ctx %>/js/elu-cartographie.js"></script>
-=======
+
 <script src="<%= ctx %>/js/elu-cartographie.js?v=20260522"></script>
->>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+
+<script src="<%= ctx %>/js/elu-cartographie.js"></script>
+
 </body>
 </html>

@@ -21,9 +21,12 @@ com\clubsport\util\CsvExportUtil.class
 com\clubsport\servlet\ActeurAccueilServlet.class
 com\clubsport\servlet\EluCartographieDataServlet.class
 <<<<<<< HEAD
+<<<<<<< HEAD
 com\clubsport\dao\CommuneDAO.class
 =======
 >>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
+=======
+>>>>>>> chloe
 com\clubsport\servlet\ExportPDFServlet.class
 com\clubsport\dao\RegionDAO.class
 com\clubsport\dao\FederationDAO.class

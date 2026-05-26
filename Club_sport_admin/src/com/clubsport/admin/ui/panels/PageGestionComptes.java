@@ -1,7 +1,8 @@
 package com.clubsport.admin.ui.panels;
 
-import com.clubsport.admin.dao.UtilisateurDAO;
 import com.clubsport.admin.model.Utilisateur;
+import com.clubsport.admin.dao.UtilisateurDAO; // ← nécessaire pour la mise à jour BDD
+import com.clubsport.admin.dao.AuditDAO; //
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,17 +16,32 @@ public class PageGestionComptes extends JFrame {
     private JTable table;
     private DefaultTableModel model;
 
-    private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
+    // --- BOUTONS DE TRI ---
+    private JRadioButton triNomAZ;
+    private JRadioButton triNomZA;
+    private JRadioButton triStatut;
 
-    public PageGestionComptes() {
+    private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
+    private AuditDAO auditDAO = new AuditDAO(); // ➕ audit
+
+    private Utilisateur adminConnecte; // ➕ admin connecté (peut être null maintenant)
+
+    // --- Constructeur modifié pour permettre un accès libre ---
+    public PageGestionComptes(Utilisateur adminConnecte) {
+        this.adminConnecte = adminConnecte; // peut être null → accès libre
+
         setTitle("Gestion des comptes");
-        setSize(750, 550);
+        setSize(900, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         // --- PANEL HAUT ---
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        topPanel.add(new JLabel("Type : "));
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS)); // empile verticalement
+
+        // --- LIGNE 1 : TYPE + CHERCHER ---
+        JPanel ligne1 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        ligne1.add(new JLabel("Type : "));
 
         comboType = new JComboBox<>(new String[]{
                 "Élus", "Présidents", "Entraîneurs", "Sportifs", "Administrateurs"
@@ -38,12 +54,40 @@ public class PageGestionComptes extends JFrame {
         btnChercher.setPreferredSize(new Dimension(110, 35));
         btnChercher.addActionListener(e -> chargerComptes());
 
-        topPanel.add(comboType);
-        topPanel.add(btnChercher);
+        ligne1.add(comboType);
+        ligne1.add(btnChercher);
+
+        topPanel.add(ligne1);
+
+        // --- LIGNE 2 : TRI ---
+        JPanel ligne2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        ligne2.add(new JLabel("Trier par : "));
+
+        triNomAZ = new JRadioButton("Nom A→Z");
+        triNomZA = new JRadioButton("Nom Z→A");
+        triStatut = new JRadioButton("Statut");
+
+        ButtonGroup groupTri = new ButtonGroup();
+        groupTri.add(triNomAZ);
+        groupTri.add(triNomZA);
+        groupTri.add(triStatut);
+
+        triNomAZ.setSelected(true); // tri par défaut
+
+        ligne2.add(triNomAZ);
+        ligne2.add(triNomZA);
+        ligne2.add(triStatut);
+
+        //Pour raffraichir la page 
+        triNomAZ.addActionListener(e -> chargerComptes());
+        triNomZA.addActionListener(e -> chargerComptes());
+        triStatut.addActionListener(e -> chargerComptes());
+
+        topPanel.add(ligne2);
 
         add(topPanel, BorderLayout.NORTH);
 
-        // --- TABLEAU ---
+        // Le tableau
         String[] colonnes = {"Sélection", "Identifiant", "Nom", "Email", "Rôle", "Statut Vérification"};
 
         model = new DefaultTableModel(colonnes, 0) {
@@ -63,7 +107,7 @@ public class PageGestionComptes extends JFrame {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // --- PANEL BAS ---
+        // Bas de la page 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         Color bleu = new Color(0, 120, 215);
 
@@ -94,12 +138,14 @@ public class PageGestionComptes extends JFrame {
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- ACTIONS ---
+        //quand on clique sur un bouton 
         btnModifier.addActionListener(e -> modifierSelection());
         btnSupprimer.addActionListener(e -> supprimerSelection());
 
         btnCreer.addActionListener(e -> {
-            CreerUtilisateur fen = new CreerUtilisateur();
+            // ➕ adminConnecte peut être null → OK
+            CreerUtilisateur fen = new CreerUtilisateur(adminConnecte);
+            fen.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             fen.setVisible(true);
 
             fen.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -125,15 +171,16 @@ public class PageGestionComptes extends JFrame {
                 return;
             }
 
+            // ➕ adminConnecte peut être null → OK
             ValidationInscription fen = new ValidationInscription(utilisateur, () -> {
                 chargerComptes(); // ← rafraîchire le tableau
-            });
-            fen.setVisible(true);
+            }, adminConnecte);
 
+            fen.setVisible(true);
         });
     }
 
-    // --- CHARGER LES COMPTES ---
+    //Fonction pour charger les comptes 
     private void chargerComptes() {
         model.setRowCount(0);
 
@@ -150,6 +197,29 @@ public class PageGestionComptes extends JFrame {
 
         List<Utilisateur> utilisateurs = utilisateurDAO.getUtilisateursParRole(roleBDD);
 
+        // Foction pour tirier les role 
+        if (triNomAZ.isSelected()) {
+            utilisateurs.sort((a, b) -> a.getNom().compareToIgnoreCase(b.getNom()));
+        }
+        else if (triNomZA.isSelected()) {
+            utilisateurs.sort((a, b) -> b.getNom().compareToIgnoreCase(a.getNom()));
+        }
+        else if (triStatut.isSelected()) {
+
+            utilisateurs.sort((a, b) -> {
+                String sa = a.getStatutVerification();
+                String sb = b.getStatutVerification();
+
+                sa = (sa == null) ? "" : sa.toUpperCase();
+                sb = (sb == null) ? "" : sb.toUpperCase();
+
+                int pa = getPrioriteStatut(sa);
+                int pb = getPrioriteStatut(sb);
+
+                return Integer.compare(pa, pb);
+            });
+        }
+
         for (Utilisateur u : utilisateurs) {
             model.addRow(new Object[]{
                     false,
@@ -157,9 +227,17 @@ public class PageGestionComptes extends JFrame {
                     u.getNom(),
                     u.getEmail(),
                     u.getRole(),
-                    u.getStatutVerification() // ✔ NOUVEAU
+                    u.getStatutVerification()
             });
         }
+    }
+
+    // --- PRIORITÉ DES STATUTS ---
+    private int getPrioriteStatut(String statut) {
+        if (statut.contains("ATTENTE")) return 0; // EN_ATTENTE
+        if (statut.startsWith("VALIDE")) return 1; // VALIDE
+        if (statut.startsWith("REFUS")) return 2; // REFUSE
+        return 3;
     }
 
     //récupérer les identifiants des clients sélectionner 
@@ -197,7 +275,8 @@ public class PageGestionComptes extends JFrame {
             return;
         }
 
-        ModifierUtilisateur fenetre = new ModifierUtilisateur(utilisateur);
+        // ➕ adminConnecte peut être null → OK
+        ModifierUtilisateur fenetre = new ModifierUtilisateur(utilisateur, adminConnecte);
         fenetre.setVisible(true);
 
         fenetre.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -210,6 +289,7 @@ public class PageGestionComptes extends JFrame {
 
     // SUPPRIMER 
     private void supprimerSelection() {
+        //récupérer les identifiants des clients sélectionner 
         List<Integer> ids = getSelectedIds();
 
         if (ids.isEmpty()) {
@@ -224,20 +304,21 @@ public class PageGestionComptes extends JFrame {
 
         if (confirm != JOptionPane.YES_OPTION) return;
 
+        //  SUPPRESSION utilisateur de la base
         for (int id : ids) {
             utilisateurDAO.supprimerUtilisateur(id);
         }
 
-        JOptionPane.showMessageDialog(this, "Suppression validée.");
-        chargerComptes();
-    }
+        //Enregistrement des actions de l'admin 
+        int idAdmin = (adminConnecte != null) ? adminConnecte.getId() :20;
 
-    // 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            PageGestionComptes fen = new PageGestionComptes();
-            fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            fen.setVisible(true);
-        });
+        auditDAO.enregistrerAction(
+                idAdmin, // ➕ sécurisé
+                "Suppression utilisateur",
+                "Suppression de " + ids.size() + " compte(s) : " + ids
+        );
+
+        JOptionPane.showMessageDialog(this, "Suppression validée.");
+        chargerComptes(); // rafraîchir le tableau
     }
 }
