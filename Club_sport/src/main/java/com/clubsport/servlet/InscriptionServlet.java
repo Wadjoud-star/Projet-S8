@@ -6,12 +6,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -82,9 +84,8 @@ public class InscriptionServlet extends HttpServlet {
 
 		String passHash = BCrypt.hashpw(password, BCrypt.gensalt());
 		String fileName = filePart.getSubmittedFileName();
-		String uniqueName = System.currentTimeMillis() + "_" + (fileName != null ? fileName : "identite");
+		String uniqueName = UUID.randomUUID() + "_" + (fileName != null ? fileName : "identite");
 		String dbPath = "uploads/" + uniqueName;
-
 		File uploadDir = resolveUploadDir(request);
 		if (!uploadDir.exists() && !uploadDir.mkdirs()) {
 			redirectError(request, response, "Impossible de créer le dossier d'upload");
@@ -118,8 +119,9 @@ public class InscriptionServlet extends HttpServlet {
 
 	private void redirectError(HttpServletRequest request, HttpServletResponse response, String message)
 			throws IOException {
-		String msg = URLEncoder.encode(message, StandardCharsets.UTF_8);
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		response.sendRedirect(request.getContextPath() + "/errorRegister.html?message=" + msg);
+		HttpSession session = request.getSession();
+		session.setAttribute("erreur", message);
+		response.sendRedirect(request.getContextPath() + "/inscription.jsp");
 	}
 }

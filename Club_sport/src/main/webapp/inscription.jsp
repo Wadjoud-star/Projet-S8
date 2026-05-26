@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +17,8 @@
 			<h1>⚽ Club de sport</h1>
 			<p>Créez un compte</p>
 		</div>
-		<form id="login-form" method="post" action="api/inscription" enctype="multipart/form-data">
+		<form id="login-form" method="post" action="api/inscription"
+			enctype="multipart/form-data">
 			<div class="row mb-3">
 				<div class="col">
 					<label for="prenom" class="form-label">Prénom</label> <input
@@ -37,12 +39,13 @@
 			<div class="mb-4">
 				<label for="password" class="form-label">Mot de passe</label> <input
 					type="password" id="password" class="form-control"
-					placeholder="•••••••" name="password" name="password" required />
+					placeholder="Mot de passe" name="password" name="password" required />
 			</div>
 			<div class="mb-4">
 				<label for="password-confirm" class="form-label">Confirmer
 					le mot de passe</label> <input type="password" id="password-confirm"
-					class="form-control" placeholder="••••••••" name="confirm" required />
+					class="form-control" placeholder="Retaper le mot de passe"
+					name="confirm" required />
 			</div>
 			<div class="mb-4">
 				<label for="type" class="form-label">Vous êtes :</label> <select
@@ -64,12 +67,16 @@
 		</form>
 		<p class="text-center mt-3 text-muted" style="font-size: 0.88rem">
 			Vous avez un statut particulier et avez un compte ? <a
-				href="authentification.html" class="text-success">Se connecter</a>
+				href="authentification.jsp" class="text-success">Se connecter</a>
 		</p>
 		<p class="text-center mt-3">
 			<a href="index.html" class="text-decoration-none"> ← Retour à la
 				page d'accueil </a>
 		</p>
+		<% String erreur = (String) session.getAttribute("erreur"); if(erreur
+		!= null){ session.removeAttribute("erreur"); %>
+		<div class="alert alert-danger"><%= erreur %></div>
+		<% } %>
 	</div>
 </body>
 </html>

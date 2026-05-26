@@ -1,6 +1,6 @@
 package com.clubsport.servlet;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.sql.SQLException;
 
 import com.clubsport.dao.UserDAO;
@@ -34,15 +34,11 @@ public class EluAccueilServlet extends HttpServlet {
             if (nom == null || nom.isBlank()) {
                 String email = (String) session.getAttribute("Email");
                 if (email != null && !email.isBlank()) {
-                    try {
-                        User u = new UserDAO().getUserbymail(email);
-                        if (u != null && u.getNom() != null) {
-                            nom = u.getNom();
-                            session.setAttribute("Nom", nom);
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                    User u = new UserDAO().getUserbymail(email);
+					if (u != null && u.getNom() != null) {
+					    nom = u.getNom();
+					    session.setAttribute("Nom", nom);
+					}
                 }
             }
             if (nom != null && !nom.isBlank()) {

@@ -1,19 +1,21 @@
-/**
- * 
- */
 package com.clubsport.model;
 
 /**
- *User est une classe qui represente un utilisateur du client leger
+ * Compte utilisateur (élu, acteur, utilisateur lambda, admin).
  */
 public class User {
+
+	private int id;
 	private String email;
 	private String nom;
 	private String password;
 	private String role;
 	private String identitePath;
 	private String statut;
-	
+	private String photoProfil;
+	private String telephone;
+	private String bio;
+
 	public User(String email, String nom, String password, String role, String identitePath) {
 		this.email = email;
 		this.nom = nom;
@@ -22,6 +24,7 @@ public class User {
 		this.statut = "EN_ATTENTE";
 		this.identitePath = identitePath;
 	}
+
 	public User(String email, String nom, String password, String role, String identitePath, String statut) {
 		this.email = email;
 		this.nom = nom;
@@ -31,58 +34,42 @@ public class User {
 		this.identitePath = identitePath;
 	}
 
-	/**
-	 * @return the email
-	 */
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public String getEmail() {
 		return email;
 	}
 
-	/**
-	 * @param email the email to set
-	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	/**
-	 * @return the nom
-	 */
 	public String getNom() {
 		return nom;
 	}
 
-	/**
-	 * @param nom the nom to set
-	 */
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
 
-	/**
-	 * @return the password
-	 */
 	public String getPassword() {
 		return password;
 	}
 
-	/**
-	 * @param password the password to set
-	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	/**
-	 * @return the role
-	 */
 	public String getRole() {
 		return role;
 	}
 
-	/**
-	 * @param role the role to set
-	 */
 	public void setRole(String role) {
 		this.role = role;
 	}
@@ -102,5 +89,28 @@ public class User {
 	public void setStatut(String statut) {
 		this.statut = statut;
 	}
-	
+
+	public String getPhotoProfil() {
+		return photoProfil;
+	}
+
+	public void setPhotoProfil(String photoProfil) {
+		this.photoProfil = photoProfil;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+	public String getBio() {
+		return bio;
+	}
+
+	public void setBio(String bio) {
+		this.bio = bio;
+	}
 }

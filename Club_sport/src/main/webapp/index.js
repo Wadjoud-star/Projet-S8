@@ -15,7 +15,32 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 var markersCluster = L.markerClusterGroup();
 map.addLayer(markersCluster);
+document.getElementById("btn-geoloc").addEventListener("click", function() {
+    if (!navigator.geolocation) {
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+        return;
+    }
 
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+
+            userLatLng = L.latLng(lat, lon);
+
+            map.setView([lat, lon], 13);
+
+            L.marker([lat, lon], { icon: userIcon })
+                .addTo(map)
+                .bindPopup("Vous êtes ici")
+                .openPopup();
+        },
+        function(error) {
+            console.error("Erreur de géolocalisation :", error);
+            alert("Impossible de récupérer votre position.");
+        }
+    );
+});
 fetch('/api/federations')
     .then(res => res.json())
     .then(data => {
@@ -73,6 +98,40 @@ fetch("regions.geojson")
             onEachFeature: onEachRegion
         }).addTo(map);
     });
+document.getElementById('inputCodePostal').addEventListener('input', function() {
+    const recherche = this.value.trim();
+    const old = document.getElementById('suggestions');
+    if (old) old.remove();
+
+    if (recherche.length < 2) return;
+
+    fetch(`/api/communes?recherche=${encodeURIComponent(recherche)}`)
+        .then(res => res.json())
+        .then(communes => {
+            if (communes.length === 0) return;
+            const liste = document.createElement('ul');
+            liste.id = 'suggestions';
+
+            communes.forEach(c => {
+                const item = document.createElement('li');
+                item.textContent = c.nomCommune;
+                item.addEventListener('click', () => {
+                    document.getElementById('inputCodePostal').value = c.nomCommune;
+                    liste.remove();
+                });
+                liste.appendChild(item);
+            });
+
+            document.getElementById('inputCodePostal').after(liste);
+        });
+});
+
+document.addEventListener('click', (e) => {
+    if (e.target.id !== 'inputCodePostal') {
+        const old = document.getElementById('suggestions');
+        if (old) old.remove();
+    }
+});
 document.getElementById('btnRechercher').addEventListener('click', () => {
     const codeRegion = document.getElementById('selectRegion').value;
     const nomCommune = document.getElementById('inputCodePostal').value.trim();
@@ -90,7 +149,7 @@ function lancerRecherche(codeRegion, nomCommune, codeFederation, layer) {
 
     if (codeRegion) {
         url += `code_region=${encodeURIComponent(codeRegion)}`;
-    } else if(nomCommune){
+    } else if (nomCommune) {
         url += `nom_commune=${encodeURIComponent(nomCommune)}`;
     }
 
@@ -132,8 +191,8 @@ function afficherListeClubs(data) {
 		       </div>
 		       <hr class="my-2">
 		   `;
-		   const Premiers = data.licences.slice(0, 1000);
-		       Premiers.forEach(l => {
+    const Premiers = data.licences.slice(0, 1000);
+    Premiers.forEach(l => {
         const clubs = data.clubs.find(c => c.codeCommune === l.codeCommune) || {};
         html += `
 		               <div class="mb-2 p-2 border rounded">
@@ -147,7 +206,7 @@ function afficherListeClubs(data) {
 		               </div>
 		           `;
     });
-	container.innerHTML=html;
+    container.innerHTML = html;
 }
 function afficherPopup(data, layer) {
     if (!data.licences || data.licences.length === 0) return;
