@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/acteur/gestion-club")
-public class GestionClubServlet extends HttpServlet {
+@WebServlet("/acteur/creer-club")
+public class CreerClubServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private ClubDAO clubDAO = new ClubDAO();
@@ -35,17 +35,19 @@ public class GestionClubServlet extends HttpServlet {
 
         int userId = (int) session.getAttribute("UserId");
 
-        Club club = clubDAO.findByUserId(userId);
-
-        if (club == null) {
-            response.sendRedirect(request.getContextPath() + "/acteur/creer-club");
+        if (clubDAO.userHasClub(userId)) {
+            request.setAttribute("message", "Vous avez déjà créé un club.");
+            request.getRequestDispatcher("/WEB-INF/jsp/acteur/club-deja-cree.jsp")
+                    .forward(request, response);
             return;
         }
 
-        request.setAttribute("club", club);
+        request.setAttribute("regions", clubDAO.listRegions());
+        request.setAttribute("communes", clubDAO.listCommunes());
+        request.setAttribute("federations", clubDAO.listFederations());
 
-        request.getRequestDispatcher("/WEB-INF/jsp/acteur/gestion-club.jsp")
-               .forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/jsp/acteur/creer-club.jsp")
+                .forward(request, response);
     }
 
     @Override
@@ -53,6 +55,8 @@ public class GestionClubServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
 
         HttpSession session = request.getSession(false);
 
@@ -63,24 +67,39 @@ public class GestionClubServlet extends HttpServlet {
 
         int userId = (int) session.getAttribute("UserId");
 
-        Club existingClub = clubDAO.findByUserId(userId);
-
-        if (existingClub == null) {
-            response.sendRedirect(request.getContextPath() + "/acteur/creer-club");
+        if (clubDAO.userHasClub(userId)) {
+            request.setAttribute("message", "Vous avez déjà créé un club.");
+            request.getRequestDispatcher("/WEB-INF/jsp/acteur/club-deja-cree.jsp")
+                    .forward(request, response);
             return;
         }
 
         Club club = new Club();
-        club.setIdClub(existingClub.getIdClub());
+
         club.setNom(request.getParameter("nom"));
         club.setAdresse(request.getParameter("adresse"));
         club.setCodePostal(request.getParameter("codePostal"));
+        club.setLatitude(0.0);
+        club.setLongitude(0.0);
         club.setNbLicencies(Integer.parseInt(request.getParameter("nbLicencies")));
         club.setNbFemmes(Integer.parseInt(request.getParameter("nbFemmes")));
         club.setNbHommes(Integer.parseInt(request.getParameter("nbHommes")));
 
-        clubDAO.update(club);
+        club.setCodeCommune(request.getParameter("codeCommune"));
+        club.setCodeFederation(request.getParameter("codeFederation"));
 
-        response.sendRedirect(request.getContextPath() + "/acteur/gestion-club");
+        int idClub = clubDAO.createClub(club, userId);
+
+        if (idClub > 0) {
+            response.sendRedirect(request.getContextPath() + "/acteur/gestion-club");
+        } else {
+            request.setAttribute("message", "Erreur lors de la création du club.");
+            request.setAttribute("regions", clubDAO.listRegions());
+            request.setAttribute("communes", clubDAO.listCommunes());
+            request.setAttribute("federations", clubDAO.listFederations());
+
+            request.getRequestDispatcher("/WEB-INF/jsp/acteur/creer-club.jsp")
+                    .forward(request, response);
+        }
     }
 }

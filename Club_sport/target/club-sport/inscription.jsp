@@ -17,8 +17,12 @@
 			<h1>⚽ Club de sport</h1>
 			<p>Créez un compte</p>
 		</div>
+
 		<form id="login-form" method="post" action="api/inscription"
 			enctype="multipart/form-data">
+
+		<form id="login-form" method="post" action="api/inscription" enctype="multipart/form-data">
+
 			<div class="row mb-3">
 				<div class="col">
 					<label for="prenom" class="form-label">Prénom</label> <input

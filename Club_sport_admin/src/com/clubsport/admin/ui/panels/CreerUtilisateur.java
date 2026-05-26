@@ -1,12 +1,16 @@
 package com.clubsport.admin.ui.panels;
 
 import com.clubsport.admin.dao.UtilisateurDAO;
+import com.clubsport.admin.dao.AuditDAO; // ➕ ajout pour l’audit
 import com.clubsport.admin.model.Utilisateur;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+
+// --- IMPORT BCRYPT ---
+import org.mindrot.jbcrypt.BCrypt;
 
 public class CreerUtilisateur extends JFrame {
 
@@ -17,10 +21,15 @@ public class CreerUtilisateur extends JFrame {
     private JTextField txtPhoto; // champ pour la photo
 
     private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
+    private AuditDAO auditDAO = new AuditDAO(); // ➕ DAO pour enregistrer l’action dans l’audit
 
-    public CreerUtilisateur() {
+    private Utilisateur adminConnecte; // ➕ admin connecté
 
-        // --- PARAMÈTRES DE LA FENÊTRE ---
+    // ➕ constructeur modifié pour recevoir l’admin connecté
+    public CreerUtilisateur(Utilisateur adminConnecte) {
+        this.adminConnecte = adminConnecte; // ➕ on stocke l’admin
+
+        // Modele de la fenetre 
         setTitle("Créer un utilisateur");
         setSize(500, 500);
         setLocationRelativeTo(null);
@@ -85,7 +94,7 @@ public class CreerUtilisateur extends JFrame {
         gbc.gridx = 1;
         panel.add(comboRole, gbc);
 
-        // --- PHOTO IDENTITÉ ---
+        // Champ pour la photo
         gbc.gridx = 0; gbc.gridy = 4;
         panel.add(new JLabel("Photo identité :"), gbc);
 
@@ -94,7 +103,7 @@ public class CreerUtilisateur extends JFrame {
         gbc.gridx = 1;
         panel.add(txtPhoto, gbc);
 
-        // --- BOUTON CHOISIR FICHIER ---
+        // Bouton pour selectionner un fichier 
         gbc.gridx = 1; gbc.gridy = 5;
         JButton btnChoisirFichier = new JButton("Choisir un fichier");
         btnChoisirFichier.setBackground(new Color(200, 200, 200));// couleur gris clair
@@ -104,7 +113,9 @@ public class CreerUtilisateur extends JFrame {
         btnChoisirFichier.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Sélectionner une photo d'identité");
-            fileChooser.setFileFilter(new FileNameExtensionFilter("Images", "jpg", "jpeg", "png"));
+
+            //Pour les pdf et autre fichier du style 
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Images ou PDF", "jpg", "jpeg", "png", "pdf"));
 
             int result = fileChooser.showOpenDialog(this);
 
@@ -118,7 +129,7 @@ public class CreerUtilisateur extends JFrame {
 
         add(panel, BorderLayout.CENTER);
 
-        //  BAS de la page avec les boutons 
+        //Le bas de la page avec tous les boutons 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
         JButton btnCreer = new JButton("Créer");
@@ -140,27 +151,7 @@ public class CreerUtilisateur extends JFrame {
         btnAnnuler.addActionListener(e -> dispose());
     }
 
-    // --- HASHAGE SHA-256 ---
-    private String hashSHA256(String motDePasse) {
-        try {
-            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(motDePasse.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // On crée un utilisateur
+    // --- CRÉATION UTILISATEUR ---
     private void creerUtilisateur() {
 
         String nom = txtNom.getText().trim();// trim sert a enlever les espaces
@@ -184,8 +175,8 @@ public class CreerUtilisateur extends JFrame {
             return;
         }
 
-        // Hashage du mot de passe
-        String hash = hashSHA256(motDePasse);
+        // Methode pour hacher le mot de passe sur le meme modele que sur le site web
+        String hash = BCrypt.hashpw(motDePasse, BCrypt.gensalt());
 
         Utilisateur u = new Utilisateur();
         u.setNom(nom);
@@ -193,15 +184,24 @@ public class CreerUtilisateur extends JFrame {
         u.setRole(role);
         u.setPhotoIdentite(photo.isEmpty() ? null : photo);
         u.setStatutVerification("EN_ATTENTE");
-        u.setMotDePasseHash(hash);
+        u.setMotDePasseHash(hash); // on enregistre le hash BCrypt
 
         boolean ok = utilisateurDAO.ajouterUtilisateur(u);
 
         if (ok) {
+
+            // Enregistrer la modification dans la page d'audit 
+            // ➕ sécurisé : adminConnecte peut être null
+            int idAdmin = (adminConnecte != null) ? adminConnecte.getId() : 20;
+
+            auditDAO.enregistrerAction(
+                    idAdmin,
+                    "Création utilisateur",
+                    "Création de l’utilisateur : " + nom
+            );
+
             JOptionPane.showMessageDialog(this, "Utilisateur créé avec succès.");
             dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Erreur lors de la création.", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

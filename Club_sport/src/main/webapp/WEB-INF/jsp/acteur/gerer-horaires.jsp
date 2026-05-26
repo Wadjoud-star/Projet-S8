@@ -1,4 +1,4 @@
-
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -38,7 +38,7 @@ button:hover { background: #1d4ed8; }
 
     <div class="card">
         <h2>Modifier les horaires</h2>
-        <form action="/acteur/gerer-horaires" method="post">
+     <form action="${pageContext.request.contextPath}/acteur/horaires" method="post">
             <textarea name="horaires">${club.horaires}</textarea>
             <button type="submit">Enregistrer</button>
             <a href="/acteur" class="retour-btn"> Retour</a>
