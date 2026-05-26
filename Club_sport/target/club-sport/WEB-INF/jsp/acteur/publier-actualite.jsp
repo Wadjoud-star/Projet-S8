@@ -1,5 +1,5 @@
 
-
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -70,8 +70,7 @@ button {
 
     <div class="card">
         <h2>Publier une actualité</h2>
-
-        <form action="/acteur/publier-actualite" method="post">
+<form action="${pageContext.request.contextPath}/acteur/actualites" method="post">
             <textarea name="actualite">${club.actualite}</textarea>
             <button type="submit">Publier</button>
             <a href="/acteur" class="retour-btn"> Retour</a>

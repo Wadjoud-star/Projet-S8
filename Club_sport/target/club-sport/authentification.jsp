@@ -41,6 +41,7 @@
 			</div>
 			<p class="text-muted small mb-4">Votre espace (élu ou
 				acteur) est défini lors de l'inscription.</p>
+
 			<div class="text-center">
 				<button type="submit" class="btn btn-success" id="submit-btn">
 					Se connecter</button>

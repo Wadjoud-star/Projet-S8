@@ -6,11 +6,15 @@ import java.util.Base64;
 import java.util.List;
 
 import com.clubsport.dao.EluVisualisationDAO;
+import com.clubsport.model.ClassementCommune;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import jakarta.servlet.ServletException;
@@ -23,77 +27,274 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ExportPDFServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private final EluVisualisationDAO dao = new EluVisualisationDAO();
+
+    private final EluVisualisationDAO dao =
+            new EluVisualisationDAO();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(
+            HttpServletRequest req,
+            HttpServletResponse resp)
             throws ServletException, IOException {
 
-        String region = req.getParameter("region");
-        String codeFederation = req.getParameter("codeFederation");
-        String nomCommune = req.getParameter("nomCommune");
+        String region =
+                req.getParameter("region");
 
-        String chartHF = req.getParameter("chartHF");
-        String chartClassement = req.getParameter("chartClassement");
+        String codeFederation =
+                req.getParameter("codeFederation");
+
+        String nomCommune =
+                req.getParameter("nomCommune");
+
+        String chartHF =
+                req.getParameter("chartHF");
+
+        String chartClassement =
+                req.getParameter("chartClassement");
 
         resp.setContentType("application/pdf");
-        resp.setHeader("Content-Disposition", "attachment; filename=\"export-graphiques.pdf\"");
+
+        resp.setHeader(
+                "Content-Disposition",
+                "attachment; filename=\"export-visualisation.pdf\""
+        );
 
         try {
-            Document document = new Document();
-            PdfWriter.getInstance(document, resp.getOutputStream());
+
+            List<ClassementCommune> classement =
+                    dao.getClassementCommunes(
+                            region,
+                            codeFederation,
+                            nomCommune
+                    );
+
+            Document document =
+                    new Document();
+
+            PdfWriter.getInstance(
+                    document,
+                    resp.getOutputStream()
+            );
 
             document.open();
 
-            document.add(new Paragraph("Export des graphiques"));
-            document.add(new Paragraph("Region : " + (region == null || region.isBlank() ? "Toutes" : region)));
-            document.add(new Paragraph("Federation : " + getNomFederation(codeFederation)));
-            document.add(new Paragraph("Commune : " + (nomCommune == null || nomCommune.isBlank() ? "Toutes" : nomCommune)));
+            document.add(
+                    new Paragraph(
+                            "Export des statistiques"
+                    )
+            );
+
+            document.add(
+                    new Paragraph(
+                            "Region : "
+                            + (
+                                region == null
+                                || region.isBlank()
+                                ? "Toutes"
+                                : region
+                            )
+                    )
+            );
+
+            document.add(
+                    new Paragraph(
+                            "Federation : "
+                            + getNomFederation(codeFederation)
+                    )
+            );
+
+            document.add(
+                    new Paragraph(
+                            "Commune : "
+                            + (
+                                nomCommune == null
+                                || nomCommune.isBlank()
+                                ? "Toutes"
+                                : nomCommune
+                            )
+                    )
+            );
+
             document.add(new Paragraph(" "));
 
-            if (chartHF != null && !chartHF.isBlank()) {
-                document.add(new Paragraph("Repartition Hommes / Femmes"));
-                document.add(convertBase64ToImage(chartHF, 450, 350));
+            // ========= CAMEMBERT =========
+
+            if (chartHF != null &&
+                !chartHF.isBlank()) {
+
+                document.add(
+                        new Paragraph(
+                                "Repartition Hommes / Femmes"
+                        )
+                );
+
+                document.add(
+                        convertBase64ToImage(
+                                chartHF,
+                                450,
+                                320
+                        )
+                );
+
                 document.add(new Paragraph(" "));
             }
 
-            if (chartClassement != null && !chartClassement.isBlank()) {
-                document.add(new Paragraph("Nombre de licencies par commune"));
-                document.add(convertBase64ToImage(chartClassement, 520, 350));
+            // ========= HISTOGRAMME =========
+
+            if (chartClassement != null &&
+                !chartClassement.isBlank()) {
+
+                document.add(
+                        new Paragraph(
+                                "Nombre de licencies par commune"
+                        )
+                );
+
+                document.add(
+                        convertBase64ToImage(
+                                chartClassement,
+                                500,
+                                320
+                        )
+                );
+
+                document.add(new Paragraph(" "));
             }
+
+            // ========= TABLEAU TOP 10 =========
+
+            document.add(
+                    new Paragraph(
+                            "Top 10 des communes"
+                    )
+            );
+
+            document.add(new Paragraph(" "));
+
+            PdfPTable table =
+                    new PdfPTable(4);
+
+            table.setWidthPercentage(100);
+
+            table.addCell(
+                    new PdfPCell(
+                            new Phrase("Rang")
+                    )
+            );
+
+            table.addCell(
+                    new PdfPCell(
+                            new Phrase("Commune")
+                    )
+            );
+
+            table.addCell(
+                    new PdfPCell(
+                            new Phrase("Licencies")
+                    )
+            );
+
+            table.addCell(
+                    new PdfPCell(
+                            new Phrase("Taux (%)")
+                    )
+            );
+
+            int limite =
+                    Math.min(classement.size(), 10);
+
+            for (int i = 0;
+                 i < limite;
+                 i++) {
+
+                ClassementCommune cc =
+                        classement.get(i);
+
+                table.addCell(
+                        String.valueOf(i + 1)
+                );
+
+                table.addCell(
+                        cc.getNomCommune()
+                );
+
+                table.addCell(
+                        String.format(
+                                "%,d",
+                                cc.getTotalLicencies()
+                        ).replace(",", " ")
+                );
+
+                table.addCell(
+                        String.format(
+                                "%.2f",
+                                cc.getTauxLicencies()
+                        ) + " %"
+                );
+            }
+
+            document.add(table);
 
             document.close();
 
         } catch (SQLException | DocumentException e) {
-            throw new ServletException("Erreur pendant la generation du PDF", e);
+
+            throw new ServletException(
+                    "Erreur pendant la generation du PDF",
+                    e
+            );
         }
     }
 
-    private Image convertBase64ToImage(String base64Data, float maxWidth, float maxHeight)
-            throws IOException, DocumentException {
+    private Image convertBase64ToImage(
+            String base64Data,
+            float maxWidth,
+            float maxHeight
+    ) throws IOException, DocumentException {
 
         String base64Image = base64Data;
 
         if (base64Data.contains(",")) {
-            base64Image = base64Data.split(",")[1];
+
+            base64Image =
+                    base64Data.split(",")[1];
         }
 
-        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-        Image image = Image.getInstance(imageBytes);
-        image.scaleToFit(maxWidth, maxHeight);
+        byte[] imageBytes =
+                Base64.getDecoder()
+                        .decode(base64Image);
+
+        Image image =
+                Image.getInstance(imageBytes);
+
+        image.scaleToFit(
+                maxWidth,
+                maxHeight
+        );
 
         return image;
     }
 
-    private String getNomFederation(String codeFederation) throws SQLException {
-        if (codeFederation == null || codeFederation.isBlank()) {
+    private String getNomFederation(
+            String codeFederation
+    ) throws SQLException {
+
+        if (codeFederation == null
+                || codeFederation.isBlank()) {
+
             return "Toutes";
         }
 
-        List<String> federations = dao.listerFederations();
+        List<String> federations =
+                dao.listerFederations();
 
         for (String f : federations) {
-            if (f.startsWith(codeFederation + " — ") || f.startsWith(codeFederation + " - ")) {
+
+            if (
+                f.startsWith(codeFederation + " — ")
+                || f.startsWith(codeFederation + " - ")
+            ) {
+
                 return f;
             }
         }

@@ -15,7 +15,32 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 var markersCluster = L.markerClusterGroup();
 map.addLayer(markersCluster);
+document.getElementById("btn-geoloc").addEventListener("click", function() {
+    if (!navigator.geolocation) {
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+        return;
+    }
 
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+
+            userLatLng = L.latLng(lat, lon);
+
+            map.setView([lat, lon], 13);
+
+            L.marker([lat, lon], { icon: userIcon })
+                .addTo(map)
+                .bindPopup("Vous êtes ici")
+                .openPopup();
+        },
+        function(error) {
+            console.error("Erreur de géolocalisation :", error);
+            alert("Impossible de récupérer votre position.");
+        }
+    );
+});
 fetch('/api/federations')
     .then(res => res.json())
     .then(data => {
