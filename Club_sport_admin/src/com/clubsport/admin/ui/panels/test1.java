@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 
 public class test1 extends JFrame {
 
-    private Utilisateur utilisateurConnecte = null; // stocke l'utilisateur connecté
+    private Utilisateur utilisateurConnecte = null; // stocke l'utilisateur connecté (peut rester null)
 
     public test1() {
         setTitle("Interface Administrateur");
@@ -39,23 +39,24 @@ public class test1 extends JFrame {
 
         // --- 4 BLOCS CLIQUABLES ---
         mainPanel.add(createClickableBlock("Gestion des comptes", () -> {
-            if (verifierAcces()) new PageGestionComptes().setVisible(true); // les faire apparaitre
+            // ACCÈS LIBRE : plus de vérification
+            new PageGestionComptes(utilisateurConnecte).setVisible(true);
         }));
         mainPanel.add(Box.createVerticalStrut(30));
 
         mainPanel.add(createClickableBlock("Historique des connexions", () -> {
-            if (verifierAcces()) new PageHistorique().setVisible(true);
+            new PageHistorique(utilisateurConnecte).setVisible(true);
         }));
         mainPanel.add(Box.createVerticalStrut(30));
 
         mainPanel.add(createClickableBlock("Recherche de clubs", () -> {
-            if (verifierAcces()) new PageRechercheClubs().setVisible(true);
+            new PageRechercheClubs(utilisateurConnecte).setVisible(true);
         }));
         mainPanel.add(Box.createVerticalStrut(30));
 
         // --- NOUVEAU : GESTION ADMINISTRATEUR ---
         mainPanel.add(createClickableBlock("Gestion administrateur", () -> {
-            if (verifierAcces()) new PageAuditAdministrateur().setVisible(true);
+            new PageAuditAdministrateur(utilisateurConnecte).setVisible(true);
         }));
 
         mainPanel.add(Box.createVerticalGlue()); // un espace en bas
@@ -63,14 +64,8 @@ public class test1 extends JFrame {
 
         // --- ACTIONS DES BOUTONS ---
         btnConnexion.addActionListener(e -> {
-            FenetreConnexion fen = new FenetreConnexion(this);
+            FenetreConnexion fen = new FenetreConnexion(this); // la fenêtre de connexion renverra l’admin via setUtilisateurConnecte()
             fen.setVisible(true);
-
-            // si un admin est connecté
-            if (utilisateurConnecte != null) {
-                btnConnexion.setEnabled(false);
-                btnDeconnexion.setEnabled(true);
-            }
         });
 
         btnDeconnexion.addActionListener(e -> {
@@ -121,18 +116,17 @@ public class test1 extends JFrame {
         return panel;
     }
 
-    // Vérifie si un admin est connecté
-    private boolean verifierAcces() {
-        if (utilisateurConnecte == null) {
-            JOptionPane.showMessageDialog(this, "Veuillez vous connecter en tant qu'administrateur.");
-            return false;
-        }
-        return true;
-    }
-
     // Permet à la fenêtre de connexion de définir l'utilisateur connecté
     public void setUtilisateurConnecte(Utilisateur u) {
         this.utilisateurConnecte = u;
+
+        // Active/désactive les boutons
+        JPanel barreConnexion = (JPanel) ((JPanel) getContentPane().getComponent(0)).getComponent(1);
+        JButton btnConnexion = (JButton) barreConnexion.getComponent(0);
+        JButton btnDeconnexion = (JButton) barreConnexion.getComponent(1);
+
+        btnConnexion.setEnabled(false);
+        btnDeconnexion.setEnabled(true);
     }
 
     // Lance l’interface affiche la fenêtre

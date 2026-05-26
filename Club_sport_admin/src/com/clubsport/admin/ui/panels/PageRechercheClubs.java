@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.clubsport.admin.dao.RechercheDAO; // nouveau DAO
 import com.clubsport.admin.model.ResultatRecherche; // nouveau modèle
+import com.clubsport.admin.model.Utilisateur; // ➕ admin connecté
 
 public class PageRechercheClubs extends JFrame {
 
@@ -22,7 +23,12 @@ public class PageRechercheClubs extends JFrame {
 
     private RechercheDAO rechercheDAO = new RechercheDAO(); // objet de la base de données (nouveau DAO)
 
-    public PageRechercheClubs() {
+    private Utilisateur adminConnecte; // ➕ admin connecté
+
+    // --- Constructeur modifié pour recevoir l’admin connecté ---
+    public PageRechercheClubs(Utilisateur adminConnecte) {
+        this.adminConnecte = adminConnecte; // ➕ on stocke l’admin
+
         setTitle("Recherche de clubs"); // titre de la fenêtre
         setSize(900, 600); // taille de la fenêtre 
         setLocationRelativeTo(null); // position de la page 
@@ -149,7 +155,8 @@ public class PageRechercheClubs extends JFrame {
 
         // tri les résultats
         int colonneTri = cbTri.getSelectedIndex(); // même ordre que les colonnes du tableau
-//TableRowSorter classe Swing qui permet de trier les lignes d’un tableau.
+
+        // TableRowSorter classe Swing qui permet de trier les lignes d’un tableau.
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);// attache un model pour trier le tableau 
 

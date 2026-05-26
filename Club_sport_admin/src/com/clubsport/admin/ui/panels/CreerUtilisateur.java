@@ -23,7 +23,11 @@ public class CreerUtilisateur extends JFrame {
     private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
     private AuditDAO auditDAO = new AuditDAO(); // ➕ DAO pour enregistrer l’action dans l’audit
 
-    public CreerUtilisateur() {
+    private Utilisateur adminConnecte; // ➕ admin connecté
+
+    // ➕ constructeur modifié pour recevoir l’admin connecté
+    public CreerUtilisateur(Utilisateur adminConnecte) {
+        this.adminConnecte = adminConnecte; // ➕ on stocke l’admin
 
         // Modele de la fenetre 
         setTitle("Créer un utilisateur");
@@ -187,14 +191,17 @@ public class CreerUtilisateur extends JFrame {
         if (ok) {
 
             // Enregistrer la modification dans la page d'audit 
-            int idAdmin = 1;
-            String details = "Création de l’utilisateur : " + nom;
-            auditDAO.enregistrerAction(idAdmin, "Création utilisateur", details);
+            // ➕ sécurisé : adminConnecte peut être null
+            int idAdmin = (adminConnecte != null) ? adminConnecte.getId() : 20;
+
+            auditDAO.enregistrerAction(
+                    idAdmin,
+                    "Création utilisateur",
+                    "Création de l’utilisateur : " + nom
+            );
 
             JOptionPane.showMessageDialog(this, "Utilisateur créé avec succès.");
             dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Erreur lors de la création.", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

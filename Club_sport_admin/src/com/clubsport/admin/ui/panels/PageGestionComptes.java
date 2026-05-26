@@ -1,8 +1,8 @@
 package com.clubsport.admin.ui.panels;
 
-import com.clubsport.admin.dao.AuditDAO;
-import com.clubsport.admin.dao.UtilisateurDAO;
 import com.clubsport.admin.model.Utilisateur;
+import com.clubsport.admin.dao.UtilisateurDAO; // ← nécessaire pour la mise à jour BDD
+import com.clubsport.admin.dao.AuditDAO; //
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -22,8 +22,14 @@ public class PageGestionComptes extends JFrame {
     private JRadioButton triStatut;
 
     private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
+    private AuditDAO auditDAO = new AuditDAO(); // ➕ audit
 
-    public PageGestionComptes() {
+    private Utilisateur adminConnecte; // ➕ admin connecté (peut être null maintenant)
+
+    // --- Constructeur modifié pour permettre un accès libre ---
+    public PageGestionComptes(Utilisateur adminConnecte) {
+        this.adminConnecte = adminConnecte; // peut être null → accès libre
+
         setTitle("Gestion des comptes");
         setSize(900, 600);
         setLocationRelativeTo(null);
@@ -137,7 +143,8 @@ public class PageGestionComptes extends JFrame {
         btnSupprimer.addActionListener(e -> supprimerSelection());
 
         btnCreer.addActionListener(e -> {
-            CreerUtilisateur fen = new CreerUtilisateur();
+            // ➕ adminConnecte peut être null → OK
+            CreerUtilisateur fen = new CreerUtilisateur(adminConnecte);
             fen.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             fen.setVisible(true);
 
@@ -164,9 +171,11 @@ public class PageGestionComptes extends JFrame {
                 return;
             }
 
+            // ➕ adminConnecte peut être null → OK
             ValidationInscription fen = new ValidationInscription(utilisateur, () -> {
                 chargerComptes(); // ← rafraîchire le tableau
-            });
+            }, adminConnecte);
+
             fen.setVisible(true);
         });
     }
@@ -266,7 +275,8 @@ public class PageGestionComptes extends JFrame {
             return;
         }
 
-        ModifierUtilisateur fenetre = new ModifierUtilisateur(utilisateur);
+        // ➕ adminConnecte peut être null → OK
+        ModifierUtilisateur fenetre = new ModifierUtilisateur(utilisateur, adminConnecte);
         fenetre.setVisible(true);
 
         fenetre.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -277,7 +287,7 @@ public class PageGestionComptes extends JFrame {
         });
     }
 
- // SUPPRIMER 
+    // SUPPRIMER 
     private void supprimerSelection() {
         //récupérer les identifiants des clients sélectionner 
         List<Integer> ids = getSelectedIds();
@@ -300,21 +310,15 @@ public class PageGestionComptes extends JFrame {
         }
 
         //Enregistrement des actions de l'admin 
-        int idAdmin = 1;
-        String details = "Suppression de " + ids.size() + " compte(s) : " + ids;
-        AuditDAO.enregistrerAction(idAdmin, "Suppression utilisateur", details);
+        int idAdmin = (adminConnecte != null) ? adminConnecte.getId() :20;
+
+        auditDAO.enregistrerAction(
+                idAdmin, // ➕ sécurisé
+                "Suppression utilisateur",
+                "Suppression de " + ids.size() + " compte(s) : " + ids
+        );
 
         JOptionPane.showMessageDialog(this, "Suppression validée.");
         chargerComptes(); // rafraîchir le tableau
-    }
-
-
-    // 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            PageGestionComptes fen = new PageGestionComptes();
-            fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            fen.setVisible(true);
-        });
     }
 }

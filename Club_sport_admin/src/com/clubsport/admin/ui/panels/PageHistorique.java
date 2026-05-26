@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.clubsport.admin.dao.HistoriqueConnexionDAO;
 import com.clubsport.admin.model.HistoriqueConnexion;
+import com.clubsport.admin.model.Utilisateur;
 
 public class PageHistorique extends JFrame {
 
@@ -27,7 +28,12 @@ public class PageHistorique extends JFrame {
     // connexion au DAO Historique de connexions 
     private HistoriqueConnexionDAO historiqueDAO = new HistoriqueConnexionDAO();
 
-    public PageHistorique() {
+    private Utilisateur adminConnecte; // ➕ admin connecté
+
+    // --- Constructeur modifié pour recevoir l’admin connecté ---
+    public PageHistorique(Utilisateur adminConnecte) {
+        this.adminConnecte = adminConnecte; // ➕ on stocke l’admin
+
         setTitle("Historique des connexions");
         setSize(800, 600);
         setLocationRelativeTo(null);
@@ -218,12 +224,5 @@ public class PageHistorique extends JFrame {
         cacheAffichage = logsBDD;
         page = 0;
         afficherPage();
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            PageHistorique page = new PageHistorique();
-            page.setVisible(true);
-        });
     }
 }

@@ -13,12 +13,14 @@ public class ValidationInscription extends JFrame {
     private Utilisateur utilisateur; // l'utilisateur dont on affiche les infos
     private Runnable parentRefreshCallback; // rafraîchir PageGestionComptes
 
+    private Utilisateur adminConnecte; // ➕ admin connecté
     private AuditDAO auditDAO = new AuditDAO(); 
 
-    // --- Constructeur : on reçoit l'utilisateur + un callback pour rafraîchir la page parent ---
-    public ValidationInscription(Utilisateur utilisateur, Runnable refreshCallback) {
+    // --- Constructeur : on reçoit l'utilisateur + un callback pour rafraîchir la page parent + admin connecté ---
+    public ValidationInscription(Utilisateur utilisateur, Runnable refreshCallback, Utilisateur adminConnecte) {
         this.utilisateur = utilisateur;
         this.parentRefreshCallback = refreshCallback; // on stocke le callback
+        this.adminConnecte = adminConnecte; // ➕ on stocke l’admin connecté
 
         setTitle("Validation de l'identité");
         setSize(500, 420);
@@ -167,13 +169,16 @@ public class ValidationInscription extends JFrame {
             if (ok) {
                 utilisateur.setStatutVerification(nouveauStatut);
 
-                //  ENREGISTREMENT DANS L’AUDIT 
-                int idAdmin = 1;
-                // on récupère l'id de l'utilisateur concerné 
-                String details = "Validation de l'inscription pour l'utilisateur ID=" 
-                        + utilisateur.getId() + " (" + utilisateur.getNom() + ")";
-                // appel de la fonction du DAO
-                auditDAO.enregistrerAction(idAdmin, "Validation inscription", details);
+            //  ENREGISTREMENT DANS L’AUDIT 
+                int idAdmin = (adminConnecte != null) ? adminConnecte.getId() : 20;
+
+                auditDAO.enregistrerAction(
+                        idAdmin,
+                        "Validation inscription",
+                        "Validation de l'inscription pour l'utilisateur ID=" 
+                                + utilisateur.getId() + " (" + utilisateur.getNom() + ")"
+                );
+
 
                 JOptionPane.showMessageDialog(this,
                         "L'inscription a été validée avec succès !");

@@ -2,6 +2,7 @@ package com.clubsport.admin.ui.panels;
 
 import com.clubsport.admin.dao.AuditDAO;
 import com.clubsport.admin.model.AuditAction;
+import com.clubsport.admin.model.Utilisateur; // ➕ admin connecté
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,11 +18,15 @@ public class PageAuditAdministrateur extends JFrame {
     // DAO pour récupérer les actions depuis la base
     private AuditDAO auditDAO = new AuditDAO();
 
+    private Utilisateur adminConnecte; // ➕ admin connecté (peut être null maintenant)
+
     // Format d'affichage de la date
     private final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    public PageAuditAdministrateur() {
+    // --- Constructeur modifié pour recevoir l’admin connecté ---
+    public PageAuditAdministrateur(Utilisateur adminConnecte) {
+        this.adminConnecte = adminConnecte; // ➕ on stocke l’admin (peut être null → accès libre OK)
 
         //Configuration de la fenêtre
         setTitle("Gestion administrateur - Audit des actions");
@@ -50,7 +55,7 @@ public class PageAuditAdministrateur extends JFrame {
         // Chargement initial des données réelles
         chargerDonneesReelles();
 
-        // Bouton Actualise
+        // Bouton Actualiser
         JButton btnActualiser = new JButton("Actualiser");
         btnActualiser.setPreferredSize(new Dimension(120, 35));
         btnActualiser.addActionListener(e -> {
@@ -71,7 +76,7 @@ public class PageAuditAdministrateur extends JFrame {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-   // charger les données de la BDD et les ajouter au tableau 
+    // charger les données de la BDD et les ajouter au tableau 
     private void chargerDonneesReelles() {
         List<AuditAction> actions = auditDAO.getAllActions();
 
@@ -83,9 +88,5 @@ public class PageAuditAdministrateur extends JFrame {
                     a.getDateAction().format(formatter)
             });
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new PageAuditAdministrateur().setVisible(true));
     }
 }

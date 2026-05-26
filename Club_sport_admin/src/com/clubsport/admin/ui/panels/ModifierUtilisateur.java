@@ -17,11 +17,15 @@ public class ModifierUtilisateur extends JFrame {
     private JTextField txtPhoto; // chemin photo identité
 
     private Utilisateur utilisateur; // utilisateur objet qui va etre modifié
+    private Utilisateur adminConnecte; // ➕ admin connecté
+
     private UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
     private AuditDAO auditDAO = new AuditDAO(); // ➕ DAO pour enregistrer l’action dans l’audit
 
-    public ModifierUtilisateur(Utilisateur utilisateur) {
+    // ➕ constructeur modifié pour recevoir l’admin connecté
+    public ModifierUtilisateur(Utilisateur utilisateur, Utilisateur adminConnecte) {
         this.utilisateur = utilisateur; // construction d'un utilisateur via notre model
+        this.adminConnecte = adminConnecte; // ➕ on stocke l’admin connecté
 
         setTitle("Modifier un utilisateur");
         setSize(420, 520);
@@ -156,7 +160,7 @@ public class ModifierUtilisateur extends JFrame {
 
         panel.add(panelBoutons);
 
-        // --- Action bouton Valider ---
+     // --- Action bouton Valider ---
         btnValider.addActionListener(e -> {
             // Mise à jour de l'objet utilisateur
             utilisateur.setNom(txtNom.getText());
@@ -169,11 +173,14 @@ public class ModifierUtilisateur extends JFrame {
 
             if (ok) {
 
-                // ➕ ENREGISTREMENT DANS L’AUDIT
-                // ⚠️ Remplacer 1 par l’ID réel de l’admin connecté
-                int idAdmin = 1;
-                String details = "Modification de l’utilisateur : " + utilisateur.getNom();
-                auditDAO.enregistrerAction(idAdmin, "Modification utilisateur", details);
+                // ➕ ENREGISTREMENT DANS L’AUDIT (sécurisé)
+                int idAdmin = (adminConnecte != null) ? adminConnecte.getId() : 20;
+
+                auditDAO.enregistrerAction(
+                        idAdmin,
+                        "Modification utilisateur",
+                        "Modification de l’utilisateur : " + utilisateur.getNom()
+                );
 
                 JOptionPane.showMessageDialog(this, "Utilisateur modifié avec succès.");
                 dispose(); // fermeture de la fenêtre
