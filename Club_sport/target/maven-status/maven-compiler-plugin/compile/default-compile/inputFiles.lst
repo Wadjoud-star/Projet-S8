@@ -2,6 +2,7 @@ C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\ClubD
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\EluLicenceDAO.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\EluVisualisationDAO.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\FederationDAO.java
+C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\HistoriqueConnexionDAO.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\RegionDAO.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\StatClubsDAO.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\StatLicenciesDAO.java
@@ -35,7 +36,11 @@ C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\E
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluVisualisationServlet.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\ExportPDFServlet.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\FederationServlet.java
+C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\GestionClubServlet.java
+C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\GestionCotisationServlet.java
+C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\GestionHorairesServlet.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\InscriptionServlet.java
+C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\MembresClubServlet.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\RegionServlet.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\StatsServlet.java
 C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\util\ConnexionDB.java

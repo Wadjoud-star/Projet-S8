@@ -31,7 +31,7 @@ public class ExportPDFServlet extends HttpServlet {
 
         String region = req.getParameter("region");
         String codeFederation = req.getParameter("codeFederation");
-        String codeCommune = req.getParameter("codeCommune");
+        String nomCommune = req.getParameter("nomCommune");
 
         String chartHF = req.getParameter("chartHF");
         String chartClassement = req.getParameter("chartClassement");
@@ -48,7 +48,7 @@ public class ExportPDFServlet extends HttpServlet {
             document.add(new Paragraph("Export des graphiques"));
             document.add(new Paragraph("Region : " + (region == null || region.isBlank() ? "Toutes" : region)));
             document.add(new Paragraph("Federation : " + getNomFederation(codeFederation)));
-            document.add(new Paragraph("Code commune : " + (codeCommune == null || codeCommune.isBlank() ? "Toutes" : codeCommune)));
+            document.add(new Paragraph("Commune : " + (nomCommune == null || nomCommune.isBlank() ? "Toutes" : nomCommune)));
             document.add(new Paragraph(" "));
 
             if (chartHF != null && !chartHF.isBlank()) {

@@ -17,11 +17,14 @@ public class EluVisualisationDAO {
         String sql = "SELECT DISTINCT nom_region FROM region ORDER BY nom_region";
 
         Connection conn = ConnexionDB.getConnection();
+
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 regions.add(rs.getString("nom_region"));
             }
+
         } finally {
             ConnexionDB.fermer(conn);
         }
@@ -34,13 +37,14 @@ public class EluVisualisationDAO {
         String sql = "SELECT code_federation, nom_federation FROM federation ORDER BY nom_federation";
 
         Connection conn = ConnexionDB.getConnection();
+
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
-                federations.add(
-                    rs.getString("code_federation") + " — " + rs.getString("nom_federation")
-                );
+                federations.add(rs.getString("code_federation") + " — " + rs.getString("nom_federation"));
             }
+
         } finally {
             ConnexionDB.fermer(conn);
         }
@@ -51,45 +55,47 @@ public class EluVisualisationDAO {
     public List<ClassementCommune> getClassementCommunes(
             String nomRegion,
             String codeFederation,
-            String codeCommune) throws SQLException {
+            String nomCommune) throws SQLException {
 
         StringBuilder sql = new StringBuilder(
-            "SELECT c.code_commune, c.nom_commune, " +
-            "COALESCE(SUM(sl.total_licencies), 0) AS total_licencies, " +
-            "ROUND(SUM(sl.total_licencies) * 100.0 / SUM(SUM(sl.total_licencies)) OVER (), 2) AS taux " +
-            "FROM statistique_licencies sl " +
-            "JOIN commune c ON c.code_commune = sl.code_commune " +
-            "JOIN region r ON r.code_region = c.code_region " +
-            "JOIN federation f ON f.code_federation = sl.code_federation " +
-            "WHERE 1=1 "
+                "SELECT c.code_commune, c.nom_commune, " +
+                "COALESCE(SUM(sl.total_licencies), 0) AS total_licencies, " +
+                "ROUND(SUM(sl.total_licencies) * 100.0 / " +
+                "SUM(SUM(sl.total_licencies)) OVER (), 2) AS taux " +
+                "FROM statistique_licencies sl " +
+                "JOIN commune c ON c.code_commune = sl.code_commune " +
+                "JOIN region r ON r.code_region = c.code_region " +
+                "JOIN federation f ON f.code_federation = sl.code_federation " +
+                "WHERE 1=1 "
         );
 
         List<Object> params = new ArrayList<>();
 
         if (nomRegion != null && !nomRegion.isBlank()) {
             sql.append("AND r.nom_region = ? ");
-            params.add(nomRegion);
+            params.add(nomRegion.trim());
         }
 
         if (codeFederation != null && !codeFederation.isBlank()) {
             sql.append("AND f.code_federation = ? ");
-            params.add(codeFederation);
+            params.add(codeFederation.trim());
         }
 
-        if (codeCommune != null && !codeCommune.isBlank()) {
-            sql.append("AND c.code_commune = ? ");
-            params.add(codeCommune);
+        if (nomCommune != null && !nomCommune.isBlank()) {
+            sql.append("AND UPPER(TRIM(c.nom_commune)) LIKE UPPER(?) ");
+            params.add("%" + nomCommune.trim() + "%");
         }
 
         sql.append(
-            "GROUP BY c.code_commune, c.nom_commune " +
-            "ORDER BY total_licencies DESC LIMIT 30"
+                "GROUP BY c.code_commune, c.nom_commune, c.population " +
+                "ORDER BY total_licencies DESC LIMIT 30"
         );
 
         List<ClassementCommune> liste = new ArrayList<>();
         Connection conn = ConnexionDB.getConnection();
 
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
@@ -103,6 +109,7 @@ public class EluVisualisationDAO {
                     liste.add(cc);
                 }
             }
+
         } finally {
             ConnexionDB.fermer(conn);
         }
@@ -110,54 +117,55 @@ public class EluVisualisationDAO {
         return liste;
     }
 
-    public int getTotalFiltre(String nomRegion, String codeFederation, String codeCommune) throws SQLException {
-        return executerTotal(nomRegion, codeFederation, codeCommune, "sl.total_licencies", "total");
+    public int getTotalFiltre(String nomRegion, String codeFederation, String nomCommune) throws SQLException {
+        return executerTotal(nomRegion, codeFederation, nomCommune, "sl.total_licencies", "total");
     }
 
-    public int getTotalFemmesFiltre(String nomRegion, String codeFederation, String codeCommune) throws SQLException {
-        return executerTotal(nomRegion, codeFederation, codeCommune, "sl.licencies_femmes", "resultat");
+    public int getTotalFemmesFiltre(String nomRegion, String codeFederation, String nomCommune) throws SQLException {
+        return executerTotal(nomRegion, codeFederation, nomCommune, "sl.licencies_femmes", "resultat");
     }
 
-    public int getTotalHommesFiltre(String nomRegion, String codeFederation, String codeCommune) throws SQLException {
-        return executerTotal(nomRegion, codeFederation, codeCommune, "sl.licencies_hommes", "resultat");
+    public int getTotalHommesFiltre(String nomRegion, String codeFederation, String nomCommune) throws SQLException {
+        return executerTotal(nomRegion, codeFederation, nomCommune, "sl.licencies_hommes", "resultat");
     }
 
     private int executerTotal(
             String nomRegion,
             String codeFederation,
-            String codeCommune,
+            String nomCommune,
             String colonne,
             String alias) throws SQLException {
 
         StringBuilder sql = new StringBuilder(
-            "SELECT COALESCE(SUM(" + colonne + "), 0) AS " + alias + " " +
-            "FROM statistique_licencies sl " +
-            "JOIN commune c ON c.code_commune = sl.code_commune " +
-            "JOIN region r ON r.code_region = c.code_region " +
-            "JOIN federation f ON f.code_federation = sl.code_federation " +
-            "WHERE 1=1 "
+                "SELECT COALESCE(SUM(" + colonne + "), 0) AS " + alias + " " +
+                "FROM statistique_licencies sl " +
+                "JOIN commune c ON c.code_commune = sl.code_commune " +
+                "JOIN region r ON r.code_region = c.code_region " +
+                "JOIN federation f ON f.code_federation = sl.code_federation " +
+                "WHERE 1=1 "
         );
 
         List<Object> params = new ArrayList<>();
 
         if (nomRegion != null && !nomRegion.isBlank()) {
             sql.append("AND r.nom_region = ? ");
-            params.add(nomRegion);
+            params.add(nomRegion.trim());
         }
 
         if (codeFederation != null && !codeFederation.isBlank()) {
             sql.append("AND f.code_federation = ? ");
-            params.add(codeFederation);
+            params.add(codeFederation.trim());
         }
 
-        if (codeCommune != null && !codeCommune.isBlank()) {
-            sql.append("AND c.code_commune = ? ");
-            params.add(codeCommune);
+        if (nomCommune != null && !nomCommune.isBlank()) {
+            sql.append("AND UPPER(TRIM(c.nom_commune)) LIKE UPPER(?) ");
+            params.add("%" + nomCommune.trim() + "%");
         }
 
         Connection conn = ConnexionDB.getConnection();
 
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
@@ -167,6 +175,7 @@ public class EluVisualisationDAO {
                     return rs.getInt(alias);
                 }
             }
+
         } finally {
             ConnexionDB.fermer(conn);
         }

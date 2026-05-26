@@ -35,32 +35,68 @@ public class EluVisualisationServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+
             String nomRegion = req.getParameter("region");
             String codeFederation = req.getParameter("codeFederation");
-            String codeCommune = req.getParameter("codeCommune");
 
+            // Remplace codeCommune par nomCommune
+            String nomCommune = req.getParameter("nomCommune");
+
+            // Chargement listes filtres
             List<String> regions = dao.listerRegions();
             List<String> federations = dao.listerFederations();
 
+            // Données filtrées
             List<ClassementCommune> classement =
-                    dao.getClassementCommunes(nomRegion, codeFederation, codeCommune);
+                    dao.getClassementCommunes(
+                            nomRegion,
+                            codeFederation,
+                            nomCommune
+                    );
 
-            int totalHommes = dao.getTotalHommesFiltre(nomRegion, codeFederation, codeCommune);
-            int totalFemmes = dao.getTotalFemmesFiltre(nomRegion, codeFederation, codeCommune);
-            int total = dao.getTotalFiltre(nomRegion, codeFederation, codeCommune);
+            int totalHommes =
+                    dao.getTotalHommesFiltre(
+                            nomRegion,
+                            codeFederation,
+                            nomCommune
+                    );
 
+            int totalFemmes =
+                    dao.getTotalFemmesFiltre(
+                            nomRegion,
+                            codeFederation,
+                            nomCommune
+                    );
+
+            int total =
+                    dao.getTotalFiltre(
+                            nomRegion,
+                            codeFederation,
+                            nomCommune
+                    );
+
+            // Envoi JSP
             req.setAttribute("regions", regions);
             req.setAttribute("federations", federations);
+
             req.setAttribute("region", nomRegion);
             req.setAttribute("codeFederation", codeFederation);
-            req.setAttribute("codeCommune", codeCommune);
+
+            // Nouveau filtre commune
+            req.setAttribute("nomCommune", nomCommune);
+
             req.setAttribute("classement", classement);
+
             req.setAttribute("totalHommes", totalHommes);
             req.setAttribute("totalFemmes", totalFemmes);
             req.setAttribute("total", total);
 
         } catch (SQLException e) {
-            req.setAttribute("erreur", "Erreur base de données : " + e.getMessage());
+
+            req.setAttribute(
+                    "erreur",
+                    "Erreur base de données : " + e.getMessage()
+            );
         }
 
         req.getRequestDispatcher("/WEB-INF/jsp/elus/visualisation.jsp")
