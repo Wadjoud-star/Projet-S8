@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\ClubDAO.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\CommuneDAO.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\EluLicenceDAO.java
@@ -8,6 +7,7 @@ C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubspor
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\StatClubsDAO.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\StatLicenciesDAO.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\UserDAO.java
+C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\UtilisateurFederationDAO.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\model\ClassementCommune.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Club.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Commune.java
@@ -38,56 +38,17 @@ C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubspor
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluVisualisationServlet.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\ExportPDFServlet.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\FederationServlet.java
+C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\GestionClubServlet.java
+C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\GestionCotisationServlet.java
+C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\GestionHorairesServlet.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\InscriptionServlet.java
+C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\MembresClubServlet.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\RegionServlet.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\StatsServlet.java
+C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\UtilisateurAccueilServlet.java
+C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\UtilisateurProfilServlet.java
+C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\UtilisateurServletHelper.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\util\ConnexionDB.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\util\CsvExportUtil.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\util\JsonUtil.java
 C:\Users\bpenw\eclipse-workspace\Projet-S8\Club_sport\src\main\java\com\clubsport\util\Test.java
-=======
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\ClubDAO.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\EluLicenceDAO.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\EluVisualisationDAO.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\FederationDAO.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\RegionDAO.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\StatClubsDAO.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\StatLicenciesDAO.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\dao\UserDAO.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\ClassementCommune.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Club.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Commune.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Departement.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Federation.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\LicenceExportRow.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\LicenceSearchExtras.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\Region.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\StatClubs.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\StatLicenceElu.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\model\User.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\service\ClubService.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\service\EluLicenceService.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\ActeurAccueilServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\AuthenticationFilter.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\AuthentificationServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\CheckAuthServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\ClubDetailServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\ClubServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\DeconnexionServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluAccueilServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluCartographieDataServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluCartographieServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluCommuneSearchServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluLicencesExportServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluLicencesServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\EluVisualisationServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\ExportPDFServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\FederationServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\InscriptionServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\RegionServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\servlet\StatsServlet.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\util\ConnexionDB.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\util\CsvExportUtil.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\util\JsonUtil.java
-C:\Users\Assane SIMAL\Projet-S8\Club_sport\src\main\java\com\clubsport\util\Test.java
->>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7

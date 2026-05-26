@@ -30,7 +30,6 @@
     String selectedDepartement = request.getAttribute("codeDepartement") == null ? "" : String.valueOf(request.getAttribute("codeDepartement"));
     String codeCommune = request.getAttribute("codeCommune") == null ? "" : String.valueOf(request.getAttribute("codeCommune"));
     String codeFederation = request.getAttribute("codeFederation") == null ? "" : String.valueOf(request.getAttribute("codeFederation"));
-    String genre = request.getAttribute("genre") == null ? "TOTAL" : String.valueOf(request.getAttribute("genre"));
     String communeLibelle = request.getAttribute("communeLibelle") == null ? "" : String.valueOf(request.getAttribute("communeLibelle"));
     List<Map<String, String>> regions = (List<Map<String, String>>) request.getAttribute("regions");
     List<Map<String, String>> departements = (List<Map<String, String>>) request.getAttribute("departements");
@@ -111,17 +110,17 @@
                                 <% } } %>
                             </select>
                         </div>
-                        <div class="col-md-4 position-relative">
+                        <div class="col-md-5 position-relative">
                             <label class="form-label" for="communeSearch">Commune</label>
                             <input class="form-control" id="communeSearch" type="search"
-                                   placeholder="Tapez un nom ou un code INSEE…" maxlength="120"
+                                   placeholder="Tapez le nom d'une commune…" maxlength="120"
                                    value="<%= escAttr(communeLibelle) %>">
                             <input type="hidden" id="codeCommune" name="codeCommune" value="<%= escAttr(codeCommune) %>">
                             <div id="communeGeoAlert" class="alert alert-warning py-2 px-3 mt-2 mb-0 small d-none" role="alert"></div>
                             <ul class="list-group position-absolute w-100 shadow-sm mt-1 d-none" id="communeSuggestions"
                                 style="z-index: 1050; max-height: 240px; overflow-y: auto;"></ul>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <label class="form-label" for="codeFederation">Fédération</label>
                             <% if (federations == null || federations.isEmpty()) { %>
                             <input class="form-control" id="codeFederation" name="codeFederation" type="text" maxlength="10" required placeholder="Code" value="<%= escAttr(codeFederation) %>">
@@ -136,14 +135,6 @@
                                 <% } %>
                             </select>
                             <% } %>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label" for="genre">Genre</label>
-                            <select class="form-select" id="genre" name="genre">
-                                <option value="TOTAL" <%= "TOTAL".equalsIgnoreCase(genre) ? "selected" : "" %>>Total</option>
-                                <option value="F" <%= "F".equalsIgnoreCase(genre) ? "selected" : "" %>>Femmes</option>
-                                <option value="H" <%= "H".equalsIgnoreCase(genre) ? "selected" : "" %>>Hommes</option>
-                            </select>
                         </div>
                         <div class="col-12 d-flex flex-wrap gap-2 align-items-center">
                             <button type="submit" class="btn btn-primary px-4 rounded-pill">
@@ -164,36 +155,41 @@
             <div class="results-wrap shadow-sm p-4 p-md-5 mt-5">
                 <h2 class="h5 fw-bold mb-4">Synthèse agrégée</h2>
                 <div class="row g-3 mb-4">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="kpi-tile">
-                            <div class="section-title">Valeur selon genre</div>
-                            <div class="fs-4 fw-bold text-primary"><%= stat.getValeurGenre() %></div>
+                            <div class="section-title">Total licences</div>
+                            <div class="fs-4 fw-bold text-primary"><%= stat.getTotalLicencies() %></div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="kpi-tile">
-                            <div class="section-title">Genre</div>
-                            <div class="fw-semibold"><%= escAttr(stat.getGenre()) %></div>
+                            <div class="section-title">Licenciées femme</div>
+                            <div class="fs-4 fw-bold"><%= stat.getLicenciesFemmes() %></div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <div class="kpi-tile">
+                            <div class="section-title">Licenciés homme</div>
+                            <div class="fs-4 fw-bold"><%= stat.getLicenciesHommes() %></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="kpi-tile">
                             <div class="section-title">Fédération</div>
-                            <div class="fw-semibold small"><%= escAttr(stat.getNomFederation()) %> <span class="text-muted">(<%= escAttr(stat.getCodeFederation()) %>)</span></div>
+                            <div class="fw-semibold small"><%= escAttr(stat.getNomFederation()) %></div>
                         </div>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-sm table-bordered align-middle mb-0">
                         <tbody>
-                            <tr><th class="bg-light" style="width: 28%;">Région</th><td><%= stat.getNomRegion() == null || stat.getNomRegion().isBlank() ? "—" : escAttr(stat.getNomRegion()) %>
-                                <% if (stat.getCodeRegion() != null && !stat.getCodeRegion().isBlank()) { %><span class="text-muted">(<%= escAttr(stat.getCodeRegion()) %>)</span><% } %></td></tr>
-                            <tr><th class="bg-light">Département</th><td><% if (stat.getCodeDepartement() == null || stat.getCodeDepartement().isBlank()) { %>—<% } else { %><%= escAttr(stat.getCodeDepartement()) %><%
-                                if (stat.getNomDepartement() != null && !stat.getNomDepartement().isBlank()) { %> <span class="text-muted">— <%= escAttr(stat.getNomDepartement()) %></span><% } %><% } %></td></tr>
-                            <tr><th class="bg-light">Commune</th><td><% if (stat.getNomCommune() == null || stat.getNomCommune().isBlank()) { %>—<% } else { %><%= escAttr(stat.getNomCommune()) %> <span class="text-muted">(<%= escAttr(stat.getCodeCommune()) %>)</span><% } %></td></tr>
+                            <tr><th class="bg-light" style="width: 28%;">Région</th><td><%= stat.getNomRegion() == null || stat.getNomRegion().isBlank() ? "—" : escAttr(stat.getNomRegion()) %></td></tr>
+                            <tr><th class="bg-light">Département</th><td><% if (stat.getNomDepartement() != null && !stat.getNomDepartement().isBlank()) { %><%= escAttr(stat.getNomDepartement()) %><% } else { %>—<% } %></td></tr>
+                            <tr><th class="bg-light">Commune</th><td><% if (stat.getNomCommune() == null || stat.getNomCommune().isBlank()) { %>—<% } else { %><%= escAttr(stat.getNomCommune()) %><% } %></td></tr>
+                            <tr><th class="bg-light">Fédération</th><td><%= stat.getNomFederation() == null || stat.getNomFederation().isBlank() ? "—" : escAttr(stat.getNomFederation()) %></td></tr>
                             <tr><th class="bg-light">Total licences</th><td class="fw-semibold"><%= stat.getTotalLicencies() %></td></tr>
-                            <tr><th class="bg-light">Licenciées (F)</th><td><%= stat.getLicenciesFemmes() %></td></tr>
-                            <tr><th class="bg-light">Licenciés (H)</th><td><%= stat.getLicenciesHommes() %></td></tr>
+                            <tr><th class="bg-light">Licenciées femme</th><td><%= stat.getLicenciesFemmes() %></td></tr>
+                            <tr><th class="bg-light">Licenciés homme</th><td><%= stat.getLicenciesHommes() %></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -316,10 +312,10 @@
                             const btn = document.createElement('button');
                             btn.type = 'button';
                             btn.className = 'list-group-item list-group-item-action py-2 text-start';
-                            btn.textContent = row.label || (row.nom + ' — ' + row.code);
+                            btn.textContent = row.label || row.nom || '';
                             btn.addEventListener('click', function () {
                                 hidden.value = row.code;
-                                input.value = row.label || (row.nom + ' — ' + row.code);
+                                input.value = row.label || row.nom || '';
                                 hideList();
                                 showAlert('');
                             });

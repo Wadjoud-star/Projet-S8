@@ -1,8 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<<<<<<< HEAD
+
 <%@ page import="com.clubsport.model.ClassementCommune" %>
 <%@ page import="java.util.List" %>
-=======
+
 <%@ page import="java.util.List" %>
 <%@ page import="com.clubsport.model.ClassementCommune" %>
 
@@ -21,12 +21,12 @@
   String ctx = request.getContextPath();
 %>
 
->>>>>>> 096f16ab2793c7e9c92c7b554c25690503afbc29
+
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-<<<<<<< HEAD
+
   <title>Visualisation — Élus</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="<%= request.getContextPath() %>/Style.css">
@@ -93,7 +93,7 @@
     <div class="col-md-4">
       <div class="card text-center p-3">
         <div class="fs-4 fw-bold text-warning"><%= request.getAttribute("totalFemmes") %></div>
-=======
+
   <title>Visualisation</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -204,13 +204,13 @@
     <div class="col-md-4">
       <div class="card stat-card shadow-sm text-center p-4">
         <div class="fs-2 fw-bold text-warning"><%= request.getAttribute("totalFemmes") != null ? request.getAttribute("totalFemmes") : 0 %></div>
->>>>>>> 096f16ab2793c7e9c92c7b554c25690503afbc29
+
         <div class="text-muted">Femmes</div>
       </div>
     </div>
   </div>
 
-<<<<<<< HEAD
+
   <%-- Graphiques --%>
   <div class="row g-4">
 
@@ -243,7 +243,7 @@
           <tbody>
             <% for (int i = 0; i < classement.size(); i++) {
                  ClassementCommune cc = classement.get(i); %>
-=======
+
   <div class="row g-4 mb-4">
     <div class="col-md-5">
       <div class="card main-card shadow-sm p-4">
@@ -269,12 +269,12 @@
         <tbody>
           <% for (int i = 0; i < classement.size(); i++) {
                ClassementCommune cc = classement.get(i); %>
->>>>>>> 096f16ab2793c7e9c92c7b554c25690503afbc29
+
             <tr>
               <td><%= i + 1 %></td>
               <td><%= cc.getNomCommune() %></td>
               <td><%= cc.getTotalLicencies() %></td>
-<<<<<<< HEAD
+
               <td><%= cc.getTauxLicencies() %> %</td>
             </tr>
             <% } %>
@@ -327,7 +327,7 @@
   </div>
 
 </div>
-=======
+
               <td><%= String.format("%.4f", cc.getTauxLicencies()) %> %</td>
             </tr>
           <% } %>
@@ -366,6 +366,6 @@
   });
 </script>
 
->>>>>>> 096f16ab2793c7e9c92c7b554c25690503afbc29
+
 </body>
 </html>

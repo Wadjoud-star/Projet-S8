@@ -8,6 +8,7 @@ import com.clubsport.util.ConnexionDB;
 
 import java.util.*;
 import java.sql.*;
+import java.text.NumberFormat;
 
 /**
  * La classe StatLicencieDAO est une classe qui permet de recuperer les
@@ -21,7 +22,12 @@ public class StatLicenciesDAO {
 	private boolean estRenseigne(String val) {
 		return val != null && !val.trim().isEmpty();
 	}
-
+	
+	public static String separateur(int nombre) {
+		NumberFormat nf = NumberFormat.getInstance(Locale.FRANCE);
+		String resultat = nf.format(nombre);
+		return resultat;
+	}
 	public List<StatLicenceElu> findParRegion(String codeRegion, String codeFederation) throws SQLException {
 		String sql = "SELECT sl.code_commune, c.nom_commune, c.code_departement, " + "  c.code_region, r.nom_region, "
 				+ "  sl.code_federation, f.nom_federation, " + "  SUM(sl.total_licencies) AS total_licencies, "
@@ -98,5 +104,10 @@ public class StatLicenciesDAO {
 			}
 		}
 		return liste;
+	}
+	public static void main(String[] args) {
+		int nombre = 123456789;
+		String resultat = separateur(nombre);
+		System.out.print(resultat);
 	}
 }
