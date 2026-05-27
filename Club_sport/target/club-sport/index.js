@@ -34,7 +34,7 @@ document.getElementById("btn-geoloc").addEventListener("click", function() {
         function(position) {
             var lat = position.coords.latitude;
             var lon = position.coords.longitude;
-
+            const rayon = sliderRayon.value;
             userLatLng = L.latLng(lat, lon);
             map.setView([lat, lon], 13);
             if (marqueurCourant) {
@@ -45,19 +45,40 @@ document.getElementById("btn-geoloc").addEventListener("click", function() {
                 .addTo(map)
                 .bindPopup("Vous êtes ici")
                 .openPopup();
-
-            fetch(`https://geo.api.gouv.fr/communes?lat=${lat}&lon=${lon}&fields=nom,code&format=json`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const commune = data[0];
-                        document.getElementById('inputCodePostal').value = commune.nom;
-                        const codeFederation = document.getElementById('selectFederation').value;
-                        lancerRecherche(null, commune.nom, codeFederation, null);
-                    }
-                });
-        }
-    );
+            if (userLatLng) {
+                const rayon = sliderRayon.value;
+                const codeFederation = document.getElementById('selectFederation').value;
+                fetch(`https://geo.api.gouv.fr/communes?lat=${userLatLng.lat}&lon=${userLatLng.lng}&fields=nom,code,codeDepartement&format=json`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.length === 0) {
+                            alert("Aucune commune trouvée dans ce rayon");
+                            return;
+                        }
+                        const codeDept = data[0].codeDepartement;
+                        if (cercleCourant) map.removeLayer(cercleCourant);
+                        cercleCourant = L.circle([userLatLng.lat, userLatLng.lng], {
+                            radius: rayon * 1000,
+                            color: '#2563eb',
+                            fillOpacity: 0.1
+                        }).addTo(map);
+                        /*                       let url = `/api/stats?codes_communes=${encodeURIComponent(codes)}`;
+                                            if (codeFederation) url += `&code_federation=${encodeURIComponent(codeFederation)}`;
+                    
+                                            fetch(url)
+                                                .then(res => res.json())
+                                                .then(data => afficherListeClubs(data))
+                                                .catch(err => console.error("Erreur :", err));*/
+                        fetch(`https://geo.api.gouv.fr/departements/${codeDept}/communes?fields=nom,code&format=json`)
+                            .then(res => res.json())
+                            .then(communes => {
+                                const codes = communes.map(c => c.code).join(',');
+                                lancerRechercheParCommunes(codes, codeFederation);
+                            });
+                    });
+                return;
+            }
+        });
 });
 fetch('/api/federations')
     .then(res => res.json())
@@ -154,30 +175,10 @@ document.getElementById('btnRechercher').addEventListener('click', () => {
     const codeRegion = document.getElementById('selectRegion').value;
     const nomCommune = document.getElementById('inputCodePostal').value.trim();
     const codeFederation = document.getElementById('selectFederation').value;
-    const rayon = sliderRayon.value;
-    if (userLatLng) {
-        const rayon = sliderRayon.value;
-        const codeFederation = document.getElementById('selectFederation').value;
-        fetch(`https://geo.api.gouv.fr/communes?lat=${userLatLng.lat}&lon=${userLatLng.lng}&distanceMaxKm=${rayon}&fields=nom,codeRegion&format=json`)
-            .then(res => res.json())
-            .then(communes => {
-                if (communes.length === 0) {
-                    alert("Aucune commune trouvée dans ce rayon.");
-                    return;
-                }
-                const codeRegion = communes[0].codeRegion;
-				if (cercleCourant) {
-				    map.removeLayer(cercleCourant);
-				}
-               cercleCourant = L.circle([userLatLng.lat, userLatLng.lng], {
-                    radius: rayon * 1000,
-                    color: '#2563eb',
-                    fillOpacity: 0.1
-                }).addTo(map);
-                lancerRecherche(codeRegion, null, codeFederation, null);
-            });
-			return;
-    }
+	if(marqueurCourant && cercleCourant){
+		marqueurCourant.remove();
+		cercleCourant.remove();
+	}
     if (!codeRegion && !nomCommune) {
         alert("Veuillez choisir une région ou saisir une commune.");
         return;
@@ -185,6 +186,15 @@ document.getElementById('btnRechercher').addEventListener('click', () => {
 
     lancerRecherche(codeRegion, nomCommune, codeFederation, null);
 });
+function lancerRechercheParCommunes(codes, codeFederation) {
+    let url = `/api/stats?codes_communes=${encodeURIComponent(codes)}`;
+    if (codeFederation) url += `&code_federation=${encodeURIComponent(codeFederation)}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => afficherListeClubs(data))
+        .catch(err => console.error("Erreur :", err));
+}
 function lancerRecherche(codeRegion, nomCommune, codeFederation, layer) {
     let url = '/api/stats?';
 

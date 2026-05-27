@@ -80,4 +80,45 @@ public class StatClubsDAO {
 		}
 		return liste;
 	}
+	public List<StatClubs> findParCodesCommunes(String[] codes, String codeFederation) throws SQLException {
+	    String placeholders = String.join(",", Collections.nCopies(codes.length, "?"));
+
+	    String sql =
+	        "SELECT sc.code_commune, sc.code_federation, " +
+	        "  SUM(sc.nb_clubs) AS nb_clubs, " +
+	        "  SUM(sc.nb_etablissements_professionnels) AS nb_etablissements_professionnels, " +
+	        "  SUM(sc.total_structures) AS total_structures " +
+	        "FROM statistique_clubs sc " +
+	        "INNER JOIN commune c ON sc.code_commune = c.code_commune " +
+	        "WHERE sc.code_commune IN (" + placeholders + ") " +
+	        (estRenseigne(codeFederation) ? "AND sc.code_federation = ? " : "") +
+	        "GROUP BY sc.code_commune, sc.code_federation " +
+	        "ORDER BY nb_clubs DESC";
+
+	    List<StatClubs> liste = new ArrayList<>();
+
+	    try (Connection conn = ConnexionDB.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        for (int i = 0; i < codes.length; i++) {
+	            ps.setString(i + 1, codes[i].trim());
+	        }
+	        if (estRenseigne(codeFederation)) {
+	            ps.setString(codes.length + 1, codeFederation);
+	        }
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                liste.add(new StatClubs(
+	                    rs.getInt("nb_clubs"),
+	                    rs.getInt("nb_etablissements_professionnels"),
+	                    rs.getInt("total_structures"),
+	                    rs.getString("code_commune"),
+	                    rs.getString("code_federation")
+	                ));
+	            }
+	        }
+	    }
+	    return liste;
+	}
 }

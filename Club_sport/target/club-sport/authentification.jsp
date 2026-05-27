@@ -37,7 +37,6 @@
 			<div class="mb-4">
 				<label for="password" class="form-label">Mot de passe</label> <input
 					type="password" id="password" class="form-control"
-
 					placeholder="Mot de passe" name="password" required />
 			</div>
 			<p class="text-muted small mb-4">Votre espace (élu, 

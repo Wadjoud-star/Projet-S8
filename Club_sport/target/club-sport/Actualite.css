@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+.card-publication {
+	transition: transform 0.2s;
+	border: none;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-publication:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-publication img {
+	height: 200px;
+	object-fit: cover;
+}
+
+.badge-date {
+	font-size: 12px;
+	background-color: #e8f0fe;
+	color: #2563eb;
+	border-radius: 20px;
+	padding: 4px 10px;
+}
+
+.auteur {
+	font-size: 13px;
+	color: #666;
+}

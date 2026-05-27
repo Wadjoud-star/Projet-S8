@@ -11,20 +11,7 @@ com\clubsport\dao\EluLicenceDAO.class
 com\clubsport\util\CsvExportUtil.class
 com\clubsport\servlet\ActeurAccueilServlet.class
 com\clubsport\servlet\EluCartographieDataServlet.class
-<<<<<<< HEAD
 com\clubsport\dao\CommuneDAO.class
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-com\clubsport\dao\CommuneDAO.class
-=======
->>>>>>> 70456a02a26d5c415f5b8e221905472a7e3f0dd7
-=======
->>>>>>> chloe
-com\clubsport\servlet\ExportPDFServlet.class
-com\clubsport\dao\RegionDAO.class
-com\clubsport\dao\FederationDAO.class
->>>>>>> ef68b54b99ccdad95458311e084eb71928d64a95
 com\clubsport\dao\UserDAO.class
 com\clubsport\model\LicenceSearchExtras.class
 com\clubsport\util\Test.class
@@ -47,15 +34,18 @@ com\clubsport\util\ConnexionDB.class
 com\clubsport\model\StatClubs.class
 com\clubsport\servlet\UtilisateurServletHelper.class
 com\clubsport\model\Federation.class
+com\clubsport\dao\PublicationDAO.class
 com\clubsport\model\Departement.class
 com\clubsport\servlet\FederationServlet.class
 com\clubsport\servlet\GestionHorairesServlet.class
 com\clubsport\servlet\ClubDetailServlet.class
+com\clubsport\model\Publication.class
 com\clubsport\servlet\MembresClubServlet.class
 com\clubsport\servlet\ExportPDFServlet.class
 com\clubsport\dao\RegionDAO.class
 com\clubsport\dao\FederationDAO.class
 com\clubsport\dao\StatLicenciesDAO.class
+com\clubsport\servlet\PublicationServlet.class
 com\clubsport\service\EluLicenceService.class
 com\clubsport\model\Commune.class
 com\clubsport\dao\StatClubsDAO.class
@@ -65,3 +55,4 @@ com\clubsport\servlet\GestionCotisationServlet.class
 com\clubsport\servlet\RegionServlet.class
 com\clubsport\servlet\EluCartographieServlet.class
 com\clubsport\servlet\CommuneServlet.class
+com\clubsport\servlet\CreerClubServlet.class

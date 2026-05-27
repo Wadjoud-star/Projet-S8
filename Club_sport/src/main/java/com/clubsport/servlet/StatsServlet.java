@@ -30,9 +30,10 @@ public class StatsServlet extends HttpServlet {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
 	private String param(HttpServletRequest request, String name) {
-	    String v = request.getParameter(name);
-	    return (v == null) ? "" : v.trim();
+		String v = request.getParameter(name);
+		return (v == null) ? "" : v.trim();
 	}
 
 	/**
@@ -46,23 +47,27 @@ public class StatsServlet extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		StatClubsDAO clubsDAO = new StatClubsDAO();
 		StatLicenciesDAO licencesDAO = new StatLicenciesDAO();
-		String codeRegion = param(request,"code_region");
-		String nomCommune = param(request,"nom_commune");
-		String codeFederation = param(request,"code_federation");
+		String codeRegion = param(request, "code_region");
+		String nomCommune = param(request, "nom_commune");
+		String codeFederation = param(request, "code_federation");
+		String codesCommunes = param(request, "codes_communes");
+
 		try {
 			Map<String, Object> resultat = new HashMap<>();
 
-			if (!codeRegion.isEmpty() || codeRegion == null) {
+			if (!codesCommunes.isEmpty()) {
+				String[] codes = codesCommunes.split(",");
+				resultat.put("clubs", clubsDAO.findParCodesCommunes(codes, codeFederation));
+				resultat.put("licences", licencesDAO.findParCodesCommunes(codes, codeFederation));
+			} else if (!codeRegion.isEmpty()) {
 				resultat.put("clubs", clubsDAO.findParRegion(codeRegion, codeFederation));
 				resultat.put("licences", licencesDAO.findParRegion(codeRegion, codeFederation));
-
-			} else if (!nomCommune.isEmpty() || nomCommune == null) {
+			} else if (!nomCommune.isEmpty()) {
 				resultat.put("clubs", clubsDAO.findParCommune(nomCommune, codeFederation));
 				resultat.put("licences", licencesDAO.findParCommune(nomCommune, codeFederation));
-
 			} else {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				resultat.put("erreur", "Parametres manquants : fournissez code_region ou nom_commune.");
+				resultat.put("erreur", "Parametres manquants.");
 			}
 
 			out.print(JsonUtil.toJson(resultat));
